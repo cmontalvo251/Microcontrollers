@@ -49,9 +49,9 @@
 #define INT_CFG            0x17  // RW   Interrupt: Configuration
 #define INT_STATUS         0x1A  // R	Interrupt: Status
 #define TEMP_OUT           0x1B  // R	SENSOR: Temperature 2bytes
-#define GYRO_XOUT          0x1D  // R	SENSOR: Gyro X 2bytes  
-#define GYRO_YOUT          0x1F  // R	SENSOR: Gyro Y 2bytes
-#define GYRO_ZOUT          0x21  // R	SENSOR: Gyro Z 2bytes
+#define GYRO_XOUT          0x1D  // R	SENSOR: Gyro X 2bytes //all these gyro hex coordinates
+#define GYRO_YOUT          0x1F  // R	SENSOR: Gyro Y 2bytes //are right next to each other
+#define GYRO_ZOUT          0x21  // R	SENSOR: Gyro Z 2bytes //so if you read 6 bytes you'll get all the data
 #define PWR_MGM            0x3E  // RW	Power Management
 
 /* ---- bit maps ---- */

@@ -55,7 +55,12 @@ void ADXL345::readAccel(int *xyz){
 // Reads the acceleration into three variable x, y and z
 void ADXL345::readAccel(int *x, int *y, int *z) {
   readFrom(ADXL345_DATAX0, TO_READ, _buff); //read the acceleration data from the ADXL345
+  //TO_READ is a #define which reads 6 bytes
 
+  // this is the kind of commenting I want. Ok so the raw data is in 10 bits 
+  // an integer is 4 bytes i think = 32 bits
+  // so this bitwise operation converts 10 bits to 32 bits.
+  // interesting. Maybe I'll work on this 1 day and see why it works
   // each axis reading comes in 10 bit resolution, ie 2 bytes.  Least Significat Byte first!!
   // thus we are converting both bytes in to one int
   *x = (((int)_buff[1]) << 8) | _buff[0];  

@@ -99,12 +99,22 @@ void FreeSixIMU::init(int acc_addr, int gyro_addr, bool fastmode) {
   acc.init(acc_addr);
 
   // init ITG3200
+  //Again here we turn the gyro on and then set a bunch
+  //of hex address to variables that control the thingy
   gyro.init(gyro_addr);
   
-  delay(1000);
+  delay(1000); //this is a 1 second delay right? 1000 ms = 1 second? Yes, milli = 10^3
+  //deci = 10^-1, centi = 10^-2, milli = 10^-3, micro = 10^-6, nano = 10^-9, pico = 10^-12
   // calibrate the ITG3200
-  gyro.zeroCalibrate(128,5);
+  gyro.zeroCalibrate(128,5); 
+  //The first variable is the total number of samples
+  //so the gyro samples 128 times in this case
+  //the second variable is the delay seconds
+  //so the code waits 5 ms between measurements
+  //the zerocalibrate takes 128 measurements and averages them to make 
+  //an offset or bias measurement.
   
+  //This is the magnetometer which is currently disabled.
   // init HMC5843
   //magn.init(false); // Don't set mode yet, we'll do that later on.
   // Calibrate HMC using self test, not recommended to change the gain after calibration.
@@ -127,12 +137,16 @@ void FreeSixIMU::getRawValues(int * raw_values) {
 
 void FreeSixIMU::getValues(float * values) {  
   int accval[3];
+  //this calls the readAccel code with 3 function inputs
   acc.readAccel(&accval[0], &accval[1], &accval[2]);
   values[0] = ((float) accval[0]);
   values[1] = ((float) accval[1]);
   values[2] = ((float) accval[2]);
-  
-  gyro.readGyro(&values[3]);
+  //Ok so we've read the accel data and it looks like the accel data 
+  //is in int so we convert it to a float
+
+  gyro.readGyro(&values[3]); //Read the calibrated values and then
+  //convert them to degrees per second
   
   //magn.getValues(&values[6]);
 }
@@ -195,6 +209,8 @@ void FreeSixIMU::AHRSupdate(float gx, float gy, float gz, float ax, float ay, fl
   }
   */
 
+  //THis whole area above is just commented because it's not used in the 6DOF sensor
+
   // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
   if((ax != 0.0f) && (ay != 0.0f) && (az != 0.0f)) {
     float halfvx, halfvy, halfvz;
@@ -206,8 +222,8 @@ void FreeSixIMU::AHRSupdate(float gx, float gy, float gz, float ax, float ay, fl
     az *= recipNorm;
     
     // Estimated direction of gravity
-    halfvx = q1q3 - q0q2;
-    halfvy = q0q1 + q2q3;
+    halfvx = q1q3 - q0q2; //this is from the rotation matrix - I can get my students to derive this 
+    halfvy = q0q1 + q2q3; //in class I think.
     halfvz = q0q0 - 0.5f + q3q3;
   
     // Error is sum of cross product between estimated direction and measured direction of field vectors
@@ -215,6 +231,8 @@ void FreeSixIMU::AHRSupdate(float gx, float gy, float gz, float ax, float ay, fl
     halfey += (az * halfvx - ax * halfvz);
     halfez += (ax * halfvy - ay * halfvx);
   }
+  
+  //Ok so we are measuring the ax,ay,az and then integrating gx,gy,gz
 
   // Apply feedback only when valid data has been gathered from the accelerometer or magnetometer
   if(halfex != 0.0f && halfey != 0.0f && halfez != 0.0f) {
@@ -246,23 +264,26 @@ void FreeSixIMU::AHRSupdate(float gx, float gy, float gz, float ax, float ay, fl
   qa = q0;
   qb = q1;
   qc = q2;
-  q0 += (-qb * gx - qc * gy - q3 * gz);
-  q1 += (qa * gx + qc * gz - q3 * gy);
-  q2 += (qa * gy - qb * gz + q3 * gx);
+  q0 += (-qb * gx - qc * gy - q3 * gz); //I just looked this up
+  q1 += (qa * gx + qc * gz - q3 * gy); //this is the derivatives of a quaternion using p,q,r
+  q2 += (qa * gy - qb * gz + q3 * gx); //This is pretty cool that they have this all here
   q3 += (qa * gz + qb * gy - qc * gx);
   
   // Normalise quaternion
   recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
   q0 *= recipNorm;
   q1 *= recipNorm;
-  q2 *= recipNorm;
+  q2 *= recipNorm; 
   q3 *= recipNorm;
 }
 
 
 void FreeSixIMU::getQ(float * q) {
   float val[9];
-  getValues(val);
+  getValues(val); //Read the raw sensor measurements from
+  //the accel and gyro
+  //now the val values have the accelerometer ax,ay,ax and gyro readings 
+  //p,q,r
   
   /*
   DEBUG_PRINT(val[3] * M_PI/180);
@@ -271,18 +292,19 @@ void FreeSixIMU::getQ(float * q) {
   DEBUG_PRINT(val[0]);
   DEBUG_PRINT(val[1]);
   DEBUG_PRINT(val[2]);
-  DEBUG_PRINT(val[6]);
+  DEBUG_PRINT(val[6]); // these are magnetometer readings which are not used
   DEBUG_PRINT(val[7]);
   DEBUG_PRINT(val[8]);
   */
   
   
-  now = micros();
-  sampleFreq = 1.0 / ((now - lastUpdate) / 1000000.0);
+  now = micros(); //the number of seconds since the last function call to getQ
+  sampleFreq = 1.0 / ((now - lastUpdate) / 1000000.0); //this is setting up the filter
   lastUpdate = now;
-  // gyro values are expressed in deg/sec, the * M_PI/180 will convert it to radians/sec
+  // gyro values are expressed in deg/sec, the * M_PI/180 will convert it to radians/sec - nice comment
   //AHRSupdate(val[3] * M_PI/180, val[4] * M_PI/180, val[5] * M_PI/180, val[0], val[1], val[2], val[6], val[7], val[8]);
-  // use the call below when using a 6DOF IMU
+  // use the call below when using a 6DOF IMU - this is because 6,7,8 are magnetometer readings and they are not used in
+  // the 6DOF sensor
   AHRSupdate(val[3] * M_PI/180, val[4] * M_PI/180, val[5] * M_PI/180, val[0], val[1], val[2], 0, 0, 0);
   q[0] = q0;
   q[1] = q1;

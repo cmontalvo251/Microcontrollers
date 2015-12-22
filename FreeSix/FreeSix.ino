@@ -42,13 +42,32 @@ void setup() {
   //correctly
   my3IMU.init(); //init with no arguments runs the init routine without fast mode
   //I honestly don't think fastmode is important to learn but I might read it later
+  //ok so in the init routine we turn on the gyro and the accelerometer and calibrate
+  //the gyro by taking 128 measurements and averaging all the measurements
+  //all the filter and bandwidth parameters seem to be internal circuitry that operates
+  //without code.
   delay(5);
+
+  //That's it for setup
 }
 
 
 void loop() { 
+  //Now we get the quaternions from the sensors
+  //Ok I went through this code. The code really just takes the raw accel and gyro data
+  //and integrates it using a DCM filter to get the quaternions
+  //so an exercise would be to take the raw accel and gyro data and obtain the quaternions
+  //using the method obtained here. That would be a fun project anyway.
+  //Perhaps I could write my own routine where I output the raw accel and gyro 
+  //data to a text file and then they obtain the quaternions
   my3IMU.getQ(q);
+  //Ok then, you use the serialPrintFloatArr command from 
+  //CommunicationUtils to send the quaternions to Processing
+  //or really just over serial
   serialPrintFloatArr(q, 4);
+  //this command is actually pretty neat and takes care of all
+  //the byte operators and pointers and stuff. It would have taken
+  //me forever to get this to work
   Serial.println(""); //line break
  
   delay(60);

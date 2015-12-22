@@ -45,7 +45,7 @@
 #define ADXL345_INT_MAP 0x2f
 #define ADXL345_INT_SOURCE 0x30
 #define ADXL345_DATA_FORMAT 0x31
-#define ADXL345_DATAX0 0x32
+#define ADXL345_DATAX0 0x32 //location of raw data
 #define ADXL345_DATAX1 0x33
 #define ADXL345_DATAY0 0x34
 #define ADXL345_DATAY1 0x35

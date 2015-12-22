@@ -77,11 +77,15 @@ void ITG3200::init(unsigned int  address) {
 void ITG3200::init(unsigned int address, byte _SRateDiv, byte _Range, byte _filterBW, byte _ClockSrc, bool _ITGReady, bool _INTRawDataReady) {
   _dev_address = address; //set the input of the function to the private variable hex address
   setSampleRateDiv(_SRateDiv); //set the _SRateDiv variable to the address of the SMPLRT_DIV hex address
-  setFSRange(_Range); //OK START HERE
-  setFilterBW(_filterBW);
-  setClockSource(_ClockSrc);
-  setITGReady(_ITGReady);
-  setRawDataReady(_INTRawDataReady);  
+  setFSRange(_Range); //the the DLPF_FS address to a 1 or a 0 because of logic
+  setFilterBW(_filterBW); //set the address to 1 or a 0
+  setClockSource(_ClockSrc); //set the address to a 1 or a 0 
+  setITGReady(_ITGReady); // << I think the << symbol is actually a bit shift operator.
+  setRawDataReady(_INTRawDataReady); //ok yes so the numbers 0 through 6 represent 000 - 110 in binary
+  //these numbers are shifted a certain number of bits to shift to a different number
+  //in addition, a & b is actually a bitwise operator rather than a standard or so 
+  // 101 & 100 = 100 rather than 5 && 3 = 1 < true or false. Interesting, so all these
+  // set commands are way more complicated than I thought.
   delay(GYROSTART_UP_DELAY);  // startup - wait 70 ms to make sure everything is good to go
   //there is a lot of waiting and initialization protocol in this code here
 }
@@ -111,19 +115,20 @@ byte ITG3200::getFSRange() {
   return ((_buff[0] & DLPFFS_FS_SEL) >> 3);
 }
 
-void ITG3200::setFSRange(byte _Range) {
-  readmem(DLPF_FS, 1, &_buff[0]);   
-  writemem(DLPF_FS, ((_buff[0] & ~DLPFFS_FS_SEL) | (_Range << 3)) ); 
+void ITG3200::setFSRange(byte _Range) { ///So _Range is currently set to 3
+  readmem(DLPF_FS, 1, &_buff[0]);  //so we read what is current in the buffer
+  writemem(DLPF_FS, ((_buff[0] & ~DLPFFS_FS_SEL) | (_Range << 3)) ); //then we write a 1 or a 0 depending
+  //on this true falst statement
 }
 
-byte ITG3200::getFilterBW() {  
-  readmem(DLPF_FS, 1, &_buff[0]);
+byte ITG3200::getFilterBW() {   ///It doesn't look like this routine is called in this cpp 
+  readmem(DLPF_FS, 1, &_buff[0]); //file. Maybe it's used somewhere else?
   return (_buff[0] & DLPFFS_DLPF_CFG); 
 }
 
 void ITG3200::setFilterBW(byte _BW) {   
-  readmem(DLPF_FS, 1, &_buff[0]);
-  writemem(DLPF_FS, ((_buff[0] & ~DLPFFS_DLPF_CFG) | _BW)); 
+  readmem(DLPF_FS, 1, &_buff[0]); //Again wierd. _BW can be between 0 and 6
+  writemem(DLPF_FS, ((_buff[0] & ~DLPFFS_DLPF_CFG) | _BW)); //then we write a 0 or 1 to the memory location. Again not really sure on this one
 }
 
 bool ITG3200::isINTActiveOnLow() {  
@@ -202,7 +207,16 @@ void ITG3200::readTemp(float *_Temp) {
 }
 
 void ITG3200::readGyroRaw(int *_GyroX, int *_GyroY, int *_GyroZ){
-  readmem(GYRO_XOUT, 6, _buff);
+  readmem(GYRO_XOUT, 6, _buff); //This reads 6 bytes 
+  //into the data buffer _buff
+  //This part below is what is beyond me.
+  //Basically it says the pointer of GyroX is the bit wise operation
+  //from _buff[0] shifted to the left 8 places then bitwise or with _buff[1]
+  //Again not really sure how that works but that's how they have it set up
+  //Ok so I learned this from the accelerometer 
+  //but basically the sensors are 10 bit sensors and 
+  //the buffer is an integer or 32 bits so the process
+  //below converts the readings to integers
   *_GyroX = ((_buff[0] << 8) | _buff[1]);
   *_GyroY = ((_buff[2] << 8) | _buff[3]); 
   *_GyroZ = ((_buff[4] << 8) | _buff[5]);
@@ -235,13 +249,15 @@ void ITG3200::zeroCalibrate(unsigned int totSamples, unsigned int sampleDelayMS)
   float tmpOffsets[] = {0,0,0};
 
   for (int i = 0;i < totSamples;i++){
-    delay(sampleDelayMS);
+    delay(sampleDelayMS); 
     readGyroRaw(xyz);
     tmpOffsets[0] += xyz[0];
     tmpOffsets[1] += xyz[1];
     tmpOffsets[2] += xyz[2];  
   }
   setOffsets(-tmpOffsets[0] / totSamples, -tmpOffsets[1] / totSamples, -tmpOffsets[2] / totSamples);
+  //so bascially this code reads the gyro value 128 times and then averages the measurements
+  //to create an offset
 }
 
 void ITG3200::readGyroRawCal(int *_GyroX, int *_GyroY, int *_GyroZ) {
@@ -257,8 +273,18 @@ void ITG3200::readGyroRawCal(int *_GyroXYZ) {
 
 void ITG3200::readGyro(float *_GyroX, float *_GyroY, float *_GyroZ){
   int x, y, z;
+  //Here we read the raw data but calibrated with the offsets obtained from
+  //the init routine where we measure 128 measurements to remove the bias
   
   readGyroRawCal(&x, &y, &z); // x,y,z will contain calibrated integer values from the sensor
+  //Typically polarities are all 1
+  //and the gain values are also 1
+  //Ok so wht's 14.375?
+  //45/pi = 14.324? Maybe it's some type of conversion?
+  //Nope - just checked the data sheet
+  //14.375 is a conversion from bits to degrees per second
+  //the unit is LSB or least significant bit thus when 1 bit increases
+  //the reading goes up by 14.375 degrees/second
   *_GyroX =  x / 14.375 * polarities[0] * gains[0];
   *_GyroY =  y / 14.375 * polarities[1] * gains[1];
   *_GyroZ =  z / 14.375 * polarities[2] * gains[2];
