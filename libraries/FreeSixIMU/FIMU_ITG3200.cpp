@@ -43,6 +43,8 @@ void ITG3200::init(unsigned int  address) {
 
   //It looks like we can initialize our rate gyro in 4 different ways
   
+  //REVISIT REVISIT - looks like we have different settings
+
   // fast sample rate - divisor = 0 filter = 0 clocksrc = 0, 1, 2, or 3  (raw values)
   init(address, NOSRDIVIDER, RANGE2000, BW256_SR8, PLL_XGYRO_REF, true, true);
   

@@ -64,7 +64,7 @@ void loop() {
   //Ok then, you use the serialPrintFloatArr command from 
   //CommunicationUtils to send the quaternions to Processing
   //or really just over serial
-  serialPrintFloatArr(q, 4);
+  serialPrintFloatArr(q, 4); // -- quaternions is 4 numbers a float is 4 bytes so 4*4 = 16 bytes right?
   //this command is actually pretty neat and takes care of all
   //the byte operators and pointers and stuff. It would have taken
   //me forever to get this to work
