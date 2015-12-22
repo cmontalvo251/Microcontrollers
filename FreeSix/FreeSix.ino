@@ -31,7 +31,7 @@ FreeSixIMU my3IMU = FreeSixIMU(); //This class is defined in FreeSixIMU.h
 //all the variables it needs
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115200); //REVIST - this needs to be the same as the processing code
   Wire.begin(); 
   //Normally this code is called from setup() at user code
   //but some people reported that joining I2C bus earlier
@@ -61,6 +61,13 @@ void loop() {
   //Perhaps I could write my own routine where I output the raw accel and gyro 
   //data to a text file and then they obtain the quaternions
   my3IMU.getQ(q);
+  
+  //Debugging
+  //q[0] = 1;
+  //q[1] = 0;
+  //q[2] = 0;
+  //q[3] += 0.1;
+  
   //Ok then, you use the serialPrintFloatArr command from 
   //CommunicationUtils to send the quaternions to Processing
   //or really just over serial
@@ -68,7 +75,7 @@ void loop() {
   //this command is actually pretty neat and takes care of all
   //the byte operators and pointers and stuff. It would have taken
   //me forever to get this to work
-  Serial.println(""); //line break
+  Serial.println("\r\n"); //line break
  
   delay(60);
 }
