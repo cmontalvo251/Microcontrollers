@@ -29,15 +29,22 @@ ADXL345::ADXL345() {
 }
 
 void ADXL345::init(int address) {
-  _dev_address = address;
+  //Here is the init routine for the accelerometer
+  _dev_address = address; //this sets the hex addres to it's
+  //internal private variable and then turns the thing on 
   powerOn();
 }
 
+//by running this routine here
 void ADXL345::powerOn() {
   //Turning on the ADXL345
   //writeTo(ADXL345_POWER_CTL, 0);      
   //writeTo(ADXL345_POWER_CTL, 16);
-  writeTo(ADXL345_POWER_CTL, 8);
+  writeTo(ADXL345_POWER_CTL, 8); //This write to seems
+  //like it is used quite a bit
+  //The writeTo function takes the byte address and the byte value
+  //ADXL345_POWER_CTL is the hexadecimal address for the "power" button
+  //so the writeTo function write the number 8 to power
 }
 
 // Reads the acceleration into an array of three places
@@ -67,7 +74,9 @@ void ADXL345::get_Gxyz(float *xyz){
 
 // Writes val to address register on device
 void ADXL345::writeTo(byte address, byte val) {
+  //_dev_address is the hex address to the actual device
   Wire.beginTransmission(_dev_address); // start transmission to device
+  //Using Wire.h the byte val is written to the address
   Wire.write(address);             // send register address
   Wire.write(val);                 // send value to write
   Wire.endTransmission();         // end transmission

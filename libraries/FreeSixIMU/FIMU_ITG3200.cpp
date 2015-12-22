@@ -40,29 +40,50 @@ ITG3200::ITG3200() {
 
 void ITG3200::init(unsigned int  address) {
   // Uncomment or change your default ITG3200 initialization
+
+  //It looks like we can initialize our rate gyro in 4 different ways
   
   // fast sample rate - divisor = 0 filter = 0 clocksrc = 0, 1, 2, or 3  (raw values)
   init(address, NOSRDIVIDER, RANGE2000, BW256_SR8, PLL_XGYRO_REF, true, true);
   
   // slow sample rate - divisor = 0  filter = 1,2,3,4,5, or 6  clocksrc = 0, 1, 2, or 3  (raw values)
-  //init(NOSRDIVIDER, RANGE2000, BW010_SR1, INTERNALOSC, true, true);
+  //init(address,NOSRDIVIDER, RANGE2000, BW010_SR1, INTERNALOSC, true, true);
   
   // fast sample rate 32Khz external clock - divisor = 0  filter = 0  clocksrc = 4  (raw values)
-  //init(NOSRDIVIDER, RANGE2000, BW256_SR8, PLL_EXTERNAL32, true, true);
+  //init(address,NOSRDIVIDER, RANGE2000, BW256_SR8, PLL_EXTERNAL32, true, true);
   
   // slow sample rate 32Khz external clock - divisor = 0  filter = 1,2,3,4,5, or 6  clocksrc = 4  (raw values)
-  //init(NOSRDIVIDER, RANGE2000, BW010_SR1, PLL_EXTERNAL32, true, true);
+  //init(address,NOSRDIVIDER, RANGE2000, BW010_SR1, PLL_EXTERNAL32, true, true);
+
 }
 
+//Our variables are the following
+
+//address = the rate gryo hex address on the 6DOF shield
+
+//_SRateDiv = The sample rate divider - FsampleHz=SampleRateHz/(divider+1)
+//If divider is zero the FsampleHz is equal to SampleRateHz
+
+//_Range = the range of the gyro right now it is set to 3 I'll learn about this in setFSRange
+
+//_filterBW = This is the ditigal Low Pass Filter Bandwidth. Rate gyros are super noisy so you need to filter
+//the signal - the setting are numbers from 0-6. Again take a look at setFilterBW to learn more
+
+//_ClockSrc = Another number from 0-6. Learn more in setClockSource
+
+//The last two variables are always true in the init routine. They are booleans and used to set
+//setITGReady(true) and setRawDataReady(true)
+
 void ITG3200::init(unsigned int address, byte _SRateDiv, byte _Range, byte _filterBW, byte _ClockSrc, bool _ITGReady, bool _INTRawDataReady) {
-  _dev_address = address;
-  setSampleRateDiv(_SRateDiv);
-  setFSRange(_Range);
+  _dev_address = address; //set the input of the function to the private variable hex address
+  setSampleRateDiv(_SRateDiv); //set the _SRateDiv variable to the address of the SMPLRT_DIV hex address
+  setFSRange(_Range); //OK START HERE
   setFilterBW(_filterBW);
   setClockSource(_ClockSrc);
   setITGReady(_ITGReady);
   setRawDataReady(_INTRawDataReady);  
-  delay(GYROSTART_UP_DELAY);  // startup 
+  delay(GYROSTART_UP_DELAY);  // startup - wait 70 ms to make sure everything is good to go
+  //there is a lot of waiting and initialization protocol in this code here
 }
 
 byte ITG3200::getDevAddr() {
@@ -303,6 +324,9 @@ void ITG3200::setClockSource(byte _CLKsource) {
 }
 
 void ITG3200::writemem(uint8_t _addr, uint8_t _val) {
+  //This must have been written by two different people but with similar
+  //interests. This is pretty annoying. 
+  //writemem is the same as writeTo
   Wire.beginTransmission(_dev_address);   // start transmission to device 
   Wire.write(_addr); // send register address
   Wire.write(_val); // send value to write

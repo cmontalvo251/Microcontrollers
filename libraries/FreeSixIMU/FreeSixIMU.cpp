@@ -70,9 +70,10 @@ void FreeSixIMU::init(int acc_addr, int gyro_addr, bool fastmode) {
   //adress
   //Interesting, delay is written again. Perhaps just a check to make
   //sure things don't go too fast
-  //START HERE!!!!
   delay(5);
   
+  //The ATMEGA is an Arduino chip. It looks like the Wire.h protocal
+  //messes with the shield and some ports need to be disabled
   // disable internal pullups of the ATMEGA which Wire enable by default
   #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega328P__)
     // deactivate internal pull-ups for twi
@@ -89,14 +90,17 @@ void FreeSixIMU::init(int acc_addr, int gyro_addr, bool fastmode) {
   if(fastmode) { // switch to 400KHz I2C - eheheh
     TWBR = ((16000000L / 400000L) - 16) / 2; // see twi_init in Wire/utility/twi.c
     // TODO: make the above usable also for 8MHz arduinos..
+    //See - fastmode does not actually do anything
   }
   
-	// init ADXL345
-	acc.init(acc_addr);
-	
+  // init ADXL345
+  //Alright here is where we initialize the accelerometer
+  //Really this just turns the unit on
+  acc.init(acc_addr);
 
   // init ITG3200
   gyro.init(gyro_addr);
+  
   delay(1000);
   // calibrate the ITG3200
   gyro.zeroCalibrate(128,5);
