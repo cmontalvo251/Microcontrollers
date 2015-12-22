@@ -18,8 +18,8 @@ void serialFloatPrint(float f) {
     char c1 = (b1 < 10) ? ('0' + b1) : 'A' + b1 - 10;
     char c2 = (b2 < 10) ? ('0' + b2) : 'A' + b2 - 10;
     
-    Serial.print(c1);
-    Serial.print(c2);
+    Serial.print(c1); //does this output a command between prints?
+    Serial.print(c2); //otherwise line 75 on .pde won't work because their aren't any commas
   }
 }
 
