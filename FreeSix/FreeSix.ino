@@ -23,6 +23,8 @@
 
 
 float q[4]; //hold q values 
+float val[9];
+float outval[6];
 
 // Set the FreeIMU object
 FreeSixIMU my3IMU = FreeSixIMU(); //This class is defined in FreeSixIMU.h
@@ -61,9 +63,16 @@ void loop() {
   //Perhaps I could write my own routine where I output the raw accel and gyro 
   //data to a text file and then they obtain the quaternions
   my3IMU.getQ(q);
+  my3IMU.getValues(val);
   
   //Debugging
-  //q[0] = 1;
+  for (int idx = 0;idx<6;idx++)
+  {
+    outval[idx] = val[idx];
+  }
+  
+  //val[4] = 1;
+  //val[5] = -1;
   //q[1] = 0;
   //q[2] = 0;
   //q[3] += 0.1;
@@ -75,6 +84,7 @@ void loop() {
   //this command is actually pretty neat and takes care of all
   //the byte operators and pointers and stuff. It would have taken
   //me forever to get this to work
+  serialPrintFloatArr(outval,6);
   Serial.println("\r\n"); //line break
  
   delay(60);

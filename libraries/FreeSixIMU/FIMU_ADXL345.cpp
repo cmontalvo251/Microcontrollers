@@ -63,6 +63,8 @@ void ADXL345::readAccel(int *x, int *y, int *z) {
   // interesting. Maybe I'll work on this 1 day and see why it works
   // each axis reading comes in 10 bit resolution, ie 2 bytes.  Least Significat Byte first!!
   // thus we are converting both bytes in to one int
+  // I watched a youtube video on this. Basically buff[1] is the first register that
+  // is bit shifted 8 bits when you | (or) it with buff[0] you get a full 16 bit variable or 2 bytes
   *x = (((int)_buff[1]) << 8) | _buff[0];  
   *y = (((int)_buff[3]) << 8) | _buff[2];
   *z = (((int)_buff[5]) << 8) | _buff[4];
