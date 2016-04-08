@@ -35,6 +35,9 @@ else
   end
 end
 
+%%%Offet Time
+time_vec = time_vec - time_vec(1);
+
 figure()
 plot(time_vec,lon_vec)
 xlabel('Time')
@@ -59,4 +62,42 @@ plot(x_vec(end),y_vec(end),'v')
 xlabel('X (m)')
 ylabel('Y (m)')
 
+%%%%Compute Distance
+dist_vec = 0*time_vec;
+for idx = 2:length(time_vec)
+    dx = x_vec(idx)-x_vec(idx-1);
+    dy = y_vec(idx)-y_vec(idx-1);
+    dist_vec(idx) = dist_vec(idx-1) + sqrt(dx^2+dy^2);
+end
 
+figure()
+plot(time_vec,dist_vec)
+xlabel('Time')
+ylabel('Distance (m)')
+
+
+%%%Run Distance Through a Derivative Filter to compute Speed
+speed_vec = 0*time_vec;
+raw_speed_vec = 0*time_vec;
+s = 0.9;
+for idx = 2:length(time_vec)
+    raw_speed = (dist_vec(idx)-dist_vec(idx-1))/(time_vec(idx)-time_vec(idx-1));
+    raw_speed_vec(idx) = raw_speed;
+    if raw_speed == Inf
+        raw_speed = speed_vec(idx-1);
+    end
+    speed_vec(idx) = s*speed_vec(idx-1) + (1-s)*raw_speed;
+end
+
+figure()
+plot(time_vec,speed_vec)
+hold on
+%plot(time_vec,raw_speed_vec,'r-')
+xlabel('Time')
+ylabel('Speed (m/s)')
+
+%%%Make cool 3D plots
+[fig,ax] = plot3color(x_vec,y_vec,speed_vec,'o');
+xlabel('X (m)')
+ylabel('Y (m)')
+zlabel('Speed (m/s)')
