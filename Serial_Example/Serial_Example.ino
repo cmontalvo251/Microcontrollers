@@ -19,7 +19,7 @@ void loop()
 
   //Generate Data
   for (int idx = 0;idx<numVars;idx++) {
-    data[idx]=sin((1.0/numVars)*3.141592654*(idx+1)*millis()/1000.0);
+    data[idx]=(idx+1)*sin((1.0/numVars)*3.141592654*(idx+1)*millis()/1000.0);
   }
   
   //Write Data to Serial
