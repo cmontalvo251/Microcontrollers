@@ -1,3 +1,4 @@
+#include <Wire.h>
 #include "CommunicationUtils.h"
 
 int numVars = 6; //Make sure this is the same as processing code
