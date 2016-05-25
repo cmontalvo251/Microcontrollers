@@ -10,12 +10,21 @@ float data[3]; //You must hardcode the number of variables.
 
 // Set the pins used
 #define ledPin 13
-#define rightTrigPin 6
-#define rightEchoPin 9
-#define leftTrigPin 4
-#define leftEchoPin 5
+//In an effort to test the sensors do not use 
+//0 or 1 - TX/RX
+//4,7 or 8 - GPS Shield
+//10 - SD Card
+
+//Your options are 2,3 // 5,6 // 9,11
 #define frontTrigPin 2
 #define frontEchoPin 3
+
+#define leftTrigPin 5
+#define leftEchoPin 6
+
+#define rightTrigPin 9
+#define rightEchoPin 11
+
 
 
 long cmright,cmleft,cmfront;
