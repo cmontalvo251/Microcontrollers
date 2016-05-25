@@ -15,22 +15,23 @@ void setup()
 
 void loop()
 {
-  // if we get a valid byte, read analog ins:
-  if (Serial.available() > 0) {
-    // get incoming word:
-    val = Serial.read();
-    if (val == '1') {
-      ledState = !ledState;
-      digitalWrite(ledPin,ledState);
-      //Create Dummy Variables to send back to Processing
-      firstSensor = random(1,10);
-      secondSensor = random(1,10);
-      thirdSensor = random(1,10); 
-      // send sensor values:
-      Serial.write(firstSensor);
-      Serial.write(secondSensor);
-      Serial.write(thirdSensor);               
-    }
+  //Infinite loop until we get something
+  while(Serial.available()==0);
+  
+  String message = Serial.readString();
+  if (message == "test")
+  {
+    firstSensor = random(1,10);
+    secondSensor = random(1,10);
+    thirdSensor = random(1,10); 
+    // send sensor values:
+    Serial.write(firstSensor); 
+    Serial.write(secondSensor);
+    Serial.write(thirdSensor);     
+  }
+  else 
+  {
+    Serial.flush();
   }
 }
 
@@ -39,4 +40,5 @@ void establishContact() {
     Serial.println("A");   // send a capital A
     delay(300);
   }
+  val = Serial.read();
 }
