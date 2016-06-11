@@ -31,13 +31,14 @@ void loop() {
  while(zero_timer + 4000 > micros());
   
  if (Serial.available() > 0) {
-  val = Serial.read();
+  ival = Serial.read();
   //val = '0';
-  //Serial.println(val);
-  ival = (int)val; //0 to int is 48 (ASCII), 9 in int is 57 (ASCII)
+  //Serial.println(val); //If a letter is converted to ASCII we should just be able
+  //to send an integer from 0-255
+  //ival = (int)val; //0 to int is 48 (ASCII), 9 in int is 57 (ASCII)
   //Serial.println(ival);
   //degree = map(ival,48,57,0,180);
-  microseconds = map(ival,48,57,500,2500);
+  microseconds = map(ival,0,255,500,2500);
   //Serial.println(degree);
   //servo1.write(degree);
   //Serial.println("-----");

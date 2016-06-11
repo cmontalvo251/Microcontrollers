@@ -43,7 +43,7 @@ void loop() {
   PORTD |= B01000000;
   //PORTD = PORTD | B0100000;
   //Then we wait anything between 500-3500us; 
-  delayMicroseconds(500);
+  delayMicroseconds(3500);
   //And finally we set pin 6 of PORTD to LOW (0)
   PORTD &= B10111111;
   //PORTD = PORTD & B10111111;
