@@ -26,7 +26,7 @@ void loop()
 {
   if (cal_voltage == 0) {
     digitalWrite(13,LOW);
-    //Read pitot sensor 1000 times to calibrate sensor
+    //Read pitot sensor N times to calibrate sensor
     cal_voltage = 0;
     int N = 10;
     for (int idx = 0;idx<N;idx++) {
