@@ -78,14 +78,14 @@ void loop() {
   data[0] = Distance(leftTrigPin,leftEchoPin);
   data[2] = Distance(frontTrigPin,frontEchoPin);
 
-//  Serial.print(millis());
-//  Serial.print(" ");
-//  Serial.print(data[1]);
-//  Serial.print(" ");
-//  Serial.print(data[0]);
-//  Serial.print(" ");
-//  Serial.print(data[2]);
-//  Serial.print("\n"); 
+  //Serial.print(millis());
+  //Serial.print(" ");
+  //Serial.print(data[1]);
+  //Serial.print(" ");
+  //Serial.print(data[0]);
+  //Serial.print(" ");
+  //Serial.print(data[2]);
+  //Serial.print("\n"); 
 
   serialPrintFloatArr(data,numVars);
   Serial.println("\r\n");  
