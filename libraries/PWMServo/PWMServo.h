@@ -3,8 +3,11 @@
 
 /*
   PWMServo.h - Hardware Servo Timer Library
+  http://arduiniana.org/libraries/pwmservo/
   Author: Jim Studt, jim@federated.com
   Copyright (c) 2007 David A. Mellis.  All right reserved.
+  renamed to PWMServo by Mikal Hart
+  ported to other chips by Paul Stoffregen
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +26,33 @@
 
 #include <inttypes.h>
 
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) // Arduino
+  #define SERVO_PIN_A 9
+  #define SERVO_PIN_B 10
+#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) // Arduino Mega
+  #define SERVO_PIN_A 11
+  #define SERVO_PIN_B 12
+  #define SERVO_PIN_C 13
+#elif defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644__) // Sanguino
+  #define SERVO_PIN_A 13
+  #define SERVO_PIN_B 12
+#elif defined(__AVR_AT90USB162__) // Teensy 1.0
+  #define SERVO_PIN_A 17
+  #define SERVO_PIN_B 18
+  #define SERVO_PIN_C 15
+#elif defined(__AVR_ATmega32U4__) // Teensy 2.0
+  #define SERVO_PIN_A 14
+  #define SERVO_PIN_B 15
+  #define SERVO_PIN_C 4
+#elif defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__) // Teensy++
+  #define SERVO_PIN_A 25
+  #define SERVO_PIN_B 26
+  #define SERVO_PIN_C 27
+#else
+  #define SERVO_PIN_A 9
+  #define SERVO_PIN_B 10
+#endif
+
 class PWMServo
 {
   private:
@@ -32,8 +62,11 @@ class PWMServo
     uint8_t max16;       // maximum pulse, 16uS units, 0-4ms range (default is 150)
     static void seizeTimer1();
     static void releaseTimer1();
-    static uint8_t attached9;
-    static uint8_t attached10;
+    static uint8_t attachedA;
+    static uint8_t attachedB;
+    #ifdef SERVO_PIN_C
+    static uint8_t attachedC;
+    #endif
   public:
     PWMServo();
     uint8_t attach(int);

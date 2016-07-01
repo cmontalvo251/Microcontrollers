@@ -1,11 +1,18 @@
 #include <avr/interrupt.h>
-#include <wiring.h>
-#include <PWMServo.h>
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "wiring.h"
+#endif
+#include "PWMServo.h"
 
 /*
-  PWMServo.h - Hardware Servo Timer Library
+  PWMServo.cpp - Hardware Servo Timer Library
+  http://arduiniana.org/libraries/pwmservo/
   Author: Jim Studt, jim@federated.com
   Copyright (c) 2007 David A. Mellis.  All right reserved.
+  renamed to PWMServo by Mikal Hart
+  ported to other chips by Paul Stoffregen
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,8 +30,11 @@
 */
 
 
-uint8_t PWMServo::attached9 = 0;
-uint8_t PWMServo::attached10 = 0;
+uint8_t PWMServo::attachedA = 0;
+uint8_t PWMServo::attachedB = 0;
+#ifdef SERVO_PIN_C
+uint8_t PWMServo::attachedC = 0;
+#endif
 
 void PWMServo::seizeTimer1()
 {
@@ -62,8 +72,12 @@ uint8_t PWMServo::attach(int pinArg)
 
 uint8_t PWMServo::attach(int pinArg, int min, int max)
 {
-  if (pinArg != 9 && pinArg != 10) return 0;
-  
+  #ifdef SERVO_PIN_C
+  if (pinArg != SERVO_PIN_A && pinArg != SERVO_PIN_B && pinArg != SERVO_PIN_C) return 0;
+  #else
+  if (pinArg != SERVO_PIN_A && pinArg != SERVO_PIN_B) return 0;
+  #endif
+
   min16 = min / 16;
   max16 = max / 16;
 
@@ -72,36 +86,59 @@ uint8_t PWMServo::attach(int pinArg, int min, int max)
   digitalWrite(pin, LOW);
   pinMode(pin, OUTPUT);
 
-  if (!attached9 && !attached10) seizeTimer1();
+  #ifdef SERVO_PIN_C
+  if (!attachedA && !attachedB && !attachedC) seizeTimer1();
+  #else
+  if (!attachedA && !attachedB) seizeTimer1();
+  #endif
 
-  if (pin == 9) {
-    attached9 = 1;
+  if (pin == SERVO_PIN_A) {
+    attachedA = 1;
     TCCR1A = (TCCR1A & ~_BV(COM1A0)) | _BV(COM1A1);
   }
-  
-  if (pin == 10) {
-    attached10 = 1;
+
+  if (pin == SERVO_PIN_B) {
+    attachedB = 1;
     TCCR1A = (TCCR1A & ~_BV(COM1B0)) | _BV(COM1B1);
   }
+
+  #ifdef SERVO_PIN_C
+  if (pin == SERVO_PIN_C) {
+    attachedC = 1;
+    TCCR1A = (TCCR1A & ~_BV(COM1C0)) | _BV(COM1C1);
+  }
+  #endif
   return 1;
 }
 
 void PWMServo::detach()
 {
   // muck with timer flags
-  if (pin == 9) {
-    attached9 = 0;
+  if (pin == SERVO_PIN_A) {
+    attachedA = 0;
     TCCR1A = TCCR1A & ~_BV(COM1A0) & ~_BV(COM1A1);
     pinMode(pin, INPUT);
-  } 
-  
-  if (pin == 10) {
-    attached10 = 0;
+  }
+
+  if (pin == SERVO_PIN_B) {
+    attachedB = 0;
     TCCR1A = TCCR1A & ~_BV(COM1B0) & ~_BV(COM1B1);
     pinMode(pin, INPUT);
   }
 
-  if (!attached9 && !attached10) releaseTimer1();
+  #ifdef SERVO_PIN_C
+  if (pin == SERVO_PIN_C) {
+    attachedC = 0;
+    TCCR1A = TCCR1A & ~_BV(COM1C0) & ~_BV(COM1C1);
+    pinMode(pin, INPUT);
+  }
+  #endif
+
+  #ifdef SERVO_PIN_C
+  if (!attachedA && !attachedB && !attachedC) releaseTimer1();
+  #else
+  if (!attachedA && !attachedB) releaseTimer1();
+  #endif
 }
 
 void PWMServo::write(int angleArg)
@@ -116,8 +153,11 @@ void PWMServo::write(int angleArg)
   // That 8L on the end is the TCNT1 prescaler, it will need to change if the clock's prescaler changes,
   // but then there will likely be an overflow problem, so it will have to be handled by a human.
   p = (min16*16L*clockCyclesPerMicrosecond() + (max16-min16)*(16L*clockCyclesPerMicrosecond())*angle/180L)/8L;
-  if (pin == 9) OCR1A = p;
-  if (pin == 10) OCR1B = p;
+  if (pin == SERVO_PIN_A) OCR1A = p;
+  if (pin == SERVO_PIN_B) OCR1B = p;
+  #ifdef SERVO_PIN_C
+  if (pin == SERVO_PIN_C) OCR1C = p;
+  #endif
 }
 
 uint8_t PWMServo::read()
@@ -127,7 +167,10 @@ uint8_t PWMServo::read()
 
 uint8_t PWMServo::attached()
 {
-  if (pin == 9 && attached9) return 1;
-  if (pin == 10 && attached10) return 1;
+  if (pin == SERVO_PIN_A && attachedA) return 1;
+  if (pin == SERVO_PIN_B && attachedB) return 1;
+  #ifdef SERVO_PIN_C
+  if (pin == SERVO_PIN_C && attachedC) return 1;
+  #endif
   return 0;
 }
