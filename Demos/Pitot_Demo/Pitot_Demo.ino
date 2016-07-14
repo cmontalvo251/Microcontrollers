@@ -69,13 +69,13 @@ void loop()
     data[idx] = random(1,10);
   }
   
-  //Serial.print("Raw Bits = ");
-  //Serial.print(sensorvalue);
-  //Serial.print(" Voltage = ");
-  //Serial.print(voltage);
-  //Serial.print(" Airspeed = ");
-  //Serial.print(airspeed);
-  //Serial.print("\n");
+//  Serial.print("Raw Bits = ");
+//  Serial.print(sensorvalue);
+//  Serial.print(" Voltage = ");
+//  Serial.print(voltage);
+//  Serial.print(" Airspeed = ");
+//  Serial.print(airspeed);
+//  Serial.print("\n");
   
   //Write Data to Serial
   serialPrintFloatArr(data,numVars);
