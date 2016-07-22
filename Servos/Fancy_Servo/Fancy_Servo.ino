@@ -17,7 +17,7 @@ void setup() {
   //Now if we don't want to use the standard Servo library things become a bit more
   //complex. First we need to configure pin 6 to be an output. Pins 0-7 are in portD
   //Thus we need to set pin 6 of portD to high or a 1. This is the equivalent to
-  //Servo.attach(6) or more simply inMode(6,OUTPUT).
+  //Servo.attach(6) or more simply pinMode(6,OUTPUT).
   DDRD |= B01000000;
   
   //We also need to have the Arduino run in Interrupt mode so that it runs faster
