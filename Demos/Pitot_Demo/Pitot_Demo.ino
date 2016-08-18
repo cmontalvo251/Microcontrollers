@@ -2,7 +2,7 @@
 #include "CommunicationUtils.h"
 
 int numVars = 6; //Make sure this is the same as processing code
-int numPitot = 3;
+int numPitot = 1;
 float data[6]; //You must hardcode the number of variables.
 float cal_voltage[3];
 float sensorvalue;
@@ -31,7 +31,7 @@ void setup()
   for (int idx = 0;idx<numPitot;idx++) {
       cal_voltage[idx] = 0;
   }
-  int N = 10;
+  int N = 100;
   for (int idx = 0;idx<N;idx++) {
     for (int jdx = 0;jdx<numPitot;jdx++){
       sensorvalue = analogRead(analogInPin[jdx]);
@@ -76,13 +76,13 @@ void loop()
     airspeed[idx] = (1.0-sigma)*airspeed_then[idx] + sigma*airspeed_now[idx];
     airspeed_then[idx] = airspeed[idx];
     data[idx] = airspeed[idx];
-//    Serial.print("Raw Bits = ");
-//    Serial.print(sensorvalue);
-//    Serial.print(" Voltage = ");
-//    Serial.print(voltage);
-//    Serial.print(" Airspeed = ");
-//    Serial.print(airspeed[idx]);
-//    Serial.print("\n");
+    //Serial.print("Raw Bits = ");
+    //Serial.print(sensorvalue);
+    //Serial.print(" Voltage = ");
+    //Serial.print(voltage);
+    //Serial.print(" Airspeed = ");
+    //Serial.print(airspeed[idx]);
+    //Serial.print("\n");
   }
   //Random Number
   for (int idx = numPitot;idx<6;idx++){

@@ -2,9 +2,9 @@
 
 Servo servo1;
 
-unsigned long current_time,timer_thrust,timer_steer;
-byte last_channel_thrust,last_channel_steer;
-int pulse_time_thrust,pulse_time_steer;
+unsigned long current_time,timer;
+byte last_channel;
+int pulse_time;
 
 void setup() {
   // put your setup code here, to run once:
@@ -32,6 +32,8 @@ void setup() {
   //PORTB7 = Dpin 13 - PCINT7
   PCMSK0 |= (1 << PCINT4); //PORTB4 - Digital Pin 10
   PCMSK0 |= (1 << PCINT5); //PORTB5 - Digital Pin 11
+  PCMSK0 |= (1 << PCINT6); //PORTB6 - Digital Pin 12
+  PCMSK0 |= (1 << PCINT7); //PORTB7 - Digital Pin 13
   
 }
 
@@ -41,51 +43,47 @@ void loop() {
   //This is to debug pulses
   //0 deg = 521 ms
   //180 deg = 2300 ms
+  servo1.write(0);
+  delay(500);
   servo1.write(90);
+  delay(500);
+  servo1.write(180);
+  delay(500);
 
   //Get pulse using Pulsein - comment out if you're using
   //interrupts
-  //pulse_time_thrust = pulseIn(10,HIGH);
+  //pulse_time = pulseIn(13,HIGH);
+  //Serial.println(pulse_time);
   
-  Serial.println(pulse_time_steer);
 }
 
 //ISR(PCINT2_vect){ //This is for pins 3 and 5 on the UNO
-//ISR(PCINT0_vect){ //This is for pins 8 and 9 on the UNO
-
+//ISR(PCINT0_vect){ //This is for pins 8 and 9 on the UNO or PORTB (pins 10-13)
 ISR(PCINT0_vect) { //Pins 10 and 11 for MEGA
 
   current_time = micros();
 
   //if (PIND & B00001000) { //This is pin 3 UNO
   //if (PINB & B00000001) { //This is pin 8 UNO
-  
-  if (PINB & B00010000) { // PORTB4 is Digital Pin 10 MEGA
-  
-    if(last_channel_thrust == 0)
-    {
-      last_channel_thrust = 1;
-      timer_thrust = current_time;
-    }
-  }
-  else if(last_channel_thrust == 1){
-      last_channel_thrust = 0;
-      pulse_time_thrust = current_time - timer_thrust;
-  }
-  
   //if (PIND & B00100000){ //This is pin 5 UNO
   //if (PINB & B00000010){ //This is pin 9 UNO
-
-  if (PINB & B00100000) { //PORTB5 is Digital Pin 11 MEGA
+  //if (PINB & B00010000) { // PORTB4 is Digital Pin 10 MEGA
+  //if (PINB & B00100000) { //PORTB5 is Digital Pin 11 MEGA
+  //if (PINB & B01000000) { //PORTB6 is Digital Pin 12 MEGA
+  //if (PINB & B10000000) { //PORTB7 is Digital Pin 13 MEGA
   
-    if(last_channel_steer == 0)
+  if (PINB & B10000000) { 
+  
+    if(last_channel == 0)
     {
-      last_channel_steer = 1;
-      timer_steer = current_time;
+      last_channel = 1;
+      timer = current_time;
     }
   }
-  else if(last_channel_steer == 1){
-      last_channel_steer = 0;
-      pulse_time_steer = current_time - timer_steer;
-  }  
+  else if(last_channel == 1){
+      last_channel = 0;
+      pulse_time = current_time - timer;
+      Serial.println(pulse_time);
+  }
+
 }
