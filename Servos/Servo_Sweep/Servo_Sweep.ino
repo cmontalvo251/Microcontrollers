@@ -4,7 +4,7 @@ Servo servo1;
 
 void setup() {
 //Serial.begin(9600);
-servo1.attach(6);
+servo1.attach(10);
 
 }
 
