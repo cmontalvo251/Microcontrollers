@@ -1,6 +1,6 @@
 #include <SPI.h>
-#include <FASTGPS.h>
-#include <FASTSerial.h>
+#include <Adafruit_GPS.h>
+#include <SoftwareSerial.h>
 #include <SD.h>
 #include <avr/sleep.h>
 
