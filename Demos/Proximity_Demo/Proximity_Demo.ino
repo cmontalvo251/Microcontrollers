@@ -16,16 +16,14 @@ float data[3]; //You must hardcode the number of variables.
 //10 - SD Card
 
 //Your options are 2,3 // 5,6 // 9,11
-#define frontTrigPin 2
-#define frontEchoPin 3
+#define frontTrigPin 39
+#define frontEchoPin 41
 
-#define leftTrigPin 5
-#define leftEchoPin 6
+#define leftTrigPin 38
+#define leftEchoPin 40
 
-#define rightTrigPin 9
-#define rightEchoPin 11
-
-
+#define rightTrigPin 36
+#define rightEchoPin 37
 
 long cmright,cmleft,cmfront;
 //unsigned int cmleft;
@@ -78,17 +76,17 @@ void loop() {
   data[0] = Distance(leftTrigPin,leftEchoPin);
   data[2] = Distance(frontTrigPin,frontEchoPin);
 
-  //Serial.print(millis());
-  //Serial.print(" ");
-  //Serial.print(data[1]);
-  //Serial.print(" ");
-  //Serial.print(data[0]);
-  //Serial.print(" ");
-  //Serial.print(data[2]);
-  //Serial.print("\n"); 
+  Serial.print(millis());
+  Serial.print(" ");
+  Serial.print(data[1]);
+  Serial.print(" ");
+  Serial.print(data[0]);
+  Serial.print(" ");
+  Serial.print(data[2]);
+  Serial.print("\n"); 
 
-  serialPrintFloatArr(data,numVars);
-  Serial.println("\r\n");  
+  //serialPrintFloatArr(data,numVars);
+  //Serial.println("\r\n");  
 
 }
 

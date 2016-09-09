@@ -1,5 +1,5 @@
-#include <Wire.h>
-#include "CommunicationUtils.h"
+//#include <Wire.h>
+//#include "CommunicationUtils.h"
 
 int numVars = 6; //Make sure this is the same as processing code
 int numPitot = 1;
@@ -18,9 +18,6 @@ void setup()
   for (int idx = 0;idx<numVars;idx++){
     data[idx] = 0;
   }
-  //Serial.print("Cal Voltage = ");
-  //Serial.print(cal_voltage);
-  //Serial.print("\n");
   digitalWrite(13,LOW);
 
   for (int idx = 0;idx<numPitot;idx++) {
@@ -76,24 +73,24 @@ void loop()
     airspeed[idx] = (1.0-sigma)*airspeed_then[idx] + sigma*airspeed_now[idx];
     airspeed_then[idx] = airspeed[idx];
     data[idx] = airspeed[idx];
-    //Serial.print("Raw Bits = ");
-    //Serial.print(sensorvalue);
-    //Serial.print(" Voltage = ");
-    //Serial.print(voltage);
-    //Serial.print(" Airspeed = ");
-    //Serial.print(airspeed[idx]);
-    //Serial.print("\n");
+    Serial.print("Raw Bits = ");
+    Serial.print(sensorvalue);
+    Serial.print(" Voltage = ");
+    Serial.print(voltage);
+    Serial.print(" Airspeed = ");
+    Serial.print(airspeed[idx]);
+    Serial.print("\n");
   }
   //Random Number
-  for (int idx = numPitot;idx<6;idx++){
-     data[idx] = random(1,10);
-  }
+  //for (int idx = numPitot;idx<6;idx++){
+  //   data[idx] = random(1,10);
+  //}
   
 
   
   //Write Data to Serial
-  serialPrintFloatArr(data,numVars);
-  Serial.println("\r\n"); //line break. Tells processing to stop reading data
+  //serialPrintFloatArr(data,numVars);
+  //Serial.println("\r\n"); //line break. Tells processing to stop reading data
 
   //wait a bit so you don't write super freaking fast
   //delay(10);
