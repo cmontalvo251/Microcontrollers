@@ -3,7 +3,7 @@
 void serialPrintFloatArr(float * arr, int length) {
   for(int i=0; i<length; i++) {
     serialFloatPrint(arr[i]);
-    Serial.print(",");
+    Serial.print(","); //The commas are here dude. 
   }
 }
 
@@ -19,7 +19,7 @@ void serialFloatPrint(float f) {
     char c2 = (b2 < 10) ? ('0' + b2) : 'A' + b2 - 10;
     
     Serial.print(c1); //does this output a command between prints?
-    Serial.print(c2); //otherwise line 75 on .pde won't work because their aren't any commas
+    Serial.print(c2); //otherwise line 75 on .pde won't work because their aren't any commas (Look up like 10 lines of code)
   }
 }
 
