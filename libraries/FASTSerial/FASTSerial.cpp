@@ -301,12 +301,12 @@ inline void SoftwareSerial::handle_interrupt()
   }
 }
 
-// #if defined(PCINT0_vect)
-// ISR(PCINT0_vect)
-// {
-//   SoftwareSerial::handle_interrupt();
-// }
-// #endif
+#if defined(PCINT0_vect)
+ISR(PCINT0_vect)
+{
+  SoftwareSerial::handle_interrupt();
+}
+#endif
 
 #if defined(PCINT1_vect)
 ISR(PCINT1_vect)

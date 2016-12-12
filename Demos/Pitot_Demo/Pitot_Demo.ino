@@ -1,15 +1,18 @@
-//#include <Wire.h>
-//#include "CommunicationUtils.h"
+#include <Wire.h>
+#include "CommunicationUtils.h"
 
 int numVars = 6; //Make sure this is the same as processing code
 int numPitot = 1;
 float data[6]; //You must hardcode the number of variables.
-float cal_voltage[3];
+float cal_voltage[4];
 float sensorvalue;
-float airspeed_then[3];
+float airspeed_then[4];
+float cal_airspeed[4];
 int analogInPin[3]; //Airspeed sensor is hooked up to pin 3
-float airspeed[3];
-float airspeed_now[3];
+float airspeed[4];
+float airspeed_now[4];
+float timerCAL = 0;
+int CAL_DONE = 0;
 
 void setup() 
 {
@@ -27,8 +30,9 @@ void setup()
   //Read pitot sensor N times to calibrate sensor
   for (int idx = 0;idx<numPitot;idx++) {
       cal_voltage[idx] = 0;
+      cal_airspeed[idx] = 0;
   }
-  int N = 100;
+  int N = 1000;
   for (int idx = 0;idx<N;idx++) {
     for (int jdx = 0;jdx<numPitot;jdx++){
       sensorvalue = analogRead(analogInPin[jdx]);
@@ -39,6 +43,36 @@ void setup()
   for (int idx = 0;idx<numPitot;idx++) {
     cal_voltage[idx] = cal_voltage[idx]/float(N);
   }
+  for (int idx = 0;idx<N;idx++) {
+    for (int jdx = 0;jdx<numPitot;jdx++) {
+      float sensorvalue = analogRead(analogInPin[jdx]);
+      //Convert to voltage
+      float raw_voltage = sensorvalue*(5.0/1023.0);
+      //Calibrate voltage
+      float voltage = raw_voltage - cal_voltage[jdx];
+      //Convert to pressure
+      float pressure = voltage/101.325;
+      //Compute Airspeed using bernoulli
+      float k = pow(pressure+1.0,2.0/7.0);
+      //Check for error
+      if (k < 1.0) {
+        k = 1.0;
+      }
+      //Compute speed of sound
+      //Based on temperature in Celsius
+      float tempC = 20.0;
+      float tempK = 273.15 + tempC;
+      float a_inf = sqrt(1.4*286.0*tempK);
+      //Compute Airspeed
+      airspeed_now[jdx] = a_inf*(sqrt(5.0*(k-1.0)));
+      airspeed[jdx] = airspeed_now[jdx];
+      cal_airspeed[jdx]+=airspeed[jdx];
+    }
+  }
+  for (int idx = 0;idx<numPitot;idx++) {
+    cal_airspeed[idx] = cal_airspeed[idx]/float(N);
+  }
+  //timerCAL = millis()/1000.0;
 }
 
 
@@ -68,29 +102,75 @@ void loop()
     float a_inf = sqrt(1.4*286.0*tempK);
     //Compute Airspeed
     airspeed_now[idx] = a_inf*(sqrt(5.0*(k-1.0)));
+    airspeed[idx] = airspeed_now[idx];
     //Use a complimentary filter to filter out noise
-    float sigma = 0.03;
-    airspeed[idx] = (1.0-sigma)*airspeed_then[idx] + sigma*airspeed_now[idx];
-    airspeed_then[idx] = airspeed[idx];
-    data[idx] = airspeed[idx];
-    Serial.print("Raw Bits = ");
-    Serial.print(sensorvalue);
-    Serial.print(" Voltage = ");
-    Serial.print(voltage);
-    Serial.print(" Airspeed = ");
-    Serial.print(airspeed[idx]);
-    Serial.print("\n");
+    //float sigma = 0.03;
+    //airspeed[idx] = (1.0-sigma)*airspeed_then[idx] + sigma*airspeed_now[idx];
+    //airspeed_then[idx] = airspeed[idx];
+    data[idx] = airspeed[idx]-cal_airspeed[idx];
+    //Serial.print(" Raw Bits = ");
+    //Serial.print(sensorvalue);
+    //Serial.print(" Raw Voltage = ");
+    //Serial.print(raw_voltage,8);
+    //Serial.print(" Voltage = ");
+    //Serial.print(voltage);
+    //Serial.print(" Airspeed = ");
+    //Serial.print(airspeed[idx]-cal_airspeed[idx]);
+    //Serial.print(" m/s \n");
   }
   //Random Number
   //for (int idx = numPitot;idx<6;idx++){
   //   data[idx] = random(1,10);
   //}
-  
 
+//  //Re-calibrate
+//  if (millis()/1000.0 > timerCAL + 10.0 && CAL_DONE == 0) {
+//    //Serial.print("Recalibrating \n");
+//    CAL_DONE = 1;
+//    //Read pitot sensor N times to calibrate sensor
+//    for (int idx = 0;idx<numPitot;idx++) {
+//      cal_voltage[idx] = 0;
+//      cal_airspeed[idx] = 0;
+//    }
+//    int N = 1000;
+//    for (int idx = 0;idx<N;idx++) {
+//      for (int jdx = 0;jdx<numPitot;jdx++){
+//          sensorvalue = analogRead(analogInPin[jdx]);
+//          cal_voltage[jdx]+=sensorvalue*(5.0/1023.0);
+//        }
+//    }
+//    for (int idx = 0;idx<numPitot;idx++) {
+//      cal_voltage[idx] = cal_voltage[idx]/float(N);
+//    }
+//    for (int idx = 0;idx<N;idx++) {
+//      for (int jdx = 0;jdx<numPitot;jdx++){
+//          sensorvalue = analogRead(analogInPin[jdx]);
+//          float voltage = sensorvalue*(5.0/1023.0) - cal_voltage[jdx];
+//          //Convert to pressure
+//          float pressure = voltage/101.325;
+//          //Compute Airspeed using bernoulli
+//          float k = pow(pressure+1.0,2.0/7.0);
+//          //Check for error
+//          if (k < 1.0) {
+//            k = 1.0;
+//          }
+//          float tempC = 20.0;
+//          float tempK = 273.15 + tempC;
+//          float a_inf = sqrt(1.4*286.0*tempK);
+//          //Compute Airspeed
+//          cal_airspeed[jdx] += a_inf*(sqrt(5.0*(k-1.0))); 
+//        }
+//    }
+//    for (int idx = 0;idx<numPitot;idx++) {
+//      cal_airspeed[idx] = cal_airspeed[idx]/float(N);
+//      //Serial.print("Calibration Airspeed = ");
+//      //Serial.println(cal_airspeed[idx]);   
+//    }
+//  }
   
   //Write Data to Serial
-  //serialPrintFloatArr(data,numVars);
-  //Serial.println("\r\n"); //line break. Tells processing to stop reading data
+  serialPrintFloatArr(data,numVars);
+  Serial.println("\r\n"); //line break. Tells processing to stop reading data
 
   //wait a bit so you don't write super freaking fast
   //delay(10);
