@@ -2,13 +2,13 @@
 #include "CommunicationUtils.h"
 
 int numVars = 6; //Make sure this is the same as processing code
-int numPitot = 1;
+int numPitot = 4;
 float data[6]; //You must hardcode the number of variables.
 float cal_voltage[4];
 float sensorvalue;
 float airspeed_then[4];
 float cal_airspeed[4];
-int analogInPin[3]; //Airspeed sensor is hooked up to pin 3
+int analogInPin[4]; //The default software port for each pitot starts at A1 and then marches from there.
 float airspeed[4];
 float airspeed_now[4];
 float timerCAL = 0;
@@ -22,9 +22,28 @@ void setup()
     data[idx] = 0;
   }
   digitalWrite(13,LOW);
+  
+  //For the 1 hole pitot sensor - Quad reference frame
+  //A2 = North pitot probe 
+
+  //For the 4 hole pitot sensor - Quad reference frame
+  //A2 = West pitot probe
+  //A3 = North Pitot Probe
+  //A4 = South Pitot probe
+  //A5 = East Pitot Probe
+
+  //Thus columns on the SD card will be
+  //West, North, South, East - Quad Reference frame
+
+  //Note that typically I point the quad itself in the EAST Earth Coordinate direction
+  //thus the SD card will actually have a different reference. However, to avoid confusion
+  //I suggest you point the quad due north so that the pitot reference frame matches with the
+  //Earth reference frame
+  
+  //Remember to verify this in the python code
 
   for (int idx = 0;idx<numPitot;idx++) {
-    analogInPin[idx] = idx+1;
+    analogInPin[idx] = idx+2;
   }
   digitalWrite(13,LOW);
   //Read pitot sensor N times to calibrate sensor
