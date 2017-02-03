@@ -1,8 +1,8 @@
 #include <Wire.h>
 #include "CommunicationUtils.h"
 
-int numVars = 6; //Make sure this is the same as processing code
-int numPitot = 4;
+int numVars = 1; //Make sure this is the same as processing code
+int numPitot = 1;
 float data[6]; //You must hardcode the number of variables.
 float cal_voltage[4];
 float sensorvalue;
@@ -121,21 +121,21 @@ void loop()
     float a_inf = sqrt(1.4*286.0*tempK);
     //Compute Airspeed
     airspeed_now[idx] = a_inf*(sqrt(5.0*(k-1.0)));
-    airspeed[idx] = airspeed_now[idx];
+    //airspeed[idx] = airspeed_now[idx];
     //Use a complimentary filter to filter out noise
-    //float sigma = 0.03;
-    //airspeed[idx] = (1.0-sigma)*airspeed_then[idx] + sigma*airspeed_now[idx];
-    //airspeed_then[idx] = airspeed[idx];
+    float sigma = 0.03;
+    airspeed[idx] = (1.0-sigma)*airspeed_then[idx] + sigma*airspeed_now[idx];
+    airspeed_then[idx] = airspeed[idx];
     data[idx] = airspeed[idx]-cal_airspeed[idx];
-    //Serial.print(" Raw Bits = ");
-    //Serial.print(sensorvalue);
-    //Serial.print(" Raw Voltage = ");
-    //Serial.print(raw_voltage,8);
-    //Serial.print(" Voltage = ");
-    //Serial.print(voltage);
-    //Serial.print(" Airspeed = ");
-    //Serial.print(airspeed[idx]-cal_airspeed[idx]);
-    //Serial.print(" m/s \n");
+    Serial.print(" Raw Bits = ");
+    Serial.print(sensorvalue);
+    Serial.print(" Raw Voltage = ");
+    Serial.print(raw_voltage,8);
+    Serial.print(" Voltage = ");
+    Serial.print(voltage);
+    Serial.print(" Airspeed = ");
+    Serial.print(airspeed[idx]-cal_airspeed[idx]);
+    Serial.print(" m/s \n");
   }
   //Random Number
   //for (int idx = numPitot;idx<6;idx++){
@@ -188,8 +188,8 @@ void loop()
 //  }
   
   //Write Data to Serial
-  serialPrintFloatArr(data,numVars);
-  Serial.println("\r\n"); //line break. Tells processing to stop reading data
+  //serialPrintFloatArr(data,numVars);
+  //Serial.println("\r\n"); //line break. Tells processing to stop reading data
 
   //wait a bit so you don't write super freaking fast
   //delay(10);
