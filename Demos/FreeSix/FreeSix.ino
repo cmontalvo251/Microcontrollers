@@ -23,6 +23,7 @@
 
 
 float q[4]; //hold q values 
+float euler[3];
 float val[9];
 float outval[6];
 
@@ -77,23 +78,31 @@ void loop() {
   //q[2] = 0;
   //q[3] += 0.1;
 
-  /* Serial.print(millis()); */
-  /* Serial.print(" "); */
-  /* for (int idx = 0;idx<4;idx++) { */
-  /*   Serial.print(q[idx]); */
-  /*   Serial.print(" "); */
-  /* } */
-  /* Serial.println(); */
+  Serial.print(millis());
+  Serial.print(" "); 
+  for (int idx = 0;idx<4;idx++) {
+     Serial.print(q[idx]);
+     Serial.print(" ");
+  }
+
+  //Convert to Euler
+  my3IMU.getEuler(euler);
+  for (int idx = 0;idx<3;idx++) {
+    Serial.print(euler[idx]);
+    Serial.print(" ");
+  }
+  
+  Serial.println(); 
   
   //Ok then, you use the serialPrintFloatArr command from 
   //CommunicationUtils to send the quaternions to Processing
   //or really just over serial
-  serialPrintFloatArr(q, 4); // -- quaternions is 4 numbers a float is 4 bytes so 4*4 = 16 bytes right?
+  //serialPrintFloatArr(q, 4); // -- quaternions is 4 numbers a float is 4 bytes so 4*4 = 16 bytes right?
   //this command is actually pretty neat and takes care of all
   //the byte operators and pointers and stuff. It would have taken
   //me forever to get this to work
-  serialPrintFloatArr(outval,6);
-  Serial.println("\r\n"); //line break
+  //serialPrintFloatArr(outval,6);
+  //Serial.println("\r\n"); //line break
  
   delay(60);
 }
