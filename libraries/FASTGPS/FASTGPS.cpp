@@ -234,7 +234,9 @@ boolean Adafruit_GPS::parse(char *nmea) {
       else if (p[0] == ',') lon = 0;
       else return false;
     }
-    // speed
+    // speed - http://www.gpsinformation.org/dale/nmea.htm
+    // according to that website above the speed is in knots
+    // for GPRMC
     p = strchr(p, ',')+1;
     if (',' != *p)
     {
