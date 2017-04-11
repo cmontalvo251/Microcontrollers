@@ -1,8 +1,8 @@
 #include <Servo.h>
 
 //Setup Sonar Sensor
-#define frontTrigPin 6
-#define frontEchoPin 7
+#define frontTrigPin 31
+#define frontEchoPin 33
 
 //Setup Servo
 Servo myservo;
@@ -16,7 +16,7 @@ void setup() {
   Serial.begin(9600);
 
   //Attach Servo
-  myservo.attach(10);
+  myservo.attach(9);
   
   //Setup input and output
   SetupPin(frontTrigPin,frontEchoPin);

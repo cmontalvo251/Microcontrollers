@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include "CommunicationUtils.h"
 
-int numVars = 6; //Make sure this is the same as processing code
+int numVars = 4; //Make sure this is the same as processing code
 int numPitot = 4;
 float data[6]; //You must hardcode the number of variables.
 float cal_voltage[4];
@@ -27,10 +27,10 @@ void setup()
   //A2 = North pitot probe 
 
   //For the 4 hole pitot sensor - Quad reference frame
-  //A2 = West pitot probe
-  //A3 = North Pitot Probe
-  //A4 = South Pitot probe
-  //A5 = East Pitot Probe
+  //A0 = West pitot probe
+  //A1 = North Pitot Probe
+  //A2 = South Pitot probe
+  //A3 = East Pitot Probe
 
   //Thus columns on the SD card will be
   //West, North, South, East - Quad Reference frame
@@ -43,7 +43,7 @@ void setup()
   //Remember to verify this in the python code
 
   for (int idx = 0;idx<numPitot;idx++) {
-    analogInPin[idx] = idx+2;
+    analogInPin[idx] = idx;
   }
   digitalWrite(13,LOW);
   //Read pitot sensor N times to calibrate sensor
@@ -100,6 +100,7 @@ void loop()
   digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
 
   //Pull Data from Airspeed sensor
+  Serial.print(" Airspeed = ");
   for (int idx = 0;idx<numPitot;idx++) {
     float sensorvalue = analogRead(analogInPin[idx]);
     //Convert to voltage
@@ -121,11 +122,11 @@ void loop()
     float a_inf = sqrt(1.4*286.0*tempK);
     //Compute Airspeed
     airspeed_now[idx] = a_inf*(sqrt(5.0*(k-1.0)));
-    airspeed[idx] = airspeed_now[idx];
+    //airspeed[idx] = airspeed_now[idx];
     //Use a complimentary filter to filter out noise
-    //float sigma = 0.03;
-    //airspeed[idx] = (1.0-sigma)*airspeed_then[idx] + sigma*airspeed_now[idx];
-    //airspeed_then[idx] = airspeed[idx];
+    float sigma = 0.03;
+    airspeed[idx] = (1.0-sigma)*airspeed_then[idx] + sigma*airspeed_now[idx];
+    airspeed_then[idx] = airspeed[idx];
     data[idx] = airspeed[idx]-cal_airspeed[idx];
     //Serial.print(" Raw Bits = ");
     //Serial.print(sensorvalue);
@@ -133,10 +134,10 @@ void loop()
     //Serial.print(raw_voltage,8);
     //Serial.print(" Voltage = ");
     //Serial.print(voltage);
-    //Serial.print(" Airspeed = ");
-    //Serial.print(airspeed[idx]-cal_airspeed[idx]);
-    //Serial.print(" m/s \n");
+    Serial.print(airspeed[idx]-cal_airspeed[idx]);
+    Serial.print(" ");
   }
+  Serial.print(" m/s \n");
   //Random Number
   //for (int idx = numPitot;idx<6;idx++){
   //   data[idx] = random(1,10);
@@ -188,8 +189,8 @@ void loop()
 //  }
   
   //Write Data to Serial
-  serialPrintFloatArr(data,numVars);
-  Serial.println("\r\n"); //line break. Tells processing to stop reading data
+  //serialPrintFloatArr(data,numVars);
+  //Serial.println("\r\n"); //line break. Tells processing to stop reading data
 
   //wait a bit so you don't write super freaking fast
   //delay(10);
