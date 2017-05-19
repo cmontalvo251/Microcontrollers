@@ -95,14 +95,21 @@ void setup() {
     error(2);
   }
   char filename[15];
-  strcpy(filename, "GPSLOG00.TXT");
-  for (uint8_t i = 0; i < 100; i++) {
+  strcpy(filename, "GPSLO000.TXT");
+  for (uint8_t i = 0; i < 1000; i++) {
+    filename[5] = '0' + i/100;
     filename[6] = '0' + i/10;
     filename[7] = '0' + i%10;
     // create if does not exist, do not open existing, write, sync after write
     if (! SD.exists(filename)) {
       break;
     }
+  }
+  char lastfile[15];
+  strcpy(lastfile,"GPSLO999.TXT");
+  if (SD.exists(lastfile)){
+    Serial.print("Sorry SD card has reached its naming limit. Suggest wiping SD card");
+    error(3);
   }
 
   logfile = SD.open(filename, FILE_WRITE);

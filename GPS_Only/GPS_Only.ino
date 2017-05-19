@@ -40,8 +40,8 @@
 
 //HardwareSerial mySerial = Serial1; //Turns out this doesn't work and
 //Adafruit_GPS GPS(&mySerial); //Adafruit must have never tested it.
-//Adafruit_GPS GPS(&Serial3); //THE NALU SENSOR IS PLUGGED INTO SERIAL3. Make sure this is different for you.
-Adafruit_GPS GPS(&Serial1); //The ECXA is in Serial1
+Adafruit_GPS GPS(&Serial3); //THE NALU SENSOR IS PLUGGED INTO SERIAL3. Make sure this is different for you.
+//Adafruit_GPS GPS(&Serial1); //The ECXA is in Serial1
 
 // Set GPSECHO to 'false' to turn off echoing the GPS data to the Serial console
 // Set to 'true' if you want to debug and listen to the raw GPS sentences. 
