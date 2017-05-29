@@ -13,39 +13,21 @@
 
 #include <Adafruit_GPS.h>
 
-// If you're using a GPS module:
-// Connect the GPS Power pin to 5V
-// Connect the GPS Ground pin to ground
-// If using software serial (sketch example default):
-//   Connect the GPS TX (transmit) pin to Digital 3
-//   Connect the GPS RX (receive) pin to Digital 2
-// If using hardware serial (e.g. Arduino Mega):
-//   Connect the GPS TX (transmit) pin to Arduino RX1, RX2 or RX3
-//   Connect the GPS RX (receive) pin to matching TX1, TX2 or TX3
+// This sketch is ONLY for the Arduino Due!
+// You should make the following connections with the Due and GPS module:
+// GPS power pin to Arduino Due 3.3V output.
+// GPS ground pin to Arduino Due ground.
+// For hardware serial 1 (recommended):
+//   GPS TX to Arduino Due Serial1 RX pin 19
+//   GPS RX to Arduino Due Serial1 TX pin 18
+#define mySerial Serial1
 
-// If you're using the Adafruit GPS shield, change 
-// SoftwareSerial mySerial(3, 2); -> SoftwareSerial mySerial(8, 7);
-// and make sure the switch is set to SoftSerial
+Adafruit_GPS GPS(&mySerial);
 
-// If using software serial, keep this line enabled
-// (you can change the pin numbers to match your wiring):
-//#include <SoftwareSerial.h>
-//SoftwareSerial mySerial(3, 2);
-//   Connect the GPS TX (transmit) pin to Digital 3
-//   Connect the GPS RX (receive) pin to Digital 2
-
-// If using hardware serial (e.g. Arduino Mega), comment out the
-// above SoftwareSerial line, and enable this line instead
-// (you can change the Serial number to match your wiring):
-
-//HardwareSerial mySerial = Serial1; //Turns out this doesn't work and
-//Adafruit_GPS GPS(&mySerial); //Adafruit must have never tested it.
-Adafruit_GPS GPS(&Serial3); //THE NALU SENSOR IS PLUGGED INTO SERIAL3. Make sure this is different for you.
-//Adafruit_GPS GPS(&Serial1); //The ECXA is in Serial1
 
 // Set GPSECHO to 'false' to turn off echoing the GPS data to the Serial console
 // Set to 'true' if you want to debug and listen to the raw GPS sentences. 
-#define GPSECHO  false
+#define GPSECHO  true
 
 // this keeps track of whether we're using the interrupt
 // off by default!
@@ -62,8 +44,7 @@ void setup()
 
   // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
   GPS.begin(9600);
-
-  Serial.print("GPS Class Initialized \n");
+  mySerial.begin(9600);
   
   // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
@@ -71,39 +52,41 @@ void setup()
   //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
   // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
   // the parser doesn't care about other sentences at this time
-
-  Serial.print("NMEA OUTPUT Set \n");
   
   // Set the update rate
-  //Serial1.println("$PMTK220,100*2F"); //10Hz
-  //Serial1.println("$PMTK220,1000*1F"); //1Hz
-  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_10HZ);   // 1 or 10 Hz update rate
+  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
   // For the parsing code to work nicely and have time to sort thru the data, and
   // print it out we don't suggest using anything higher than 1 Hz
 
-  Serial.print("Update Rate Set \n");
-
-  //Request updates on antenna status
+  // Request updates on antenna status, comment out to keep quiet
   //GPS.sendCommand(PGCMD_ANTENNA);
 
   // the nice thing about this code is you can have a timer0 interrupt go off
   // every 1 millisecond, and read data from the GPS for you. that makes the
   // loop code a heck of a lot easier!
-  useInterrupt(false);
 
-  Serial.print("Delaying for 1 second \n");
+#ifdef __arm__
+  usingInterrupt = false;  //NOTE - we don't want to use interrupts on the Due
+#else
+  useInterrupt(true);
+#endif
+
   delay(1000);
   // Ask for firmware version
-  //mySerial.println(PMTK_Q_RELEASE);
+  mySerial.println(PMTK_Q_RELEASE);
 }
 
-
+#ifdef __AVR__
 // Interrupt is called once a millisecond, looks for any new GPS data, and stores it
 SIGNAL(TIMER0_COMPA_vect) {
   char c = GPS.read();
+  // if you want to debug, this is a good time to do it!
+#ifdef UDR0
   if (GPSECHO)
-    if (c) UDR0 = c; // writing direct to UDR0 is much much faster than Serial.print 
+    if (c) UDR0 = c;  
+    // writing direct to UDR0 is much much faster than Serial.print 
     // but only one character can be written at a time. 
+#endif
 }
 
 void useInterrupt(boolean v) {
@@ -119,9 +102,9 @@ void useInterrupt(boolean v) {
     usingInterrupt = false;
   }
 }
+#endif //#ifdef__AVR__
 
 uint32_t timer = millis();
-
 void loop()                     // run over and over again
 {
   // in case you are not using the interrupt above, you'll
@@ -132,8 +115,6 @@ void loop()                     // run over and over again
     // if you want to debug, this is a good time to do it!
     if (GPSECHO)
       if (c) Serial.print(c);
-      //if (c) UDR0 = c; //writing direct to UDR0 is much faster than Serial.print
-      //but only one character can be written at a time.
   }
   
   // if a sentence is received, we can check the checksum, parse it...
@@ -150,35 +131,22 @@ void loop()                     // run over and over again
   // if millis() or timer wraps around, we'll just reset it
   if (timer > millis())  timer = millis();
 
-  //approximately every  seconds or so, print out the current stats
-  if (millis() - timer > 1000) { 
+  // approximately every 2 seconds or so, print out the current stats
+  if (millis() - timer > 200) { 
     timer = millis(); // reset the timer
     
-    Serial.print("\nTime: ");
-    Serial.print(GPS.hour, DEC); Serial.print(':');
-    Serial.print(GPS.minute, DEC); Serial.print(':');
-    Serial.print(GPS.seconds, DEC); Serial.print('.');
-    Serial.println(GPS.milliseconds);
-    Serial.print("Date: ");
-    Serial.print(GPS.day, DEC); Serial.print('/');
-    Serial.print(GPS.month, DEC); Serial.print("/20");
-    Serial.println(GPS.year, DEC);
-    Serial.print("Fix: "); Serial.print((int)GPS.fix);
-    Serial.print(" quality: "); Serial.println((int)GPS.fixquality); 
-    //if (GPS.fix) {
-      Serial.print("Location: ");
-      Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-      Serial.print(", "); 
-      Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
-      Serial.print("Location (in degrees, works with Google Maps): ");
-      Serial.print(GPS.latitudeDegrees, 8);
-      Serial.print(", "); 
-      Serial.println(GPS.longitudeDegrees, 8);
-      
-      Serial.print("Speed (knots): "); Serial.println(GPS.speed);
-      Serial.print("Angle: "); Serial.println(GPS.angle);
-      Serial.print("Altitude: "); Serial.println(GPS.altitude);
-      Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
-    //}
+    Serial.print(GPS.year); Serial.print(" ");
+    Serial.print(GPS.month); Serial.print(" ");
+    Serial.print(GPS.day); Serial.print(" ");
+    Serial.print(GPS.hour, DEC); Serial.print(' ');
+    Serial.print(GPS.minute, DEC); Serial.print(' ');
+    Serial.print(GPS.seconds, DEC); Serial.print(' ');
+    Serial.print((int)GPS.fix); Serial.print(" ");
+    Serial.print(GPS.latitudeDegrees, 8); Serial.print(" ");
+    Serial.print(GPS.longitudeDegrees, 8); Serial.print(" "); 
+    Serial.print(GPS.speed); Serial.print(" ");
+    Serial.print(GPS.angle); Serial.print(" ");
+    Serial.print(GPS.altitude); Serial.print(" ");
+    Serial.print("\n");
   }
 }

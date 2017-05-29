@@ -131,6 +131,8 @@ void setup() {
   // For logging data, we don't suggest using anything but either RMC only or RMC+GGA
   // to keep the log files at a reasonable size
   // Set the update rate
+
+  //I don't think the UNO can handle 10HZ update rate so just do 1HZ
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 100 millihertz (once every 10 seconds), 1Hz or 5Hz update rate
 
   // Turn off updates on antenna status, if the firmware permits it
@@ -183,6 +185,7 @@ void loop() {
   
   // if a sentence is received, we can check the checksum, parse it...
   if (GPS.newNMEAreceived()) {
+    //Serial.println();
     // a tricky thing here is if we print the NMEA sentence, or data
     // we end up not listening and catching other sentences! 
     // so be very wary if using OUTPUT_ALLDATA and trying to print out data
@@ -192,26 +195,37 @@ void loop() {
     // new data comes in before parse is called again.
     char *stringptr = GPS.lastNMEA();
     
-    if (!GPS.parse(stringptr))   // this also sets the newNMEAreceived() flag to false
-      return;  // we can fail to parse a sentence in which case we should just wait for another
+    if (!GPS.parse(stringptr)) {  // this also sets the newNMEAreceived() flag to false
+      return; // we can fail to parse a sentence in which case we should just wait for another
+    }
 
     // Sentence parsed! 
-    Serial.println("OK");
+    //Serial.println("OK");
     if (LOG_FIXONLY && !GPS.fix) {
       Serial.print("No Fix");
       return;
     }
 
     // Rad. lets log it!
-    Serial.println("Log");
+    //Serial.println("Log");
 
     uint8_t stringsize = strlen(stringptr);
-    if (stringsize != logfile.write((uint8_t *)stringptr, stringsize))    //write the string to the SD file
-        error(4);
-    if (strstr(stringptr, "RMC") || strstr(stringptr, "GGA"))   logfile.flush();
+    //write the string to the SD file
+    if (stringsize != logfile.write((uint8_t *)stringptr, stringsize))  {
+      error(4);
+    }
+    logfile.println();
     Serial.println();
-  }
-}
+    
+
+    //Flush the file to make sure SD buffer is empty in the event of loss of power
+    if (strstr(stringptr, "RMC") || strstr(stringptr, "GGA")) {
+      logfile.flush(); 
+    }
+    
+  } 
+  
+} //void loop()
 
 //ISR(PCINT0_vect){
 //   int i;
