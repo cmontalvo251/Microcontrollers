@@ -21,7 +21,6 @@
 #include "CommunicationUtils.h" //Looks like commands to write serially
 #include <Wire.h> //Built in Arduino read and write buffer code
 
-
 //float q[4]; //hold q values 
 //float val[9];
 float Values[6];
