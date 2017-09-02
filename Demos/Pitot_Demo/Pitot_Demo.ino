@@ -43,7 +43,7 @@ void setup()
   //Remember to verify this in the python code
 
   for (int idx = 0;idx<numPitot;idx++) {
-    analogInPin[idx] = idx;
+    analogInPin[idx] = idx+1;
   }
   digitalWrite(13,LOW);
   //Read pitot sensor N times to calibrate sensor
