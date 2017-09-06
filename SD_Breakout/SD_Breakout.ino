@@ -22,10 +22,14 @@ void setup()
   // so you have to close this one before opening another.
   char filename[15];
   strcpy(filename, "TEST000.TXT");
-  for (uint8_t i = 0; i < 1000; i++) {
+  for (int i = 0; i < 1000; i++) {
     filename[4] = '0' + i/100;
-    filename[5] = '0' + i/10;
+    filename[5] = '0' + (i/10)%10;
     filename[6] = '0' + i%10;
+    Serial.print("i = ");
+    Serial.println(i);
+    Serial.println(filename);
+    delay(10);
     // create if does not exist, do not open existing, write, sync after write
     if (! SD.exists(filename)) {
       break;
