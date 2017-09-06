@@ -105,12 +105,12 @@ void setup() {
       break;
     }
   }
-  char lastfile[15];
-  strcpy(lastfile,"GPSLO999.TXT");
-  if (SD.exists(lastfile)){
-    Serial.print("Sorry SD card has reached its naming limit. Suggest wiping SD card");
-    error(3);
-  }
+  /* char lastfile[15]; */
+  /* strcpy(lastfile,"GPSLO999.TXT"); */
+  /* if (SD.exists(lastfile)){ */
+  /*   Serial.print("Sorry SD card has reached its naming limit. Suggest wiping SD card"); */
+  /*   error(3); */
+  /* } */
 
   logfile = SD.open(filename, FILE_WRITE);
   if( ! logfile ) {
