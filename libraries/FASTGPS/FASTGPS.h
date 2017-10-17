@@ -86,6 +86,11 @@ All text above must be included in any redistribution
 // how long to wait when we're looking for a response
 #define MAXWAITSENTENCE 5
 
+//Some Constants
+#define NM2FT 6076.115485560000
+#define FT2M 0.3048
+#define GPS2CART 111119.999999921
+
 #if ARDUINO >= 100
  #include "Arduino.h"
 #if defined (__AVR__) && !defined(__AVR_ATmega32U4__)
@@ -139,6 +144,7 @@ class Adafruit_GPS {
   float latitudeDegrees, longitudeDegrees;
   float geoidheight, altitude;
   float speed, angle, magvariation, HDOP;
+  float LatOrigin,LonOrigin,x,y;
   char lat, lon, mag;
   boolean fix;
   uint8_t fixquality, satellites;

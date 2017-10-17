@@ -257,6 +257,9 @@ boolean Adafruit_GPS::parse(char *nmea) {
       year = (fulldate % 100);
     }
     // we dont parse the remaining, yet!
+    //Convert Lat,Lon to X,Y
+    x = (latitudeDegrees - LatOrigin)*GPS2CART; //North direction - Xf , meters
+    y = (longitudeDegrees - LonOrigin)*GPS2CART*cos(LatOrigin*3.141592654/180.0);
     return true;
   }
 
