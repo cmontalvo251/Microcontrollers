@@ -11,7 +11,7 @@
 // and help support open source hardware & software! -ada
      
 #include <Adafruit_GPS.h>
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 Adafruit_GPS GPS(&Serial1);
      
 // Set GPSECHO to 'false' to turn off echoing the GPS data to the Serial console
@@ -32,22 +32,22 @@ void setup()
   // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
   GPS.begin(9600);
   // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+  //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   // uncomment this line to turn on only the "minimum recommended" data
   //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
   // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
   // the parser doesn't care about other sentences at this time
   // Set the update rate
-  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate
+  //GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate
   // For the parsing code to work nicely and have time to sort thru the data, and
   // print it out we don't suggest using anything higher than 1 Hz
      
   // Request updates on antenna status, comment out to keep quiet
-  GPS.sendCommand(PGCMD_ANTENNA);
+  //GPS.sendCommand(PGCMD_ANTENNA);
 
   delay(1000);
   // Ask for firmware version
-  Serial1.println(PMTK_Q_RELEASE);
+  //Serial1.println(PMTK_Q_RELEASE);
 }
      
      
@@ -55,6 +55,7 @@ void setup()
 uint32_t timer = millis();
 void loop() // run over and over again
 {
+  //Serial.println("Testing....");
   // read data from the GPS in the 'main loop'
   char c = GPS.read();
   // if you want to debug, this is a good time to do it!
@@ -73,7 +74,7 @@ void loop() // run over and over again
   if (timer > millis()) timer = millis();
      
   // approximately every 2 seconds or so, print out the current stats
-  if (millis() - timer > 2000) {
+  if (millis() - timer > 1000) {
     timer = millis(); // reset the timer
     Serial.print("\nTime: ");
     Serial.print(GPS.hour, DEC); Serial.print(':');
