@@ -36,8 +36,16 @@ stabilizer::stabilizer()
 	flight_mode = STABILIZE;
 	
 	// roll and pitch
-	pidRoll[STAB].setGains(4.5f, 0.0f, 0.0f);
-	pidRoll[RATE].setGains(0.9f, 1.0f, 0.0f);
+	pidRoll[STAB].setGains(4.5f, 0.0f, 0.0f); ///Outer loop on roll is just Kp
+	pidRoll[RATE].setGains(0.9f, 1.0f, 0.0f); ///Inner loop on Roll_rate is just Kp and KI
+	///But here's the thing that bothers me At the end of the day you have
+	///roll_rate_command = 4.5*(roll-roll_command)
+	///roll_out = 0.9*(roll_rate-roll_rate_command) + 1.0*integral(roll_rate-roll_rate_command)
+	///So this is basically PID control only the integral gain is on the roll_rate and roll_rate_command
+	///I just derived this inner loop outer loop controller and it's the same. The math all shakes out
+	///and you get the same thing. I even made a quadcopter.py script to prove it.
+	///It might make more sense for some people and perhaps the error signals shake out better
+	///but for me the aero engineer it seems the same to me.
 	pidRoll[RATE].setiTermLimit(50.0f);
 	pidPitch[STAB].setGains(4.5f, 0.0f, 0.0f);
 	pidPitch[RATE].setGains(0.9, 1.0f, 0.0f);
@@ -115,7 +123,14 @@ Vector4f stabilizer::compute_pwmDutyCycle( 	Vector3f RPY_is,
 											float yaw_rx,
 											float thrust_rx)
 {	
+	///Ok so RPY_is is a 3x1 vector containing roll pitch and yaw values
+	///RPYDot_is is the rates
+	///roll_rx - thrust_rx are the receiver signals
+
+
 	// map rx input to target angles
+	///These map functions map the receiver channel from -30 to 30 degrees
+	///This is the same thing that I'm doing.
 	roll_rx = mapp<float>(roll_rx, RECV_CLIP_MINIMUM, RECV_CLIP_MAXIMUM, -30.0f, 30.0f);
 	pitch_rx = mapp<float>(pitch_rx, RECV_CLIP_MINIMUM, RECV_CLIP_MAXIMUM, -30.0f, 30.0f);
 	yaw_rx = mapp<float>(yaw_rx, RECV_CLIP_MINIMUM, RECV_CLIP_MAXIMUM, -135.0f, 135.0f);
@@ -125,6 +140,7 @@ Vector4f stabilizer::compute_pwmDutyCycle( 	Vector3f RPY_is,
 	roll_rx = deadband<float>(roll_rx, 0.75f);
 	pitch_rx = deadband<float>(pitch_rx, 0.75f);
 	
+	///Limit the total tilt to 30 degrees so that you don't have roll and pitch at 30
 	#ifdef STABILIZER_ROLL_PITCH_TOTAL_TILT_COMPENSATION
 	double totalTilt = RAD2DEG*acos(cos(DEG2RAD*roll_rx)*cos(DEG2RAD*pitch_rx));
 	if(totalTilt > 30.0f)
@@ -134,6 +150,7 @@ Vector4f stabilizer::compute_pwmDutyCycle( 	Vector3f RPY_is,
 	}
 	#endif
 	
+	///Debug stuff
 	#ifdef DBG_STABLE_MAP_RX_INPUT_PRINT
 	printMappedRxInput(roll_rx, pitch_rx, yaw_rx, thrust_rx, RAD2DEG*acos(cos(DEG2RAD*roll_rx)*cos(DEG2RAD*pitch_rx)));
 	#endif
@@ -144,6 +161,7 @@ Vector4f stabilizer::compute_pwmDutyCycle( 	Vector3f RPY_is,
 	RPY_is_deg *= RAD2DEG;
 	RPYDot_is_deg *= RAD2DEG;
 	
+	///More debug stuff
 	#ifdef DBG_STABLE_SENSOR_INPUT_PRINT
 	printSensorInput(RPY_is_deg, RPYDot_is_deg, height_is, heightDot_is, heightDotDot_is);
 	#endif
@@ -152,6 +170,12 @@ Vector4f stabilizer::compute_pwmDutyCycle( 	Vector3f RPY_is,
 	float roll_out = 0.0f, pitch_out = 0.0f, yaw_out = 0.0f, thrust_out = 0.0f;	
 
 	// first angle control stage
+	///STAB is just 0 and RATE is just 1
+	///So this is just mapping pidRoll[0].compute(roll_command,roll_current) to -250 to 250
+	///pidRoll is a class defined in PID.cpp
+	///pidRoll[0].compute(xc,x) returns the results of kp*e + kd*edot + ki*eint
+	///So if e,edot and eint are all zero you just have a roll_stab_output of zero
+	///otherwise you get a number between -250 to 250
 	float roll_stab_output = constrainn<float>(pidRoll[STAB].compute(roll_rx, RPY_is_deg.x), -250.0f, 250.0f);
 	float pitch_stab_output = constrainn<float>(pidPitch[STAB].compute(pitch_rx, RPY_is_deg.y), -250.0f, 250.0f);
 	float yaw_error = wrap_180(yawLock - RPY_is_deg.z);
@@ -166,16 +190,22 @@ Vector4f stabilizer::compute_pwmDutyCycle( 	Vector3f RPY_is,
 	
 	#ifdef STABILIZER_BODY_RATES_CONVERSION
 	// is rates (changing meaning of RPYDot_is!)
+	///Use the Roll pItch and yaw to rotate the RPYdot values to inertial frame? Kind of. 
+	///The rotation matrix they are using is only phi and theta
 	Vector3f RPYDot_is_deg_body = getBodyRatesFromEulerRates(RPY_is, RPYDot_is);
 	RPYDot_is_deg_body *= RAD2DEG;
 	
 	// target rates
+	///This takes the roll_stab_output from above and creates a body rate command
+	/// roll_command -> roll_rate_command -> motor_signal -> G -> roll
 	Vector3f target_body_rates = getBodyRatesFromEulerRates(RPY_is, Vector3f(DEG2RAD*roll_stab_output, DEG2RAD*pitch_stab_output, DEG2RAD*yaw_stab_output));
+	/// Then basically redefine that roll_stab_output variable with a roll_command value
 	roll_stab_output = target_body_rates.x*RAD2DEG;
 	pitch_stab_output = target_body_rates.y*RAD2DEG;
 	yaw_stab_output = target_body_rates.z*RAD2DEG;
 		
     // second angle control stage
+    /// Then compute another PID based on your roll_rate_command and your current roll_rate
 	roll_out = constrainn<float>(pidRoll[RATE].compute(roll_stab_output, RPYDot_is_deg_body.x), - 500.0f, 500.0f);  
 	pitch_out = constrainn<float>(pidPitch[RATE].compute(pitch_stab_output, RPYDot_is_deg_body.y), -500.0f, 500.0f);
 	yaw_out = constrainn<float>(pidYaw[RATE].compute(yaw_stab_output, RPYDot_is_deg_body.z), -500.0f, 500.0f);
@@ -184,6 +214,12 @@ Vector4f stabilizer::compute_pwmDutyCycle( 	Vector3f RPY_is,
 	pitch_out = constrainn<float>(pidPitch[RATE].compute(pitch_stab_output, RPYDot_is_deg.y), -500.0f, 500.0f);
 	yaw_out = constrainn<float>(pidYaw[RATE].compute(yaw_stab_output, RPYDot_is_deg.z), -500.0f, 500.0f);
 	#endif
+
+	/// This then gives you roll_out which is a PWM signal from -500 to 500. Why they have an inner loop and outer loop
+	/// I can't say. I just derived this and I think it just makes more sense for this guy.
+	/// The gains get all messed up but the standard outer loop PID controller on roll is preserved
+	/// There are some saturation blocks in here and stuff sure but it should work just fine the
+	/// way I have it.
 	
 	// height stabilization
 	if(flight_mode == STABILIZE)
