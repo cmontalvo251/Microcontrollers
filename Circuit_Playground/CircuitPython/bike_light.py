@@ -25,6 +25,10 @@ pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=pixel_brightness)
 pixels.fill(color)
 pixels.show()
 
+#Some helpful links
+#https://learn.adafruit.com/adafruit-circuit-playground-express/circuitpython-digital-in-out
+#http://circuitpython.readthedocs.io/en/2.x/shared-bindings/index.html
+
 ##B Button Press
 def buttonB_Pressed():
     global COLORMODE,color
@@ -67,6 +71,11 @@ while True:
     pixels.brightness = pixel_brightness
     pixels.fill(color)
     pixels.show()
+
+    # If you want to change one pixel do this
+    # pixels[0] = (0,255,0)
+    # pixels.write()
+    
     if FLASH:
         time.sleep(0.1)
         pixels.brightness = 0
