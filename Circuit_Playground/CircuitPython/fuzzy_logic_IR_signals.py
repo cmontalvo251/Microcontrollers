@@ -71,6 +71,7 @@ def process_signals(input_signals,title):
     total_signals = 0
     filtered_signals = []
     for line in input_signals:
+        plt_raw.plot(line)
         total_signals += 1.0
         #Compute Length
         L = len(line)
@@ -91,7 +92,7 @@ def process_signals(input_signals,title):
                     num_peaks_final = sum(x > 1200 for x in processed_line)
                     #Since we counted peaks again we gotta throw out ones without 15
                     if int(num_peaks_final) == 15:
-                        plt_raw.plot(processed_line)
+                        #plt_raw.plot(processed_line)
                         success_rate += 1.0
                         peaks_vec.append(num_peaks_final)  
                         filtered_signals.append(processed_line)

@@ -10,6 +10,20 @@ MAX_THRESHOLD = 1000
 
 def mean(input_signal):
     return sum(input_signal)/len(input_signal)
+
+#Let's make the function to compute the RMS
+def RMS(input_signal,avg_signal):
+    global MAX_THRESHOLD
+    ##Assuming both signals are the same and np arrays we should be able to do this
+    ##But they might not
+    if len(input_signal) != len(avg_signal):
+        return MAX_THRESHOLD*100.0
+    else:
+        avg = mean(avg_signal)
+        num = 0
+        for x in range(0,len(input_signal)):
+            num+=(input_signal[x]-avg_signal[x])**2
+        return num/avg
     
 def mean_matrix(input_matrix):
     output_matrix = []
@@ -23,19 +37,44 @@ def mean_matrix(input_matrix):
         output_matrix.append(avg)
     return output_matrix
 
-##Let's make the function to compute the RMS
-def RMS(input_signal,avg_signal):
-    global MAX_THRESHOLD
-    ##Assuming both signals are the same and np arrays we should be able to do this
-    ##But they might not
-    if len(input_signal) != len(avg_signal):
-        return MAX_THRESHOLD*100.0
-    else:
-        avg = mean(avg_signal)
-        num = 0
-        for x in range(0,len(input_signal)):
-            num+=(input_signal[x]-avg_signal[x])**2
-        return num/avg
+##This will edit a signal to comply with a certain standard that I found
+#in fuzzy_logic_IR_signals
+def process_signal(input_signal):
+    num_peaks = 0
+    peak = 0
+    for x in range(0,len(input_signal)):
+        if input_signal[x] > 1500:
+            input_signal[x] = 1500
+            num_peaks += 1
+            if peak == 0:
+                #This means the previous value was not a peak so set it to 1
+                peak = 1
+            elif peak == 1:
+                #this means previous value was a peak so we can't have repeated peaks
+                input_signal[x] = 650
+                peak = 0
+        elif input_signal[x] < 650:
+            peak = 0
+            input_signal[x] = 650
+        if input_signal[x] < 1200:
+            peak = 0
+            input_signal[x] = 650
+    #We need to process the signal one more time and find the first data point 
+    found = 0
+    x = -1
+    #that is about 1400
+    while not found:
+        x+=1
+        if input_signal[x] > 1400:
+            found = 1
+    #Clip the first data points
+    output_signal = input_signal[x-1:]
+    #Turns out this clips everything to 49+ data points so let's clip everything to 49
+    #Now clip the input_signal to only 49 data points
+    if len(output_signal) > 49:
+        n = len(output_signal) - 49
+        del output_signal[-n:]
+    return output_signal,num_peaks
 
 ##Up Button Press
 def change_brightness():
@@ -64,107 +103,13 @@ def ResetPulses():
     p.clear()
     p.resume()
 
+#Right and up button averages
+right_button_avg = [650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0]
+up_button_avg = [650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 650.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0, 1500.0, 650.0]
+#print(len(up_button_avg))
 
-right_button_avg = [650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0]
 
-up_button_avg = [650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 650.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0,
- 1500.0,
- 650.0]
-                    
+#Led for debug purposes
 led = digitalio.DigitalInOut(board.D13)
 led.direction = digitalio.Direction.OUTPUT
 
@@ -184,19 +129,43 @@ while True:
     det = d.read_pulses(p)
     ##If we get a signal check to see what signal it is
     if det is not None:
-        up = RMS(det,up_button_avg)
-        right = RMS(det,right_button_avg)
-        if up < MAX_THRESHOLD:
-             ##This is a up button press
-             change_brightness()
-        elif right < MAX_THRESHOLD:
-             ##This is a right button press
-            change_color()
+        #print(det)
+        ##Better idea. Let's just remove these errorneous signals
+        det = [x for x in det if x < 2500]
+        #Then check length
+        L = len(det)
+        if L > 55:
+            #print('Line is appropriate length')
+            ##Now we need to make everything either a 1500 or 650 and count the numebr of peaks
+            processed_det,num_peaks = process_signal(det)
+            ##If we don't have 15 peaks we throw it out
+            if int(num_peaks) == 15:
+                #print('Peaks is equal to 15')
+                #For some reason we need to count peaks again
+                num_peaks_final = sum(x>1200 for x in processed_det)
+                if int(num_peaks_final) == 15:
+                    #print('Peaks is really 15')
+                    #Now we have an appropriate signal to compute RMS
+                    up_button_RMS = RMS(processed_det,up_button_avg)
+                    #print(up_button_RMS)
+                    if up_button_RMS < 100:
+                        #print('This is clearly an Up button press')
+                        change_brightness()
+                    else:
+                        #Let's check right button
+                        right_button_RMS = RMS(processed_det,right_button_avg)
+                        #print(right_button_RMS)
+                        if right_button_RMS < 100:
+                            #print('This is clearly a right button press')
+                            change_color()
+                #else:
+                    #print('Peaks apparently was not 15')
+            #else:
+                #print('Peaks is not 15')
+        #else:
+            #print('Line is too short',L)
         #No matter what we want to Reset Pulses
         ResetPulses()
-        print(det)
-        print(up) #only for debugging
-        print(right)
         #change_color() #only for debugging
      
     #Reset color and brightness
