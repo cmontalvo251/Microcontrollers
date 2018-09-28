@@ -1,0 +1,387 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"else",
+				"elseif\telseif"
+			],
+			[
+				"mass_ex",
+				"mass_expended_MATLAB"
+			],
+			[
+				"Distance",
+				"Distance_of_Orbit_from_Surface"
+			],
+			[
+				"area",
+				"areamagnetorque"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"x.pop()",
+			"x = 1",
+			"./run",
+			"make",
+			"from numpy import *",
+			"import numpy",
+			"cd",
+			"pwd",
+			"dir",
+			"exit()",
+			"quit()",
+			"x",
+			"x.pop()",
+			"x = [1,2]",
+			"x = 1",
+			"ls",
+			"./wrapper.py"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects"
+	],
+	"file_history":
+	[
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/motors.cpp",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/sensorFusion.cpp",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/receiver.cpp",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/flightController.cpp",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/motors.h",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/stabilizer.h",
+		"/home/carlos/Documents/GitLab_Repos/CubeSAT/CubeSim/Input_Files/Propulsion/Propulsion.fileofiles",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/stabilizer.cpp",
+		"/home/carlos/Documents/GitLab_Repos/FASTPilot/FASTRotor/Arduino_Code/Quadcopter_KyrellGod/Quadcopter_KyrellGod.ino",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/mathHelp.h",
+		"/home/carlos/Applications/arduino-1.8.1/libraries/Servo/src/avr/Servo.cpp",
+		"/home/carlos/Applications/arduino-1.8.1/libraries/Servo/library.properties",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/vectorTypes.h",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/Quadcopter_lib/global.h",
+		"/home/carlos/Documents/GitLab_Repos/Arduino_Projects/libraries/readme.txt",
+		"/home/carlos/Applications/arduino-1.8.1/libraries/Servo/src/avr/ServoTimers.h",
+		"/home/carlos/Applications/arduino-1.8.1/libraries/Servo/src/Servo.h",
+		"/home/carlos/Applications/arduino-1.8.1/libraries/Servo/src/samd/ServoTimers.h",
+		"/home/carlos/Applications/arduino-1.8.1/libraries/Servo/README.adoc",
+		"/home/carlos/Arduino/libraries/readme.txt",
+		"/home/files/Docs/GitLab_Repos/Arduino/libraries/Quadcopter_lib/buzzer.cpp",
+		"/home/files/Docs/GitLab_Repos/Arduino/libraries/Quadcopter_lib/motors.cpp",
+		"/home/files/Docs/GitLab_Repos/Arduino/libraries/Quadcopter_lib/PID.cpp",
+		"/home/files/Docs/GitLab_Repos/Arduino/libraries/Quadcopter_lib/flightController.cpp",
+		"/home/files/Docs/GitLab_Repos/Arduino/libraries/Quadcopter_lib/voltageControl.h",
+		"/home/files/Docs/GitLab_Repos/Arduino/libraries/Quadcopter_lib/voltageControl.cpp",
+		"/home/files/Docs/GitLab_Repos/Arduino/libraries/Quadcopter_lib/receiver.h",
+		"/home/files/Docs/GitLab_Repos/Arduino/libraries/Quadcopter_lib/receiver.cpp",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/Satellite.CS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/Satellite1.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/Satellite0.MASS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/Tether.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/animation_plotting_routines/plotresults.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/animation_plotting_routines/esail_animate.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/animation_plotting_routines/plot_montecarlo_results.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/animation_plotting_routines/validate_model.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/runSim.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/montecarlo.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/parameters.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/yea.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/ohyea.",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/OptiTrack/OptiTrack.fileofiles",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/OptiTrack/Satellite0.MASS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/OptiTrack/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/OptiTrack/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/OptiTrack/Confluence.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/OptiTrack/Tether.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/getInputFileParameters.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/tether_help.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Propulsion/Satellite1.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Propulsion/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Propulsion/Satellite.CS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Propulsion/Tether.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Propulsion/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spun_Up/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spun_Up/Satellite.CS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spun_Up/Tether.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spun_Up/Satellite1.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spun_Up/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spun_Up/Huge_Tether_Spun_Up.fileofiles",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spin_Up/Satellite1.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spin_Up/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spin_Up/ReactionWheel_100mNms.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spin_Up/Huge_Tether_Spin_Up.fileofiles",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spin_Up/Satellite.CS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spin_Up/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spin_Up/Tether.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Huge_Tether_Spin_Up/Thrusters.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/runEXE.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/THRUSTER_DETUMBLE/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/Thrusters.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/animation_plotting_routines/animate_cubes.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEI_Problems/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEI_Problems/Satellite.CS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEI_Problems/PHASEI_Problems.fileofiles",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/Satellite1.MASS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEIII_Maneuver/Tether.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEIII_Maneuver/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAGNETORQUER_DETUMBLE/Magnetometer.DETUMBLE",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAGNETORQUER_DETUMBLE/Satellite.CS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAGNETORQUER_DETUMBLE/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAGNETORQUER_DETUMBLE/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAGNETORQUER_DETUMBLE/MAGNETORQUER_DETUMBLE.fileofiles",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEIII_Maneuver/Satellite1.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEIII_Maneuver/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/Confluence.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEII_Maneuver/PHASEII_Maneuver.fileofiles",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEI_Problems/Confluence.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEI_Problems/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEI_Problems/ReactionWheel.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEI_Problems/Thrusters.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/PHASEI_Problems/Satellite1.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAG_RW_DETUMBLE/Magnetometer.DETUMBLE",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAG_RW_DETUMBLE/ReactionWheel.DETUMBLE",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAG_RW_DETUMBLE/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAG_RW_DETUMBLE/Satellite.CS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAG_RW_DETUMBLE/Satellite0.MASS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAG_RW_DETUMBLE/MAG_RW_DETUMBLE.fileofiles",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAG_RW_DETUMBLE/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/REACTIONWHEEL_TESTS/ReactionWheel.TEST",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/REACTIONWHEEL_TESTS/Satellite.SIM",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/REACTIONWHEEL_TESTS/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/THRUSTER_DETUMBLE/Thrusters.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/REACTIONWHEEL_TESTS/Satellite.CS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/REACTIONWHEEL_TESTS/REACTIONWHEEL_TESTS.fileofiles",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/THRUSTER_DETUMBLE/THRUSTER_DETUMBLE.fileofiles",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/THRUSTER_DETUMBLE/Satellite0.MASS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/THRUSTER_DETUMBLE/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/THRUSTER_DETUMBLE/Satellite.CS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/MAGNETORQUER_DETUMBLE/Satellite0.MASS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/tether_system_stability.m",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Satellite_ORBIT_EXAMPLE_DO_NOT_EDIT.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Satellite_6DOF_CONTROL_DO_NOT_EDIT.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Satellite.MASS",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/main.cpp",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/mathp.cpp",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/mathp.h",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/main.h",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/MATLAB.h",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/MATLAB.cpp",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/satellite_physics.h",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/satellite_physics.cpp",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/animate_cubes.m~",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/opengl.cpp",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Satellite0.INIT",
+		"/home/files/Docs/GitLab_Repos/Research/CubeSATs/JagSAT/CubeSim/Input_Files/Satellite.CS"
+	],
+	"find":
+	{
+		"height": 28.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"ticks",
+			"lowerClippingValue",
+			"setGains",
+			"tether_data",
+			"axflap",
+			"Confluence",
+			"Length(",
+			"axorbit",
+			"screenheight",
+			"SAVE_ANIMATION",
+			"MAGNETORQUER_DETUMBLE",
+			"PULSES",
+			"SIMGRAV",
+			"Magnetic_Flag",
+			"rk4_XYZ",
+			"GVEC.",
+			"rk4_PTP",
+			"MAG",
+			"set(0",
+			"a_x",
+			"Kp",
+			"getCurrentMa",
+			"PAUSE()",
+			"pause",
+			"getCurrentGravity",
+			"MEARTH",
+			"runge_",
+			"runge_kut",
+			"computeXYZDerivs"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"MAG_RW_DETUMBLE"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 35.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "Arduino_Projects.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 387.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

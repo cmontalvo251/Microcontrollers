@@ -12,21 +12,21 @@
   modified 8 May 2014
   by Scott Fitzgerald
  */
-
+const int outputpin = 2;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
   // initialize digital pin 13 as an output.
   Serial.begin(9600);
-  pinMode(13, OUTPUT);
+  pinMode(outputpin, OUTPUT);  //Change the 7 to a 13 if you want the built in one
   Serial.print("SETUP!\n");
 }
 
 // the loop function runs over and over again forever
 void loop() {
   Serial.print("BLINK!!!\n");
-  digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(outputpin, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);              // wait for a second
-  digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(outputpin, LOW);    // turn the LED off by making the voltage LOW
   delay(1000);              // wait for a second
 }
