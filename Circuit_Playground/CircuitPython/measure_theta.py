@@ -2,7 +2,7 @@ from adafruit_circuitplayground.express import cpx
 import math
 import time
 
-def Compute_Theta():
+def Compute_Theta(theta_in):
     ##Ok these are crickit frame signals
     x_total = 0
     y_total = 0
@@ -27,9 +27,17 @@ def Compute_Theta():
     #Then we can compute theta the pitch angle
     theta = math.atan(y_robot/z_total)*180./math.pi
     
+    elapsed_time = 0.1
+    
+    thetadot = (theta_in - theta)/elapsed_time
+    
     #print((x_robot,y_robot,z_total))
-    return theta
+    return [theta,thetadot]
 
+theta = 0
+thetadot = 0
+s = 0.8
 while True:
-    theta = Compute_Theta()
-    print((theta,))
+    [theta,thetadot_new] = Compute_Theta(theta)
+    thetadot = thetadot*s + thetadot_new*(1-s)
+    print((theta,thetadot))
