@@ -3,4 +3,6 @@ libraries/*.zip
 *.png
 *.wav
 *.mp3
+*.wav
+*.zip
 
