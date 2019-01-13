@@ -8,6 +8,7 @@
 import numpy as np
 import time
 import keyboard
+import threading
 import sys
 import os
 import pyxhook
@@ -24,6 +25,50 @@ INSTRUMENTS = ["Drums","Tops","Bass","Chords","Leads","Voice"]
 ###Remember the type is the row
 TYPES = ["Hey","Square","Deeper","Days"]
 
+###############CLASSES##################
+
+class MediaPlayer():
+	def __init__(self):
+		self.status = False
+		self.running = True
+		self.t1_stop = threading.Event()
+		self.row = None
+		self.col = None
+		self.t1 = threading.Thread(target=self.player_thread)
+		self.t1.start()
+
+	def player_thread(self):
+		while self.running == True:
+			if self.status == False:
+				self.play_sounds()
+		print('Partys over')
+
+	def play_sounds(self):
+		global audio_all,INSTRUMENTS,TYPES
+		if self.row is not None:
+			#print row,col
+			#So we need to iterate through the solution set
+			ctr = 0
+			##Combine with pydub module
+			mixed = None
+			for x in range(0,len(self.row)):
+				r = self.row[x]
+				c = self.col[x]
+				if mixed is None:
+					mixed = audio_all[c][r]
+				else:
+					mixed = mixed.overlay(audio_all[c][r])
+			self.status = True
+			play(mixed)
+			self.status = False
+
+	def stop(self):
+		player.row = None
+		player.col = None
+		player.running = False
+		print 'Stopping Player Thread. Waiting for song to end'
+		self.t1_stop.set()
+
 #################FUNCTIONS#################
 
 def which_sounds():
@@ -32,6 +77,13 @@ def which_sounds():
 	col = None
 	if 1 in pixels:
 		row,col = np.where(pixels==1)
+		for x in range(0,len(row)):
+			r = row[x]
+			c = col[x]
+			i = INSTRUMENTS[c]
+			t = TYPES[r]
+			song_name = i + ' ' + t + '.ogg'
+			print('Playing ',song_name)
 	return row,col
 
 def OnKeyPress(event):
@@ -40,8 +92,11 @@ def OnKeyPress(event):
 	KEY = event.Key
 
 def close_all():
-	print('Quiting Program. Have a nice night.')
+	global pixels
+	print('Killing Keylogger')
 	hm.cancel()
+	player.stop()
+	#print('Quiting Program. Have a nice night.')
 	sys.exit()
 
 #Check which key in the key map was pressed
@@ -70,30 +125,6 @@ def button_press(x,y):
 		pixels[x,y] = 1
 	print(pixels)
 
-def play_mixed(row,col):
-	global audio_all,INSTRUMENTS,TYPES
-	if row is not None:
-		#print row,col
-		#So we need to iterate through the solution set
-		ctr = 0
-		##Combine with pydub module
-		mixed = None
-		for x in range(0,len(row)):
-			r = row[x]
-			c = col[x]
-			i = INSTRUMENTS[c]
-			t = TYPES[r]
-			song_name = i + ' ' + t + '.ogg'
-			print('Playing ',song_name)
-			if mixed is None:
-				mixed = audio_all[r][c]
-			else:
-				mixed = mixed.overlay(audio_all[r][c])
-		play(mixed)
-	print('....')
-
-##################VARIABLES###############
-
 ##################SETUP####################
 
 # create a hook manager for keyboard presses
@@ -104,6 +135,9 @@ hm.KeyDown = OnKeyPress
 hm.HookKeyboard()
 # kick off the thread
 hm.start()
+
+#Kick off the player thread
+player = MediaPlayer()
 
 #Run Permutations on INSTRUMENTS AND TYPES
 for i in INSTRUMENTS:
@@ -123,11 +157,13 @@ print(pixels)
 
 while True:
 	#print the pixels too
+	print('....')
 	print(pixels)	
 	##Check and see which sounds need to be played
-	row,col = which_sounds()
-	#and then play them
-	play_mixed(row,col)
+	player.row,player.col = which_sounds()
+
+	#The place where we actually play the songs is in the mediaplayer class 
+	#which runs all the time. No need really to change anything
 	
 	##Check for Key press
 	if len(KEY) > 0:
@@ -139,5 +175,4 @@ while True:
 			close_all()
 
 	#Clear terminal
-	time.sleep(0.01)
 	os.system('clear')
