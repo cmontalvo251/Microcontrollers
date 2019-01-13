@@ -72,16 +72,17 @@ hm.KeyDown = OnKeyPress
 hm.HookKeyboard()
 # kick off the thread
 hm.start()
-#Print current light status
-print(pixels)
 
 #Run Permutations on INSTRUMENTS AND TYPES
 for i in INSTRUMENTS:
 	for t in TYPES:	
 		song_name = i + ' ' + t + '.ogg'
-		print(song_name)
+		print('Reading ',song_name)
 		audio = AudioSegment.from_file('Future_Beat/' + song_name)
-		play(audio)
+		#play(audio)
+
+#Print current light status
+print(pixels)
 
 ##################Main Loop#################
 
