@@ -11,11 +11,15 @@ import keyboard
 import sys
 import os
 import pyxhook
+import scipy.io.wavfile as S
+import sounddevice as sd
 
 ###############GLOBALS##################
 
 KEY = []
 pixels = np.zeros([4,8])
+fs_ = []
+audio_ = []
 
 #################FUNCTIONS#################
 
@@ -57,19 +61,21 @@ def which_sounds():
 		#In this case we just care about the row but let's get both
 		row,col = np.where(pixels==9)
 		#print(row)
-	#If the routine above returns a row object we need to figure out what songs to play and play them
+	return row
+
+def play(row):
+	global audio_,fs_
 	if row is not None:
-		sounds = []
+		##Take the average of the sounds?
+		audio_out = 0*audio
+		fs_out = 0
 		for r in row:
-			sounds.append(VOICES[r])
-	else:
-		sounds = None
-
-	return sounds
-
-def play(sounds):
-	if sounds is not None:
-		print(sounds)
+			audio_out += audio_[r]
+			fs_out += fs_[r]
+		audio_out = audio_out/len(row)
+		fs_out = fs_out/len(row)
+		S.write('test.wav',fs_out,audio_out)
+		os.system('aplay test.wav')
 
 ##################VARIABLES###############
 
@@ -95,6 +101,14 @@ VOICES = ["voice01.wav", "voice02.wav", "voice03.wav", "voice04.wav"]
 
 ##################Main Loop#################
 
+##Play all sounds just to make sure everything works right. This will also import all fs and audio data
+for v in VOICES:
+	fs, audio = S.read(v)
+	fs_.append(fs)
+	audio_.append(audio)
+	S.write('test.wav',fs,audio)
+	os.system('aplay test.wav')
+
 while True:
 	#Advance the ticker
 	ticker_col+=1 
@@ -111,10 +125,10 @@ while True:
 	time.sleep(sleep_time)
 
 	#Check to see which sounds need to be played
-	sounds = which_sounds()
+	row = which_sounds()
 
 	#Play sounds if any
-	play(sounds)
+	play(row)
 	
 	#Remove the ticker
 	pixels[:,ticker_col] = pixels[:,ticker_col] - ticker
