@@ -1,0 +1,96 @@
+###This is the console version of the python demo. You have a 
+#4x8 array that you can turn on and off. The beat will play if one of the beats is on
+#while the ticker moves across. I thought about creating a GUI but it's all done with just 
+#the terminal
+
+##################MODULES##################
+
+import numpy as np
+import time
+import keyboard
+import sys
+import os
+import pyxhook
+from pydub import AudioSegment
+from pydub.playback import play
+
+###############GLOBALS##################
+
+pixels = np.zeros([4,8])
+KEY = []
+
+#################FUNCTIONS#################
+
+def OnKeyPress(event):
+	global KEY
+	#print(event.Key)
+	KEY = event.Key
+
+def close_all():
+	print('Quiting Program. Have a nice night.')
+	hm.cancel()
+	sys.exit()
+
+#Check which key in the key map was pressed
+def check_key_map():
+	global KEY
+	##Create key map for the keyboard
+	KEY_MAP = [['1','2','3','4','5','6','7','8'],['q','w','e','r','t','y','u','i'],['a','s','d','f','g','h','j','k'],['z','x','c','v','b','n','m',',']]
+	for x in range(0,4):
+		if KEY in KEY_MAP[x]:
+			#Grab the column
+			y = KEY_MAP[x].index(KEY)
+			#Reset the KEY
+			KEY = []
+			#Turn pixels on or off depending on whether or not it's on or off
+			button_press(x,y)
+
+def button_press(x,y):
+	global pixels
+	#In this version of the trellis you need to turn off the sound if it's on
+	if pixels[x,y] == 1:
+		pixels[x,y] == 0
+	else:
+	#But if the sound is off you need to make sure there's only one from that column currently on
+		for ri in range(0,4):
+			pixels[ri,y] = 0
+		pixels[x,y] = 1
+	print(pixels)
+
+##################VARIABLES###############
+
+INSTRUMENTS = ["Drums","Tops","Bass","Chords","Leads","Voice"]
+TYPES = ["Hey","Square","Deeper","Days"]
+
+##################SETUP####################
+
+# create a hook manager for keyboard presses
+hm = pyxhook.HookManager()
+# watch for all keyboard presses
+hm.KeyDown = OnKeyPress
+# set the hook
+hm.HookKeyboard()
+# kick off the thread
+hm.start()
+#Print current light status
+print(pixels)
+
+#Run Permutations on INSTRUMENTS AND TYPES
+for i in INSTRUMENTS:
+	for t in TYPES:	
+		song_name = i + ' ' + t + '.ogg'
+		print(song_name)
+		audio = AudioSegment.from_file('Future_Beat/' + song_name)
+		play(audio)
+
+##################Main Loop#################
+
+while True:
+
+	##Check for Key press
+	if len(KEY) > 0:
+		#Check if one of the pixels is pressed
+		check_key_map()
+		#Check for program quit
+		if KEY == 'space':
+			close_all()
