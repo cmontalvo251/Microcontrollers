@@ -11,14 +11,12 @@ import keyboard
 import sys
 import os
 import pyxhook
-import scipy.io.wavfile as S
-import sounddevice as sd
+import wave
 
 ###############GLOBALS##################
 
 KEY = []
 pixels = np.zeros([4,8])
-fs_ = []
 audio_ = []
 
 #################FUNCTIONS#################
@@ -64,17 +62,15 @@ def which_sounds():
 	return row
 
 def play(row):
-	global audio_,fs_
+	#global audio_,fs_
+	global audio_
 	if row is not None:
-		##Take the average of the sounds?
-		audio_out = 0*audio
-		fs_out = 0
+		##Combine with wav module
+		audio_out = wave.open('test.wav','wb')
+		audio_out.setparams(audio_[0][0])
 		for r in row:
-			audio_out += audio_[r]
-			fs_out += fs_[r]
-		audio_out = audio_out/len(row)
-		fs_out = fs_out/len(row)
-		S.write('test.wav',fs_out,audio_out)
+			audio_out.writeframes(audio_[r][1])
+		audio_out.close()	
 		os.system('aplay test.wav')
 
 ##################VARIABLES###############
@@ -101,13 +97,19 @@ VOICES = ["voice01.wav", "voice02.wav", "voice03.wav", "voice04.wav"]
 
 ##################Main Loop#################
 
-##Play all sounds just to make sure everything works right. This will also import all fs and audio data
+##Play all sounds just to make sure everything works right. This will also import all audio data into a vector
+ctr = 0
 for v in VOICES:
-	fs, audio = S.read(v)
-	fs_.append(fs)
-	audio_.append(audio)
-	S.write('test.wav',fs,audio)
+	print ('Reading file = ',v)
+	audio = wave.open(v, 'rb')
+	audio_.append( [audio.getparams(),audio.readframes(audio.getnframes())])
+	audio.close()
+	audio_out = wave.open('test.wav','wb')
+	audio_out.setparams(audio_[0][0])
+	audio_out.writeframes(audio_[ctr][1])
+	audio_out.close()	
 	os.system('aplay test.wav')
+	ctr+=1
 
 while True:
 	#Advance the ticker
