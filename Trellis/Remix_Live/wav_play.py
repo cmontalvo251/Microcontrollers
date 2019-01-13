@@ -8,3 +8,5 @@ for v in VOICES:
 	fs, audio = S.read(v)
 	S.write('test.wav',fs,audio)
 	os.system('aplay test.wav')
+
+

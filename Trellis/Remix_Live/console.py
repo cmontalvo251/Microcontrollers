@@ -11,7 +11,8 @@ import keyboard
 import sys
 import os
 import pyxhook
-import wave
+from pydub import AudioSegment
+from pydub.playback import play
 
 ###############GLOBALS##################
 
@@ -20,6 +21,17 @@ pixels = np.zeros([4,8])
 audio_ = []
 
 #################FUNCTIONS#################
+
+def speed_change(sound, speed=1.0):
+    # Manually override the frame_rate. This tells the computer how many
+    # samples to play per second
+    sound_with_altered_frame_rate = sound._spawn(sound.raw_data, overrides={
+         "frame_rate": int(sound.frame_rate * speed)
+      })
+     # convert the sound with altered frame rate to a standard frame rate
+     # so that regular playback programs will work right. They often only
+     # know how to play audio at standard frame rate (like 44.1k)
+    return sound_with_altered_frame_rate.set_frame_rate(sound.frame_rate)
 
 def OnKeyPress(event):
 	global KEY
@@ -61,17 +73,19 @@ def which_sounds():
 		#print(row)
 	return row
 
-def play(row):
+def play_mixed(row):
 	#global audio_,fs_
 	global audio_
 	if row is not None:
-		##Combine with wav module
-		audio_out = wave.open('test.wav','wb')
-		audio_out.setparams(audio_[0][0])
+			##Combine with pydub module
+		mixed = None
 		for r in row:
-			audio_out.writeframes(audio_[r][1])
-		audio_out.close()	
-		os.system('aplay test.wav')
+			print r
+			if mixed is None:
+				mixed = audio_[r]
+			else:
+				mixed = mixed.overlay(audio_[r])
+		play(mixed)
 
 ##################VARIABLES###############
 
@@ -101,15 +115,11 @@ VOICES = ["voice01.wav", "voice02.wav", "voice03.wav", "voice04.wav"]
 ctr = 0
 for v in VOICES:
 	print ('Reading file = ',v)
-	audio = wave.open(v, 'rb')
-	audio_.append( [audio.getparams(),audio.readframes(audio.getnframes())])
-	audio.close()
-	audio_out = wave.open('test.wav','wb')
-	audio_out.setparams(audio_[0][0])
-	audio_out.writeframes(audio_[ctr][1])
-	audio_out.close()	
-	os.system('aplay test.wav')
-	ctr+=1
+	audio = AudioSegment.from_file(v)
+	#Run the speed change algorithm
+	#audio = speed_change(audio, speed=tempo/60.)
+	audio_.append(audio)
+	play(audio)
 
 while True:
 	#Advance the ticker
@@ -130,7 +140,7 @@ while True:
 	row = which_sounds()
 
 	#Play sounds if any
-	play(row)
+	play_mixed(row)
 	
 	#Remove the ticker
 	pixels[:,ticker_col] = pixels[:,ticker_col] - ticker
