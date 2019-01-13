@@ -16,10 +16,23 @@ from pydub.playback import play
 
 ###############GLOBALS##################
 
-pixels = np.zeros([4,8])
+pixels = np.zeros([4,6])
 KEY = []
+audio_all = []
+##And the column is dictated by Instrument
+INSTRUMENTS = ["Drums","Tops","Bass","Chords","Leads","Voice"]
+###Remember the type is the row
+TYPES = ["Hey","Square","Deeper","Days"]
 
 #################FUNCTIONS#################
+
+def which_sounds():
+	#Check to see if any of the pixels are on. If so we need to play that sound
+	row = None
+	col = None
+	if 1 in pixels:
+		row,col = np.where(pixels==1)
+	return row,col
 
 def OnKeyPress(event):
 	global KEY
@@ -35,7 +48,7 @@ def close_all():
 def check_key_map():
 	global KEY
 	##Create key map for the keyboard
-	KEY_MAP = [['1','2','3','4','5','6','7','8'],['q','w','e','r','t','y','u','i'],['a','s','d','f','g','h','j','k'],['z','x','c','v','b','n','m',',']]
+	KEY_MAP = [['1','2','3','4','5','6'],['q','w','e','r','t','y'],['a','s','d','f','g','h'],['z','x','c','v','b','n']]
 	for x in range(0,4):
 		if KEY in KEY_MAP[x]:
 			#Grab the column
@@ -57,10 +70,29 @@ def button_press(x,y):
 		pixels[x,y] = 1
 	print(pixels)
 
-##################VARIABLES###############
+def play_mixed(row,col):
+	global audio_all,INSTRUMENTS,TYPES
+	if row is not None:
+		#print row,col
+		#So we need to iterate through the solution set
+		ctr = 0
+		##Combine with pydub module
+		mixed = None
+		for x in range(0,len(row)):
+			r = row[x]
+			c = col[x]
+			i = INSTRUMENTS[c]
+			t = TYPES[r]
+			song_name = i + ' ' + t + '.ogg'
+			print('Playing ',song_name)
+			if mixed is None:
+				mixed = audio_all[r][c]
+			else:
+				mixed = mixed.overlay(audio_all[r][c])
+		play(mixed)
+	print('....')
 
-INSTRUMENTS = ["Drums","Tops","Bass","Chords","Leads","Voice"]
-TYPES = ["Hey","Square","Deeper","Days"]
+##################VARIABLES###############
 
 ##################SETUP####################
 
@@ -75,11 +107,14 @@ hm.start()
 
 #Run Permutations on INSTRUMENTS AND TYPES
 for i in INSTRUMENTS:
+	audio_instrument = []
 	for t in TYPES:	
 		song_name = i + ' ' + t + '.ogg'
 		print('Reading ',song_name)
 		audio = AudioSegment.from_file('Future_Beat/' + song_name)
+		audio_instrument.append(audio)
 		#play(audio)
+	audio_all.append(audio_instrument)
 
 #Print current light status
 print(pixels)
@@ -87,11 +122,22 @@ print(pixels)
 ##################Main Loop#################
 
 while True:
-
+	#print the pixels too
+	print(pixels)	
+	##Check and see which sounds need to be played
+	row,col = which_sounds()
+	#and then play them
+	play_mixed(row,col)
+	
 	##Check for Key press
 	if len(KEY) > 0:
 		#Check if one of the pixels is pressed
+		#print('Checking Key Map')
 		check_key_map()
 		#Check for program quit
 		if KEY == 'space':
 			close_all()
+
+	#Clear terminal
+	time.sleep(0.01)
+	os.system('clear')
