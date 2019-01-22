@@ -12,7 +12,63 @@ import audioio
 import adafruit_trellis_express
 import adafruit_adxl34x
 
+###########GLOBALS########################
+
+###Remember the type is the row
+TYPES = ["Hey","Square","Deeper","Days"]
+##And the column is dictated by Instrument
+INSTRUMENTS = ["Drums","Tops","Bass","Chords","Leads"]
+
 #############FUNCTIONS#####################
+
+def which_buttons(stamp,current_press):
+	# handle button presses while we're waiting for the next tempo beat
+	# also check the accelerometer if we're using it, to adjust tempo
+	#while time.monotonic() - stamp < 60/tempo:
+	# Check for pressed buttons
+	print("Checking for pressed buttons")
+	pressed = set(trellis.pressed_keys)
+	for down in pressed - current_press:
+		print("Pressed down", down)
+		row = down[0]
+		col = down[1]
+		if beatset[row][col] == True:
+			print("Turning Pixel off")
+			#This means this pixel is already on so we just turn it off
+			beatset[row][col] = False
+			trellis.pixels[down] = (0,0,0)
+		else:
+			print("Turning Pixel On")
+			#This means the pixel is off so we need to turn it on
+			#but we need ot make sure no other pixels are off
+			for ri in range(0,4):
+				beatset[ri][col] = False
+				trellis.pixels[(ri,col)] = (0,0,0)
+			trellis.pixels[down] = COLUMN_COLOR[col]
+			beatset[row][col] = True
+	#Not so sure about this line of code but we shall see
+	current_press = pressed
+	return current_press
+
+def play_songs(mixer,stamp,current_press):
+	ctr = 0 
+	for ri in range(0,4):
+		if True in beatset[ri]:
+			for ci in range(0,len(INSTRUMENTS)):
+				if beatset[ri][ci] == True:
+					i = INSTRUMENTS[ci]
+					t = TYPES[ri]
+					song_name = 'Future_Beat/' + i + ' ' + t + '000.wav'
+					print('Playing ',song_name)
+					if ctr < 4:
+						mixer.play(samples[ci][ri],voice=ctr)
+					else:
+						print("Can only play 4 voices at once")
+					ctr+=1
+	while mixer.playing:
+		current_press = which_buttons(stamp,current_press)
+		print("...")
+		time.sleep(0.25)
 
 def parse_wav(filename,scale = 1.0):
 	print("Reading file " + filename)
@@ -44,31 +100,12 @@ def parse_wav(filename,scale = 1.0):
 			'num_samples': num_samples,
 			'data_size': data_size}
 
-def wheel(pos): # Input a value 0 to 255 to get a color value.
-	if pos < 0 or pos > 255:
-		return (0, 0, 0)
-	elif pos < 85:
-		return(int(pos * 3), int(255 - pos*3), 0)
-	elif pos < 170:
-		pos -= 85
-		return(int(255 - pos*3), 0, int(pos * 3))
-	else:
-		pos -= 170
-		return(0, int(pos * 3), int(255 - pos*3))
-
 ##################INITIAL ROUTINES###########################
-
-###Remember the type is the row
-TYPES = ["Hey","Square","Deeper","Days"]
-##And the column is dictated by Instrument
-INSTRUMENTS = ["Drums","Tops","Bass","Chords","Leads","Voice"]
 
 # Parse the first file to figure out what format its in
 # Audio must be 22050 Hz at 705 kbps stereo 16 bit uncompressed wav
 # Use the command to convert audio files to the right format
-wave_format = parse_wav("voice01.wav")
-print(wave_format)
-wave_format = parse_wav('Future_Beat/' + INSTRUMENTS[0] + '_' + TYPES[0] + '.wav')
+wave_format = parse_wav('Future_Beat/' + INSTRUMENTS[0] + ' ' + TYPES[0] + '000.wav')
 print(wave_format)
 
 # Audio playback object - we'll go with either mono or stereo depending on
@@ -87,18 +124,20 @@ audio.play(mixer)
 ##Read in all files
 samples = []
 #Run Permutations on INSTRUMENTS AND TYPES
-#for i in INSTRUMENTS:
-#	for t in TYPES:	
-i = INSTRUMENTS[0]
-t = TYPES[0]
-song_name = i + '_' + t + '.wav'
-print('Reading ',song_name)
-wave_file = open('Future_Beat/' + song_name,"rb")
-sample = audioio.WaveFile(wave_file)
-mixer.play(sample,voice=0)
-while mixer.playing:
-	pass
-samples.append(sample)
+for i in INSTRUMENTS:
+	samples_row = []
+	for t in TYPES:	
+		#i = INSTRUMENTS[0]
+		#t = TYPES[0]
+		song_name = i + ' ' + t + '000.wav'
+		print('Reading ',song_name)
+		wave_file = open('Future_Beat/' + song_name,"rb")
+		sample = audioio.WaveFile(wave_file)
+		#mixer.play(sample,voice=0)
+		#while mixer.playing:
+		#	pass
+		samples_row.append(sample)
+	samples.append(samples_row)
 
 # colors for each column
 COLUMN_COLOR = ((255, 0, 0),
@@ -126,66 +165,18 @@ current_press = set()
 # the state of the sequencer
 beatset = [[False] * 8, [False] * 8, [False] * 8, [False] * 8]
 
-ctr = 0
+#ctr = 0
 while True:
 	#Get timestamp
 	stamp = time.monotonic()
 
 	#Check and see which songs to play
-	for ri in range(0,4):
-		if True in beatset[ri]:
-			for ci in range(0,len(INSTRUMENTS)):
-				if beatset[ri][ci] == True:
-					i = INSTRUMENTS[ci]
-					t = TYPES[ri]
-					song_name = i + '_' + t + '.ogg'
-					print('Playing ',song_name)
+	play_songs(mixer,stamp,current_press)
 	
 	#Heartbeat				
 	print("...")
-	#for row in beatset:
-	#   print(row)
 
-	#for ri in range(0,4):
-	#   for ci in range(0,6):
-	#       print(trellis.pixels[(ri,ci)])
-	#       #print(trellis.pixels[(ri,ci)])
-	#       print(" ")
+	#Button check
+	current_press = which_buttons(stamp,current_press)
 
-	# handle button presses while we're waiting for the next tempo beat
-	# also check the accelerometer if we're using it, to adjust tempo
-	while time.monotonic() - stamp < 60/tempo:
-				# Check for pressed buttons
-		pressed = set(trellis.pressed_keys)
-		for down in pressed - current_press:
-			print("Pressed down", down)
-			row = down[0]
-			col = down[1]
-			if beatset[row][col] == True:
-				print("Turning Pixel off")
-				#This means this pixel is already on so we just turn it off
-				beatset[row][col] = False
-				trellis.pixels[down] = (0,0,0)
-			else:
-				print("Turning Pixel On")
-				#This means the pixel is off so we need to turn it on
-				#but we need ot make sure no other pixels are off
-				for ri in range(0,4):
-					beatset[ri][col] = False
-					trellis.pixels[(ri,col)] = (0,0,0)
-				trellis.pixels[down] = COLUMN_COLOR[col]
-				beatset[row][col] = True
-		#Not so sure about this line of code but we shall see
-		current_press = pressed
-
-	#This is where we are going to turn on pixels depending on the color
-	#for ri in range(0,4):
-	#	for ci in range(0,6):
-	#		if beatset[ri][ci] == True:
-	#			trellis.pixels[(ri,ci)] = COLUMN_COLOR[ci]
-	#		else:
-	#			trellis.pixels[(ri,ci)] = (0,0,0)
-
-	ctr+=1
-	#print(ctr)
 	time.sleep(0.01)

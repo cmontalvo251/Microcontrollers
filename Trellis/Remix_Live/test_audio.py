@@ -1,5 +1,4 @@
-#Python code to convert audio and send it to the board.
-#Copies over the code as well just so it's ready to go
+###This will test any audio you like using parse_wav.py
 
 import os
 import sys
@@ -44,38 +43,14 @@ def parse_wav(filename,scale = 1.0):
 			'num_samples': num_samples,
 			'data_size': data_size}
 
-#os.system('rm Future_Beat/*.wav')
-
 ###Remember the type is the row
 TYPES = ["Hey","Square","Deeper","Days"]
 ##And the column is dictated by Instrument
 INSTRUMENTS = ["Drums","Tops","Bass","Chords","Leads","Voice"]
 
-#Run Permutations on INSTRUMENTS AND TYPES
-FFMPEG = False
-if FFMPEG == True:
-	for i in INSTRUMENTS:
-		for t in TYPES:	
-			#i = INSTRUMENTS[0]
-			#t = TYPES[0]
-			in_name = "'Future_Beat/" + i + ' ' + t
-			out_name = "'Future_Beat/FFMPEG/" + i + ' ' + t
-			print('Reading ',in_name)
-			fmt = 'pcm_s16le'
-			ffmpeg_cmd = 'ffmpeg -i ' + in_name + ".ogg' -acodec " + fmt + " -ac 2 -ar 22050 " + out_name + ".wav'"
-			print(ffmpeg_cmd)
-			os.system(ffmpeg_cmd)
-
-#sys.exit()
-
 wave_format = parse_wav("voice01.wav")
 print(wave_format)
 wave_format = parse_wav('Future_Beat/FFMPEG/cleaned/' + INSTRUMENTS[0] + ' ' + TYPES[0] + '.wav')
 print(wave_format)
-
-sys.exit()
-
-copy_cmd = "cp " + out_name + ".wav' /media/carlos/CIRCUITPY/Future_Beat/"
-print(copy_cmd)
-os.system(copy_cmd)
-os.system("cp remix_live.py /media/carlos/CIRCUITPY/code.py")
+wave_format = parse_wav('Future_Beat/FFMPEG/cleaned/Split/000/cleaned/Drums Hey000.wav')
+print(wave_format)
