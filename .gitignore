@@ -1,3 +1,13 @@
+Trellis/Python_Demo/README.txt
+Trellis/Python_Demo/lib
+*.uf2
+*.UF2
 USK_Guide_Code
 libraries/*.zip
+*.png
+*.wav
+*.mp3
+*.wav
+*.zip
+Trellis/build*
 
