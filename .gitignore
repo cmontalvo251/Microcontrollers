@@ -1,3 +1,5 @@
+*.mpy
+*.ogg
 Trellis/Python_Demo/README.txt
 Trellis/Python_Demo/lib
 *.uf2
