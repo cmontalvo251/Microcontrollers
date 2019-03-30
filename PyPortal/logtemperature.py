@@ -59,7 +59,14 @@ io = RESTClient(ADAFRUIT_IO_USER, ADAFRUIT_IO_KEY, wifi) #Connect to the interne
 
 print("Connected to the Internet")
 
-#This probably isn't needed but whatever - this is needed but I'm getting an error
+##Turn off the LCD screen
+lcd = DigitalInOut(board.TFT_BACKLIGHT)
+lcd.direction = Direction.OUTPUT
+lcd.value = False
+
+print("Turned off LCD Screen")
+
+#This probably isn't needed but whatever - this is needed but I'm getting an error. The error was with Adafruit IO. You can't have _ symbols
 try:
     # Get the 'temperature' feed from Adafruit IO
     print("Handshake Attempt")
@@ -83,6 +90,13 @@ adt.high_resolution = True
 # Set up an analog light sensor on the PyPortal
 print("Let there be light")
 adc = AnalogIn(board.LIGHT)
+
+##Turn off the LCD screen
+#lcd = DigitalInOut(board.TFT_BACKLIGHT)
+#lcd.direction = Direction.OUTPUT
+#lcd = pulseio.PWMOut(board.TFT_BACKLIGHT)
+#lcd.value = False
+#print("Turned off LCD Screen")
  
 while True:
     try:
@@ -90,13 +104,16 @@ while True:
         light_value = adc.value
         print('Light Level: ', light_value)
         temperature_celsius = adt.temperature
-        temperature_farenheit = temperature_celsius*9.0/5.0 + 32.0
-        print('Temperature: %0.2f F'%(temperature_farenheit))
+        if temperature_celsius > 1.0:
+            temperature_farenheit = temperature_celsius*9.0/5.0 + 32.0
+            print('Temperature: %0.2f F'%(temperature_farenheit))
 
-        print("===========SENDING TO LADY ADA=================")
-        io.send_data(light_feed['key'], light_value)
-        io.send_data(temperature_feed['key'], temperature_farenheit, precision=2)
-        print('=================DATA SENT======================')
+            print("===========SENDING TO LADY ADA=================")
+            io.send_data(light_feed['key'], light_value)
+            io.send_data(temperature_feed['key'], temperature_farenheit, precision=2)
+            print('=================DATA SENT======================')
+        else:
+            print("Temperature error. Skipping")
     except (ValueError, RuntimeError) as e:
         print("ERROR!!!", e)
         wifi.reset()
