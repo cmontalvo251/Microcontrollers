@@ -4,15 +4,15 @@ File myFile;
  
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.print("Initializing SD card...");
   // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
   // Note that even if it's not used as the CS pin, the hardware SS pin 
   // (10 on most Arduino boards, 53 on the Mega) must be left as an output 
   // or the SD library functions will not work. 
-   pinMode(10, OUTPUT);
+   pinMode(10, OUTPUT); //This is usually 10.
  
-  if (!SD.begin(10)) {
+  if (!SD.begin(10)) { //This is usually 10.
     Serial.println("initialization failed!");
     while(1){};
   }
