@@ -6,6 +6,7 @@
 Servo myservo;
 
 float nextTime = 0;
+float startTime = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -21,6 +22,7 @@ void setup() {
   Serial.println("Ready!");
 
   nextTime = millis()/1000.0;
+  startTime = millis()/1000.0;
 }
 
 long Distance(int TrigPin,int EchoPin) {
@@ -55,13 +57,18 @@ void loop() {
   float error = dc - d;
 
   //Proportional Control
-  float kp = -0.5; //Start small. Don't break shit.
+  float kp = -10; //Start small. Don't break shit. Unless you want to.
 
   //PWM Signal
   float u = kp*error + 1525;
 
   //Complete the loop
-  myservo.writeMicroseconds(u);
+  if ((millis()/1000.0 - startTime) > 6) {
+    myservo.writeMicroseconds(u);
+  } else {
+    myservo.writeMicroseconds(1500);
+  }
+  
 
   if (millis()/1000.0 > nextTime + 0.05) {
     nextTime = millis()/1000.0;
