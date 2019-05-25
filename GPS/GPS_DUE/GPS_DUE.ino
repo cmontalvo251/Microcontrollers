@@ -147,6 +147,7 @@ void loop()                     // run over and over again
     Serial.print(GPS.speed); Serial.print(" ");
     Serial.print(GPS.angle); Serial.print(" ");
     Serial.print(GPS.altitude); Serial.print(" ");
+    Serial.print(GPS.satellites); Serial.print(" ");
     Serial.print("\n");
   }
 }
