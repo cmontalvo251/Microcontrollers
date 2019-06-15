@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp -f $1 /media/carlos/CIRCUITPY/code.py
+

@@ -59,13 +59,6 @@ io = RESTClient(ADAFRUIT_IO_USER, ADAFRUIT_IO_KEY, wifi) #Connect to the interne
 
 print("Connected to the Internet")
 
-##Turn off the LCD screen
-lcd = DigitalInOut(board.TFT_BACKLIGHT)
-lcd.direction = Direction.OUTPUT
-lcd.value = False
-
-print("Turned off LCD Screen")
-
 #This probably isn't needed but whatever - this is needed but I'm getting an error. The error was with Adafruit IO. You can't have _ symbols
 try:
     # Get the 'temperature' feed from Adafruit IO
@@ -90,13 +83,7 @@ adt.high_resolution = True
 # Set up an analog light sensor on the PyPortal
 print("Let there be light")
 adc = AnalogIn(board.LIGHT)
-
-##Turn off the LCD screen
-#lcd = DigitalInOut(board.TFT_BACKLIGHT)
-#lcd.direction = Direction.OUTPUT
-#lcd = pulseio.PWMOut(board.TFT_BACKLIGHT)
-#lcd.value = False
-#print("Turned off LCD Screen")
+ctr = 1
  
 while True:
     try:
@@ -119,4 +106,18 @@ while True:
         wifi.reset()
         continue
     print('==============Delaying {0} seconds================='.format(IO_DELAY))
+    if ctr == 1:
+        print('TURNING OFF SCREEN AFTER DELAY')
     time.sleep(IO_DELAY)
+    if ctr == 1:
+        ##Turn off the LCD screen
+        board.DISPLAY.auto_brightness = False
+        board.DISPLAY.brightness = 0
+        #lcd = DigitalInOut(board.TFT_BACKLIGHT)
+        #lcd.direction = Direction.OUTPUT
+        #lcd.value = False
+        #lcd = pulseio.PWMOut(board.TFT_BACKLIGHT)
+        #lcd.value = False
+        print("Turned off LCD Screen")
+        ctr = 0
+    
