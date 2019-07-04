@@ -12,22 +12,29 @@ bank = stage.Bank.from_bmp16("ball.bmp")
 #print("Imported Bank BMP")
 
 #Create a grid that's 10 x 8
-background = stage.Grid(bank,10,8)
+background = [stage.Grid(bank,10,8)]
 #Each tile in ball.bmp is 16x16 pixels
 #A 10x8 grid is thus 160x128 pixels.
 #That's the size of the TFT grid on the PyGamer
 #print("Background Grid created")
 
 ##Create A Sprite. In this case a ball
-ball = stage.Sprite(bank,1,8,8)
+#1 is the second slot in the bank and the position
+#is 8,8
+sprites = []
+sprites.append(stage.Sprite(bank,1,30,8))
+sprites.append(stage.Sprite(bank,1,50,50))
+
+#sprites = [ball]
 
 ##Create game
 game = stage.Stage(ugame.display,12) #the 12 is FPS
 #print("Created Game")
-game.layers = [ball,background]
+layers = sprites + background
+game.layers = layers
+#game.layers = [ball,background]
 #print("Layers Imported")
 game.render_block()
-
 
 ####### USE THESE FOR BLINK CODE
 #import board
@@ -39,9 +46,24 @@ game.render_block()
 ##################################3
  
 ctr = 0
-
+#ball.frame is the current frame number
+current_frame = sprites[0].frame
+#current_frame = ball.frame
 while True:
-	pass
+	#To make the ball spin we can increase the frame in 
+	#the bank from 1-4
+	#There is a fancy way to do this with a modulo but
+	#I'd rather do it the hacky way
+	current_frame+=1
+	if current_frame == 5:
+		current_frame = 1
+	#sprites[0].set_frame(current_frame)
+	#game.render_sprites(sprites)
+	#ball.set_frame(ball.frame % 4 + 1)
+	for sprite in sprites:
+		sprite.set_frame(current_frame)
+	game.render_sprites(sprites)
+	game.tick()
 
 	#####THIS STUFF IF ONLY NEEDED FOR THE BLINK CODE###
 	#ctr+=1
