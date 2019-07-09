@@ -23,6 +23,12 @@ class Gravity():
 
 class GoalPost():
 	def __init__(self,bank,index,goalwidth):
+		#Create two goal posts
+		self.post1 = stage.Sprite(bank,index,0,0)
+		self.post2 = stage.Sprite(bank,index,0,0)
+		#Then move the posts so we can reset them later
+		self.Reset(goalwidth)
+	def Reset(self,goalwidth):
 		#For the stationary we need to pick a wall (left,right,top,bottom)
 		#First let's run a random number generator to determine x or y
 		self.LR_TP = random.randint(1,2)
@@ -62,9 +68,8 @@ class GoalPost():
 				#print("BOTTOM")
 				init_y1 = 110
 			init_y2 = init_y1
-		self.post1 = stage.Sprite(bank,index,init_x1,init_y1)
-		self.post2 = stage.Sprite(bank,index,init_x2,init_y2)
-
+		self.post1.move(init_x1,init_y1)
+		self.post2.move(init_x2,init_y2)
 class Ball():
 	def __init__(self,bank):
 		self.sprite = stage.Sprite(bank,1,0,0)
@@ -167,11 +172,17 @@ background = [stage.Grid(bank,10,8)]
 #That's the size of the TFT grid on the PyGamer
 #print("Background Grid created")
 
+#Make two goal posts
+goalwidth = 56
+posts = GoalPost(bank,5,goalwidth)
+sprites = []
+sprites.append(posts.post1)
+sprites.append(posts.post2)
+
 ##Create A Sprite. In this case a ball
 #1 is the second slot in the bank and the position
 # is the next 2 arguments which I use as random numbers
 # so the game is different every time
-sprites = []
 balls = []
 num_sprites = 1 ##also will be used as the current level
 current_level = 1
@@ -180,16 +191,11 @@ for x in range(0,num_sprites):
 	balls.append(ball)
 	sprites.append(ball.sprite)
 
-#Make two goal posts
-posts = GoalPost(bank,5,32)
-sprites.append(posts.post1)
-sprites.append(posts.post2)
-
 ##Create Text
-s = "          "
+s = "             "
 win_text = stage.Text(len(s), 1)
 win_text.move(32, 60)
-win_text.text(s)
+#win_text.text(s)
 
 ##Create game
 game = stage.Stage(ugame.display,12) #the 12 is FPS
@@ -201,6 +207,7 @@ grav = Gravity()
 
 #ball.frame is the current frame number
 game_reset = False
+start_time = time.time()
 while True:
 	#To make the ball spin we can increase the frame in 
 	#the bank from 1-4
@@ -222,7 +229,13 @@ while True:
 			num_sprites -= 1
 			ball.stop = 1
 			if num_sprites == 0:
-				win_text.text("YOU WIN!!!")
+				elapsed_time = time.time() - start_time
+				record = str(round(elapsed_time))
+				win_text.clear()
+				win_text.text(record + " secs")
+				#We also need to reset the layers
+				layers = [win_text] + sprites + background
+				game.layers = layers
 				game.render_block()
 				#Wait 2 seconds after you win before resetting the game
 				time.sleep(2)
@@ -242,11 +255,21 @@ while True:
 		balls.append(ball)
 		sprites.append(ball.sprite)
 		#Change the text
-		win_text.text("          ")
+		win_text.clear()
+		#Make the goal smaller
+		if goalwidth > 10:
+			goalwidth-=10
+		else:
+			goalwidth/=2
+		if goalwidth < 1:
+			goalwidth = 1
+		posts.Reset(goalwidth)
 		#We also need to reset the layers
 		layers = [win_text] + sprites + background
 		game.layers = layers
 		game.render_block()
+		#Reset timer
+		start_time = time.time()
 
 	game.render_sprites(sprites)
 	game.tick()
