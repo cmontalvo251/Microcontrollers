@@ -5,6 +5,8 @@ import random
 import analogio
 import board
 import time
+import adafruit_lis3dh
+import busio
 
 class Gravity():
 	def __init__(self):
@@ -14,12 +16,29 @@ class Gravity():
 		self.JOY_MAX = 65520.0
 		self.GRAV = 0.5
 		self.slope = -2.0*self.GRAV/(self.JOY_MAX-self.JOY_MIN)
+		self.TOGGLE = 1
+		# Hardware I2C setup:
+		i2c = busio.I2C(board.SCL, board.SDA)
+		self.lis3dh = adafruit_lis3dh.LIS3DH_I2C(i2c,address=0x19)
+		#x,y,z = lis3dh.acceleration
+		#print(x,y,z)
+	def readAccel(self):
+		self.x,self.y,z = self.lis3dh.acceleration
+		self.x*= -self.GRAV/9.81
+		self.y*= -self.GRAV/9.81
 	def print(self):
-		self.compute()
+		self.ReadJoy()
 		print(self.joy_x.value,self.joy_y.value,self.x,self.y)
-	def compute(self):
+		self.readAccel()
+		print(self.x,self.y)
+	def ReadJoy(self):
 		self.x = self.slope*(self.joy_x.value - self.JOY_MIN) + self.GRAV
 		self.y = self.slope*(self.joy_y.value - self.JOY_MIN) + self.GRAV
+	def compute(self):
+		if self.TOGGLE:
+			self.readAccel()
+		else:
+			self.ReadJoy()
 
 class GoalPost():
 	def __init__(self,bank,index,goalwidth):
@@ -196,10 +215,16 @@ s = "             "
 win_text = stage.Text(len(s), 1)
 win_text.move(32, 60)
 #win_text.text(s)
+ta = "ACCEL"
+tj = "JOY  "
+ctl_text = stage.Text(len(ta),1)
+ctl_text.move(112,120)
+ctl_text.text(ta)
+text_obj = [win_text,ctl_text]
 
 ##Create game
 game = stage.Stage(ugame.display,12) #the 12 is FPS
-layers = [win_text] + sprites + background
+layers = text_obj + sprites + background
 game.layers = layers
 game.render_block()
 
@@ -208,7 +233,19 @@ grav = Gravity()
 #ball.frame is the current frame number
 game_reset = False
 start_time = time.time()
+switch_time = time.time()
 while True:
+	##Read keys to switch between joystick and accel
+	keys = ugame.buttons.get_pressed()
+	if keys == 1 and (time.time() - switch_time) > 0.5:
+		#print("SWITCHING")
+		switch_time = time.time()
+		grav.TOGGLE =  not grav.TOGGLE
+		if grav.TOGGLE:
+			ctl_text.text(ta)
+		else:
+			ctl_text.text(tj)
+		game.render_block()
 	#To make the ball spin we can increase the frame in 
 	#the bank from 1-4
 	#There is a fancy way to do this with a modulo but
@@ -234,7 +271,7 @@ while True:
 				win_text.clear()
 				win_text.text(record + " secs")
 				#We also need to reset the layers
-				layers = [win_text] + sprites + background
+				layers = text_obj + sprites + background
 				game.layers = layers
 				game.render_block()
 				#Wait 2 seconds after you win before resetting the game
@@ -265,7 +302,7 @@ while True:
 			goalwidth = 1
 		posts.Reset(goalwidth)
 		#We also need to reset the layers
-		layers = [win_text] + sprites + background
+		layers = text_obj + sprites + background
 		game.layers = layers
 		game.render_block()
 		#Reset timer
