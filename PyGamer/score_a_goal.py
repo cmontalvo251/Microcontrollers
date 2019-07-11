@@ -228,7 +228,13 @@ layers = text_obj + sprites + background
 game.layers = layers
 game.render_block()
 
+##Initialize Gravity
 grav = Gravity()
+
+#Set up sounds
+nextsound = open("nextlevel.wav","rb")
+scoresound = open("score.wav","rb")
+ugame.audio.mute(False)
 
 #ball.frame is the current frame number
 game_reset = False
@@ -274,9 +280,12 @@ while True:
 				layers = text_obj + sprites + background
 				game.layers = layers
 				game.render_block()
+				ugame.audio.play(nextsound)
 				#Wait 2 seconds after you win before resetting the game
 				time.sleep(2)
 				game_reset = True
+			else:
+				ugame.audio.play(scoresound)
 	#Ok so what to do when the game gets reset?
 	if game_reset == True:
 		game_reset = False
