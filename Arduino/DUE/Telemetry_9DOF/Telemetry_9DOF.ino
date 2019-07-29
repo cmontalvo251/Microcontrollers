@@ -20,8 +20,10 @@ void setup()
   if(!bno.begin())
   {
     /* There was a problem detecting the BNO055 ... check your connections */
-    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR! \n");
     while(1);
+  } else {
+    Serial.print("BNO Init Successful \n");
   }
 
   bno.setExtCrystalUse(true);
