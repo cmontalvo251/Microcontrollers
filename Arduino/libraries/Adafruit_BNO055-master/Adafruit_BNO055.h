@@ -285,7 +285,7 @@ class Adafruit_BNO055 : public Adafruit_Sensor
 #else
     Adafruit_BNO055 ( int32_t sensorID = -1, uint8_t address = BNO055_ADDRESS_A );
 #endif
-    bool  begin               ( adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF );
+    uint8_t  begin               ( adafruit_bno055_opmode_t mode = OPERATION_MODE_NDOF );
     void  setMode             ( adafruit_bno055_opmode_t mode );
     void  getRevInfo          ( adafruit_bno055_rev_info_t* );
     void  displayRevInfo      ( void );
@@ -310,9 +310,9 @@ class Adafruit_BNO055 : public Adafruit_Sensor
     void  setSensorOffsets(const uint8_t* calibData);
     void  setSensorOffsets(const adafruit_bno055_offsets_t &offsets_type);
     bool  isFullyCalibrated(void);
+    byte  read8   ( adafruit_bno055_reg_t );
 
   private:
-    byte  read8   ( adafruit_bno055_reg_t );
     bool  readLen ( adafruit_bno055_reg_t, byte* buffer, uint8_t len );
     bool  write8  ( adafruit_bno055_reg_t, byte value );
 
