@@ -52,7 +52,7 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address)
     @brief  Sets up the HW
 */
 /**************************************************************************/
-bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
+uint8_t Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 {
   /* Enable I2C */
   Wire.begin();
@@ -64,13 +64,17 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
 
   /* Make sure we have the right device */
   uint8_t id = read8(BNO055_CHIP_ID_ADDR);
-  if(id != BNO055_ID)
+  int ctr = 0;
+  while(id != BNO055_ID) //Just keep trying???
   {
     delay(1000); // hold on for boot
+    id = 0; //Reset ID
     id = read8(BNO055_CHIP_ID_ADDR);
-    if(id != BNO055_ID) {
-      return false;  // still not? ok bail
-    }
+    printf("Getting ID = %d but it should be %d. Attempt #:%d \n",id,BNO055_ID,ctr);
+    ctr++;
+    //if(id != BNO055_ID) {
+    //return id;  // still not? ok bail
+    //}
   }
 
   /* Switch to config mode (just in case since this is the default) */
@@ -114,7 +118,7 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode)
   setMode(mode);
   delay(20);
 
-  return true;
+  return id;
 }
 
 /**************************************************************************/

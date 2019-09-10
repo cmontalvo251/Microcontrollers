@@ -1,8 +1,7 @@
 import time
 from adafruit_crickit import crickit
- 
 # Capacitive touch tests
- 
+
 while True:
     time.sleep(0.1)
     #print("Checking Pad ")
