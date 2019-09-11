@@ -1,32 +1,28 @@
-#include <Servo.h>
-
 //Setup Sonar Sensor
 #define frontTrigPin 31
 #define frontEchoPin 33
 
-//Setup Servo
+#include <Servo.h>
 Servo myservo;
 
-//Make a float for later
-float distance_to_box = 0;
+float nextTime = 0;
+float startTime = 0;
 
 void setup() {
-  
-  //Just need 9600 for prox sensors
+  // put your setup code here, to run once:
+ //Just need 9600 for prox sensors
   Serial.begin(9600);
+
+  //Setup input and output
+  SetupPin(frontTrigPin,frontEchoPin);
 
   //Attach Servo
   myservo.attach(9);
-  
-  //Setup input and output
-  SetupPin(frontTrigPin,frontEchoPin);
- 
-  Serial.println("Ready!");
-}
 
-void SetupPin(int TrigPin,int EchoPin) {
- pinMode(TrigPin,OUTPUT);
- pinMode(EchoPin,INPUT); 
+  Serial.println("Ready!");
+
+  nextTime = millis()/1000.0;
+  startTime = millis()/1000.0;
 }
 
 long Distance(int TrigPin,int EchoPin) {
@@ -44,58 +40,48 @@ long Distance(int TrigPin,int EchoPin) {
   return cm;
 }  
 
-void loop() {
-  //Delay for kicks
-  delay(30);
-
-  //Get Distance to Box from Sonar Sensor
-  float distance_to_box = Distance(frontTrigPin,frontEchoPin);
-  
-  //Debugging
-  //distance_to_box++;
-
-  //if (distance_to_box > 100) {
-  //     distance_to_box = 0;
-  //}
-
-  //Distance from Box Command 
-  float dcommand = 10;
-
-  //Error Calculation
-  float error = dcommand - distance_to_box;
-
-  ///Decide what gain to use
-  //distance_to_box = 100
-  //error = -90
-  //I want throttle to be full throttle
-  //Full throttle = 180
-  //Not moving = 90
-  //So gain needs to be -1 but we will change this later
-
-  //Gain 
-  float kp = -0.1;
-
-  //Compute Throttle command using proportional control
-  float throttle_command = kp*error+94;
-
-  //Send Throttle Command to Servo
-  myservo.write(throttle_command);
-
-  //Debug Servo
-  //myservo.write(90);
-  //delay(1000);
-  //myservo.write(120);
-  //delay(1000);
-
-  //Print some stuffs
-  Serial.print(millis());
-  Serial.print(" ");
-  Serial.print(distance_to_box);
-  Serial.print(" ");
-  Serial.println(throttle_command);
-    
+void SetupPin(int TrigPin,int EchoPin) {
+ pinMode(TrigPin,OUTPUT);
+ pinMode(EchoPin,INPUT); 
 }
 
+void loop() {
+  // put your main code here, to run repeatedly:
 
-/* End code */
+  //Get Sonar Reading
+  float d = Distance(frontTrigPin,frontEchoPin);
 
+  //Control Law
+  float dc = 0;
+
+  float error = dc - d;
+
+  //Proportional Control
+  float kp = -0.5; //Start small. Don't break shit. Unless you want to.
+
+  //PWM Signal
+  float u = kp*error + 1525;
+
+  //Complete the loop
+  if ((millis()/1000.0 - startTime) > 6) {
+    myservo.writeMicroseconds(u);
+  } else {
+    myservo.writeMicroseconds(1500);
+  }
+  
+
+  if (millis()/1000.0 > nextTime + 0.05) {
+    nextTime = millis()/1000.0;
+    Serial.print(millis()/1000.0);
+    Serial.print(" ");
+    Serial.print(d);
+    Serial.print(" ");
+    Serial.print(error);
+    Serial.print(" ");
+    Serial.print(u);
+    Serial.println();
+  }
+
+  
+
+}
