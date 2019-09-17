@@ -52,21 +52,21 @@ void loop() {
   float d = Distance(frontTrigPin,frontEchoPin);
 
   //Control Law
-  float dc = 0;
+  float dc = 15; //sensor can't actually read zero. You also don't have brakes so you need to coast for a while
 
   float error = dc - d;
 
   //Proportional Control
-  float kp = -0.5; //Start small. Don't break shit. Unless you want to.
+  float kp = -0.4; //Start small. Don't break shit. Unless you want to.
 
   //PWM Signal
-  float u = kp*error + 1525;
+  float u = kp*error + 1525; //is 1525 the offset for not moving forward? Perhaps we need to add some integral gain to determine the min signal
 
   //Complete the loop
   if ((millis()/1000.0 - startTime) > 6) {
     myservo.writeMicroseconds(u);
   } else {
-    myservo.writeMicroseconds(1500);
+    myservo.writeMicroseconds(1500); //Is this really the initialization value?
   }
   
 
