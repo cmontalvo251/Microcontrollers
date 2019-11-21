@@ -19,12 +19,13 @@ a = audioio.AudioOut(board.A0)
 
 #Set up pixels
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, auto_write=True)
-flora = neopixel.NeoPixel(board.A2,2,auto_write=True)
+flora1 = neopixel.NeoPixel(board.A5,2,auto_write=True)
+flora2 = neopixel.NeoPixel(board.A2,2,auto_write=True)
 
 #and sequins
 pwm_leds1 = board.D0 ##Pin D0 is pin A6. It can be digital or analog
 pwm1 = pulseio.PWMOut(pwm_leds1, frequency=1000, duty_cycle=0) 
-pwm_leds2 = board.D10 ##Pin D10 is pin A3. It can be digital or analog
+pwm_leds2 = board.D6 ##Pin D6 is pin A1. It can be digital or analog
 pwm2 = pulseio.PWMOut(pwm_leds2, frequency=1000, duty_cycle=0) 
 
 ##Button Presses
@@ -40,7 +41,7 @@ slide = DigitalInOut(board.SLIDE_SWITCH)
 #print(dir(board))
 
 #Set up Touch Buttons
-touch1 = touchio.TouchIn(board.A1)
+touch1 = touchio.TouchIn(board.A3)
 
 ##Accelerometer is hooked up to SDA/SCL which is I2C or just some kind of protocol
 i2c = busio.I2C(board.ACCELEROMETER_SCL, board.ACCELEROMETER_SDA)
@@ -185,8 +186,10 @@ while True:
     pixels.fill(color_main)
     
     #Now we need to turn on the flora's
-    flora[0] = color_alt
-    flora[1] = color_main
+    flora1[0] = color_alt
+    flora1[1] = color_main
+    flora2[0] = color_alt
+    flora2[1] = color_main
     
     #Then we need run the sequins
     if SEQUINS or SPARKLE:
