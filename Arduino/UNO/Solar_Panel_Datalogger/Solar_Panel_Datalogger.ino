@@ -29,14 +29,15 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  float value = analogRead(A0)*5./1023.;
-  Serial.print(value);
-  Serial.print(" ");
-  //float a = 1.0;
-  //float b = -value;
-  //float c = -11.2;
-  //float vactual = -b/2. + sqrt(b*b - 4*a*c)/2.;
-  //Serial.print(vactual);
-  Serial.print('\n');
+  float load = analogRead(A0)*5./1023.;
+  float battery = analogRead(A1)*5./1023.;
+  float solar = analogRead(A2)*5./1023.;
+  Serial.print("L = ");
+  Serial.print(load);
+  Serial.print(", B = ");
+  Serial.print(battery);
+  Serial.print(", S = ");
+  Serial.print(solar);
+  Serial.print("\n");
   delay(100);
 }

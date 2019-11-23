@@ -12,7 +12,7 @@
   modified 8 May 2014
   by Scott Fitzgerald
  */
-const int outputpin = 8;
+const int outputpin = 9;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -23,10 +23,16 @@ void setup() {
 }
 
 // the loop function runs over and over again forever
+int value = 0;
 void loop() {
-  Serial.print("BLINK!!!\n");
-  digitalWrite(outputpin, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(3000);              // wait for a second
-  digitalWrite(outputpin, LOW);    // turn the LED off by making the voltage LOW
-  delay(3000);              // wait for a second
+  value+=10;
+  analogWrite(outputpin, value);   // turn the LED on (HIGH is the voltage level)
+  delay(100);              // wait for a second
+  if (value > 255) {
+    value = 0;
+  }
+  Serial.print(value);
+  Serial.print(" ");
+  Serial.print(value*5./255.);
+  Serial.print("\n");
 }
