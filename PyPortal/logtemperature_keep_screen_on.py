@@ -92,7 +92,7 @@ while True:
         print('Light Level: ', light_value)
         temperature_celsius = adt.temperature
         if temperature_celsius > 1.0:
-            temperature_farenheit = temperature_celsius*9.0/5.0 + 32.0
+            temperature_farenheit = temperature_celsius*9.0/5.0 + 32.0 - (15.0) #Subsract bias (you need to wait for it to heat up though)
             print('Temperature: %0.2f F'%(temperature_farenheit))
 
             print("===========SENDING TO LADY ADA=================")
@@ -106,17 +106,4 @@ while True:
         wifi.reset()
         continue
     print('==============Delaying {0} seconds================='.format(IO_DELAY))
-    #print('TURNING OFF SCREEN AFTER DELAY')
     time.sleep(IO_DELAY)
-    #if ctr == 1:
-        ##Turn off the LCD screen
-        #board.DISPLAY.auto_brightness = False
-        #board.DISPLAY.brightness = 0
-        #lcd = DigitalInOut(board.TFT_BACKLIGHT)
-        #lcd.direction = Direction.OUTPUT
-        #lcd.value = False
-        #lcd = pulseio.PWMOut(board.TFT_BACKLIGHT)
-        #lcd.value = False
-        #print("Turned off LCD Screen")
-        #ctr = 0
-    
