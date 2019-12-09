@@ -8,7 +8,7 @@ void setup() {
   //Setup communication with computer
   Serial.begin(9600);
   //Setup communication with other arduino
-  Serial1.begin(9600);
+  Serial1.begin(115200);
 }
 
 //Check For Inputs from the User
@@ -50,7 +50,8 @@ void loop() {
     while (Serial1.available()) {
       int d = Serial1.read();
     }
-    Serial.println("Received Handshake from other Arduino");
+    Serial.print("Received Handshake from other Arduino");
+    Serial.println(millis());
     oktosend = true;
   }
   //Check for User Input
@@ -63,7 +64,7 @@ void loop() {
       for (int i = 0;i<6;i++) {
         Serial1.print(input_chars[i]);
       }
-      Serial1.println("\r\n");
+      //Serial1.println("\r\n");
       Serial1.flush(); //wait for outgoing data to go out
       //Reset oktosend
       oktosend = false;
