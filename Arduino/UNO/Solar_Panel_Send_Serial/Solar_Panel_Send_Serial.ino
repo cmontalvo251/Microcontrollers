@@ -17,7 +17,7 @@ void loop() {
   volts[2] = analogRead(A2)*5./1023.; //solar
   volts[3] = millis()/1000.0; //time
 
-  if (true)  {
+  if (false)  {
     serialPrintFloatArr(volts,4);
     Serial.println("\r\n"); //line break
   } else {

@@ -23,28 +23,60 @@
 `adafruit_irremote`
 ====================================================
 
-Demo code for upcoming CircuitPlayground Express:
+Demo code for Circuit Playground Express:
 
-.. code-block: python
+.. code-block:: python
 
+    # Circuit Playground Express Demo Code
+    # Adjust the pulseio 'board.PIN' if using something else
     import pulseio
     import board
     import adafruit_irremote
+    pulsein = pulseio.PulseIn(board.REMOTEIN, maxlen=120, idle_state=True)
+    decoder = adafruit_irremote.GenericDecode()
 
-    with pulseio.PulseIn(board.REMOTEIN, maxlen=120, idle_state=True) as p:
-        d = adafruit_irremote.GenericDecode()
-        code = bytearray(4)
-        while True:
-            d.decode(p, code)
-            print(code)
+    # size must match what you are decoding! for NEC use 4
+    received_code = bytearray(4)
+
+    while True:
+        pulses = decoder.read_pulses(pulsein)
+        print("Heard", len(pulses), "Pulses:", pulses)
+        try:
+            code = decoder.decode_bits(pulses)
+            print("Decoded:", code)
+        except adafruit_irremote.IRNECRepeatException:  # unusual short code!
+            print("NEC repeat!")
+        except adafruit_irremote.IRDecodeException as e:     # failed to decode
+            print("Failed to decode: ", e.args)
+
+        print("----------------------------")
 
 * Author(s): Scott Shawcroft
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+* `CircuitPlayground Express <https://www.adafruit.com/product/3333>`_
+
+* `IR Receiver Sensor <https://www.adafruit.com/product/157>`_
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware for the ESP8622 and M0-based boards:
+  https://github.com/adafruit/circuitpython/releases
+
 """
 
 # Pretend self matter because we may add object level config later.
 # pylint: disable=no-self-use
 
 import array
+import time
+
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_IRRemote.git"
 
 class IRDecodeException(Exception):
     """Generic decode exception"""
@@ -79,11 +111,9 @@ class GenericDecode:
             #print(bins)
         return bins
 
-    def decode_bits(self, pulses, debug=False):
+    def decode_bits(self, pulses):
         """Decode the pulses into bits."""
         # pylint: disable=too-many-branches,too-many-statements
-        if debug:
-            print("length: ", len(pulses))
 
         # special exception for NEC repeat code!
         if ((len(pulses) == 3) and (8000 <= pulses[0] <= 10000) and
@@ -97,22 +127,16 @@ class GenericDecode:
         del pulses[0]
         if len(pulses) % 2 == 1:
             del pulses[0]
-        if debug:
-            print("new length: ", len(pulses))
 
         evens = pulses[0::2]
         odds = pulses[1::2]
         # bin both halves
         even_bins = self.bin_data(evens)
         odd_bins = self.bin_data(odds)
-        if debug:
-            print("evenbins: ", even_bins, "oddbins:", odd_bins)
 
         outliers = [b[0] for b in (even_bins + odd_bins) if b[1] == 1]
         even_bins = [b for b in even_bins if b[1] > 1]
         odd_bins = [b for b in odd_bins if b[1] > 1]
-        if debug:
-            print("evenbins: ", even_bins, "oddbins:", odd_bins, "outliers:", outliers)
 
         if not even_bins or not odd_bins:
             raise IRDecodeException("Not enough data")
@@ -126,8 +150,6 @@ class GenericDecode:
         else:
             raise IRDecodeException("Both even/odd pulses differ")
 
-        if debug:
-            print("Pulses:", pulses, "& Bins:", pulse_bins)
         if len(pulse_bins) == 1:
             raise IRDecodeException("Pulses do not differ")
         elif len(pulse_bins) > 2:
@@ -135,8 +157,6 @@ class GenericDecode:
 
         mark = min(pulse_bins[0][0], pulse_bins[1][0])
         space = max(pulse_bins[0][0], pulse_bins[1][0])
-        if debug:
-            print("Space:", space, "Mark:", mark)
 
         if outliers:
             # skip outliers
@@ -150,8 +170,6 @@ class GenericDecode:
                 pulses[i] = True
             else:
                 raise IRDecodeException("Pulses outside mark/space")
-        if debug:
-            print(len(pulses), pulses)
 
         # convert bits to bytes!
         output = [0] * ((len(pulses)+7)//8)
@@ -161,25 +179,54 @@ class GenericDecode:
                 output[i // 8] |= 1
         return output
 
-    def read_pulses(self, input_pulses, max_pulse=10000):
-        """Read out a burst of pulses until a pulse is longer than ``max_pulse``.
+    def _read_pulses_non_blocking(self, input_pulses, max_pulse=10000, pulse_window=0.10):
+        """Read out a burst of pulses without blocking until pulses stop for a specified
+            period (pulse_window), pruning pulses after a pulse longer than ``max_pulse``.
 
-           :param ~pulseio.PulseIn input_pulses: Object to read pulses from
-           :param int max_pulse: Pulse duration to end a burst
+            :param ~pulseio.PulseIn input_pulses: Object to read pulses from
+            :param int max_pulse: Pulse duration to end a burst
+            :param float pulse_window: pulses are collected for this period of time
            """
-        received = []
+        received = None
+        recent_count = 0
+        pruning = False
         while True:
-            while len(input_pulses) < 8:   # not too big (slower) or too small (underruns)!
-                pass
             while input_pulses:
                 pulse = input_pulses.popleft()
+                recent_count += 1
                 if pulse > max_pulse:
-                    if not received:
+                    if received is None:
                         continue
-                    else:
-                        return received
-                received.append(pulse)
-        return received
+                    pruning = True
+                if not pruning:
+                    if received is None:
+                        received = []
+                    received.append(pulse)
+
+            if recent_count == 0:
+                return received
+            recent_count = 0
+            time.sleep(pulse_window)
+
+    def read_pulses(self, input_pulses, *, max_pulse=10000, blocking=True,
+                    pulse_window=0.10, blocking_delay=0.10):
+        """Read out a burst of pulses until pulses stop for a specified
+            period (pulse_window), pruning pulses after a pulse longer than ``max_pulse``.
+
+            :param ~pulseio.PulseIn input_pulses: Object to read pulses from
+            :param int max_pulse: Pulse duration to end a burst
+            :param bool blocking: If True, will block until pulses found.
+                If False, will return None if no pulses.
+                Defaults to True for backwards compatibility
+            :param float pulse_window: pulses are collected for this period of time
+            :param float blocking_delay: delay between pulse checks when blocking
+           """
+        while True:
+            pulses = self._read_pulses_non_blocking(input_pulses, max_pulse, pulse_window)
+            if blocking and pulses is None:
+                time.sleep(blocking_delay)
+                continue
+            return pulses
 
 class GenericTransmit:
     """Generic infrared transmit class that handles encoding."""
@@ -210,5 +257,5 @@ class GenericTransmit:
                     durations[out + 1] = self.zero[1]
                 out += 2
 
-        print(durations)
+        # print(durations)
         pulseout.send(durations)
