@@ -34,7 +34,7 @@ jingle_bells_song = [[E4, quarter_note], [E4, quarter_note],
 [E4, half_note], [E4, quarter_note], [E4, quarter_note],
 [E4, half_note], [E4, quarter_note], [G4, quarter_note],
 [C4, dotted_quarter_note], [D4, eighth_note], [E4, whole_note]]
-bpm = 100
+
 # Define a list of tones/music notes to play.
 TONE_FREQ = [ 262,  # C4
               294,  # D4
@@ -45,7 +45,7 @@ TONE_FREQ = [ 262,  # C4
               440,  # A4
               494 ] # B4
 
-length_relative = [0.5,
+length = [0.5,
         1.0,
         1.5,
         1.0,
@@ -76,5 +76,5 @@ while True:
             buzzer.duty_cycle = 2**15
             buzzer.frequency = TONE_FREQ[n]
 
-        time.sleep(length_relative[i]/bpm)
+        time.sleep(jingle_bells_song[i][1])
         #cpx.stop_tone()
