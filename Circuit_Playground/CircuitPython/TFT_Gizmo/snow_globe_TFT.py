@@ -124,6 +124,7 @@ def add_snow(index, amount, steepness=2):
 
 print('Setup Complete')
 start_time = time.monotonic()
+last_time = 0.0
 print(start_time)
 ##Loop forever
 while True:
@@ -132,10 +133,14 @@ while True:
     # loop until globe is full of snow
     while snow_depth.count(0) < display.width:
         # check for shake
-        if accelo.shake(SHAKE_THRESHOLD, 5, 0):
+        x,y,z = accelo.acceleration
+        norm = x**2 + y**2 + z**2
+        if norm > 144:
+             break
+        #print(x,y,z)
             ##wierd way to do this but it basically loops forever unless it fills
             #with snow or you shake the thing
-            break
+
         # update snowflakes
         for i, flake in enumerate(flakes):
             # speed based on sprite index # since the start location
@@ -154,5 +159,6 @@ while True:
         #Then just refresh everything
         display.refresh()
         now_time = time.monotonic()-start_time
-        if abs(int(now_time) - now_time) < 0.05:
-            print(int(now_time))
+        if now_time - last_time > 0.2:
+            print(now_time,norm)
+            last_time = now_time
