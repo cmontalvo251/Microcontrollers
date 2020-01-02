@@ -10,7 +10,8 @@ import adafruit_lis3dh
 
 #---| User Config |---------------
 #BACKGROUND = 0x0FFF00              # specify color or background BMP file
-BACKGROUND = 'blinka_dark.bmp'
+#BACKGROUND = 'blinka_dark.bmp'
+BACKGROUND = 'psyduck_240.bmp'
 NUM_FLAKES = 50                    # total number of snowflakes
 SNOW_COLOR = 0xFFFFFF              # snow color
 SHAKE_THRESHOLD = 27               # shake sensitivity, lower=more sensitive
@@ -122,7 +123,8 @@ def add_snow(index, amount, steepness=2):
             snow_bmp[x, new_level] = 1
 
 print('Setup Complete')
-
+start_time = time.monotonic()
+print(start_time)
 ##Loop forever
 while True:
     ##Go ahead and clear the snow.
@@ -138,7 +140,7 @@ while True:
         for i, flake in enumerate(flakes):
             # speed based on sprite index # since the start location
             # was random this is sufficient for speed randomization
-            flake_pos[i] += 1 - flake[0] / 3
+            flake_pos[i] += 3 - flake[0] / 3 #The 3 tells the speed so you can make it go faster if you'd like
             # check if snowflake has hit the ground
             if int(flake_pos[i]) >= snow_depth[flake.x]:
                 # add snow where it fell
@@ -151,5 +153,6 @@ while True:
             #built into the displayio library. This is kind of like the sprite library I worked on for the Pygamer
         #Then just refresh everything
         display.refresh()
-        if abs(int(time.monotonic()) - time.monotonic()) < 0.1:
-            print(time.monotonic())
+        now_time = time.monotonic()-start_time
+        if abs(int(now_time) - now_time) < 0.05:
+            print(int(now_time))
