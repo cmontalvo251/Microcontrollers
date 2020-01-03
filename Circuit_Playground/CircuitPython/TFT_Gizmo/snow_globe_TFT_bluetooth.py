@@ -9,6 +9,7 @@ from adafruit_gizmo import tft_gizmo
 import adafruit_imageload
 import adafruit_lis3dh
 import neopixel
+import adafruit_fancyled.adafruit_fancyled as fancy
 
 ##Bluetooth libraries
 from adafruit_ble import BLERadio
@@ -79,6 +80,11 @@ def check_bluetooth(now_time):
         ##If it's a ColorPacket
         if isinstance(packet, ColorPacket):
             print('Color Packet')
+            print(packet.color)
+            #print(splash[1][0].pixel_shader[1])
+            color = fancy.CRGB(packet.color[0],packet.color[1],packet.color[2])
+            packed = color.pack()
+            splash[1][0].pixel_shader[1] = packed
             #print(packet.color)
             ##Fill all the pixels with that color
             pixels.fill(packet.color)
@@ -156,8 +162,10 @@ splash.append(flakes)
 splash.append(snow)
 display.show(splash)
 
-print(splash[1][0].pixel_shader[1])
-splash[1][0].pixel_shader[1] = 0xFFFFFF
+#print(splash[1][0].pixel_shader[1])
+#color = fancy.CRGB(255, 85, 0)
+#packed = color.pack()
+#splash[1][0].pixel_shader[1] = packed
 
 def clear_the_snow():
     #pylint: disable=global-statement, redefined-outer-name

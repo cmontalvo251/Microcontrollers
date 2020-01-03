@@ -28,15 +28,6 @@ speaker_enable.value = True
 #print(dir(board))
 a = AudioOut(board.SPEAKER)
 
-##Colors for light show
-WHITE = (65, 65, 65)
-RED = (220, 0, 0)
-GREEN = (0, 220, 0)
-BLUE = (0, 0, 220)
-SKYBLUE = (0, 20, 200)
-BLACK = (0, 0, 0)
-
-
 def Light_Show():
     pixels.fill(WHITE)
     pixels.show()
@@ -49,17 +40,17 @@ def Circle_Lights(color):
     for idx in range(0,10):
         pixels[idx] = color
         pixels.show()
-        time.sleep(0.1);
+        time.sleep(0.01);
         pixels.fill((0,0,0))
 
 def End_Game():
     for idx in range(0,4):
         pixels.fill(WHITE)
         pixels.show()
-        time.sleep(0.1)
+        time.sleep(0.01)
         pixels.fill((0,0,0))
         pixels.show()
-        time.sleep(0.1)
+        time.sleep(0.01)
 
 #Audio function
 def play_sound():
@@ -68,7 +59,9 @@ def play_sound():
     a.play(wav)
     ctr = 0
     while a.playing:
-        Light_Show()
+        ctr+=1
+        if ctr < 8:
+            Light_Show()
         pass
     f.close()
 
