@@ -24,9 +24,9 @@ flora2 = neopixel.NeoPixel(board.A2,2,auto_write=True)
 
 #and sequins
 pwm_leds1 = board.D0 ##Pin D0 is pin A6. It can be digital or analog
-pwm1 = pulseio.PWMOut(pwm_leds1, frequency=1000, duty_cycle=0) 
+pwm1 = pulseio.PWMOut(pwm_leds1, frequency=1000, duty_cycle=0)
 pwm_leds2 = board.D6 ##Pin D6 is pin A1. It can be digital or analog
-pwm2 = pulseio.PWMOut(pwm_leds2, frequency=1000, duty_cycle=0) 
+pwm2 = pulseio.PWMOut(pwm_leds2, frequency=1000, duty_cycle=0)
 
 ##Button Presses
 buttonA = DigitalInOut(board.BUTTON_A)
@@ -57,7 +57,7 @@ def check_brightness():
     if brightness < 0:
         brightness = max_brightness
     print("Current Brightness = ",brightness)
-        
+
 def change_brightness(increment):
     print("Changing Brightness by = ",increment)
     global brightness
@@ -69,14 +69,14 @@ def Get_Sound():
     f = open("Feliz.wav", "rb")
     wav = audioio.WaveFile(f)
     return f,wav
-    
+
 def CHANGE_MODE():
     global MODE
     MODE+=1
     if MODE > 4:
         MODE = 0
     print("Current MODE = ",MODE)
-    
+
 def get_color(now_time):
     global MODE,XMAS,change_time
     color = (brightness,brightness,brightness)
@@ -110,7 +110,7 @@ def get_color(now_time):
         color_main = color
         color_alt = color
     return color_main,color_alt
-    
+
 ##Take a bunch of average readings
 avg = 0
 N = 100
@@ -132,17 +132,17 @@ XMAS = True
 brightness = 10
 color = get_color(0)
 FLASH = True
-    
+
 while True:
     #Get Current Time for Event Handling
     now_time = time.monotonic()
     #print("Time = ",now_time)
-    
+
     #Button A event
     if buttonA.value:
         CHANGE_MODE()
         time.sleep(0.25)
-        
+
     #Button B event
     if a.playing:
         pass
@@ -152,17 +152,17 @@ while True:
             f,wav = Get_Sound()
             print("Playing Sound")
             a.play(wav)
-        
+
     #Slide Switch Event
     if slide.value:
         SEQUINS = True #This is only for perpetual sequins
     else:
         SEQUINS = False
-    
+
     #Capacitive Touch Event
     if touch1.value:
         change_brightness(1)
- 
+
     #Accelerometer Event
     x,y,z = lis3dh.acceleration
     norm2 = x*x + y*y + z*z
@@ -174,23 +174,23 @@ while True:
     if now_time - sparkle_start > 1 and SPARKLE:
         print("Sparkles off")
         SPARKLE = False
-        
+
     ##Now we actually do stuff based on the following settings
     #brightness
     #SPARKLE -- tells us if we need to be sparkling
     #SEQUINS -- tells us if sequins are always on
     #MODE -- which mode we are in (solid red,blue, green, random, red/green duty cycle)
-    
+
     #Alright let's do pixels on the CPX first
     color_main,color_alt = get_color(now_time)
     pixels.fill(color_main)
-    
+
     #Now we need to turn on the flora's
     flora1[0] = color_alt
     flora1[1] = color_main
     flora2[0] = color_alt
     flora2[1] = color_main
-    
+
     #Then we need run the sequins
     if SEQUINS or SPARKLE:
         if not FLASH:
@@ -206,6 +206,6 @@ while True:
     else:
         pwm1.duty_cycle = 0
         pwm2.duty_cycle = 0
-        
+
     #Slow Down Sim
     time.sleep(0.1)
