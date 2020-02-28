@@ -14,6 +14,7 @@ while True:
     Temp = Temp * 1.8 +32
     print(time.monotonic(),light,Temp)
     if not cpx.switch:
+        print('Writing Data to Disk')
         output = str(time.monotonic()) + " " + str(light) + " " + str(Temp) + str('\n')
         file.write(output)
         file.flush()
