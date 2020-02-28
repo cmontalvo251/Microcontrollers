@@ -23,24 +23,31 @@ print("Time\tLight\tTemperature\tX\tY\tZ")  # Print column headers
 def slow_write(string):   # Typing should not be too fast for
     for c in string:      # the computer to be able to accept
         layout.write(c)
-        time.sleep(0.2)   # use 1/5 second pause between characters
+        time.sleep(0.02)   # use 1/5 second pause between characters
 
+timestart = 0
+timewindow = 100
 while True:
-    if cpx.switch:    # If the slide switch is on, don't log
+    currenttime = time.monotonic()
+    print(currenttime,timestart)
+    if cpx.switch or currenttime > timestart + timewindow:    # If the slide switch is on, don't log
         #print("Flip Switch to start logging")
         cpx._led.value = True
         time.sleep(0.1)
         cpx._led.value = False
         time.sleep(0.1)
+        if currenttime < timestart + timewindow or timestart == 0:
+            timestart = time.monotonic()
         continue
 
     # Turn on the LED to show we're logging
     cpx._led.value = True
     light = cpx.light
     temp = cpx.temperature
-    x,y,z = cpx.acceleration
+    #x,y,z = cpx.acceleration
     # Format data into value 'output'
-    output = "%0.1f\t%0.1f\t%0.1f\t%0.5f\t%0.5f\t%0.5f" % (time.monotonic(), light,temp,x,y,z)
+    #output = "%0.1f\t%0.1f\t%0.1f\t%0.5f\t%0.5f\t%0.5f" % (time.monotonic(), light,temp,x,y,z)
+    output = "%0.1f\t%0.1f\t%0.1f" % (time.monotonic(), light,temp)
     print(output)         # Print to serial monitor
     slow_write(output)    # Print to spreadsheet
 
@@ -49,9 +56,9 @@ while True:
     kbd.release_all()
     for _ in range(6):
         kbd.press(Keycode.LEFT_ARROW)
-        time.sleep(0.015)
+        time.sleep(0.005)
         kbd.release_all()
-        time.sleep(0.025)  # Wait a bit more for Google Sheets
+        #time.sleep(0.025)  # Wait a bit more for Google Sheets
 
     cpx._led.value = False
     # Change 0.1 to whatever time you need between readings
