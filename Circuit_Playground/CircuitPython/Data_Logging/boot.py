@@ -11,4 +11,7 @@ switch.pull = digitalio.Pull.UP
 
 # If the switch pin is connected to ground CircuitPython can write to the drive
 storage.remount("/", switch.value)
-print('Stuffs')
+if (switch.value):
+    print('Storage changed')
+else:
+    print('Change the switch')
