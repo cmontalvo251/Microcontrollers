@@ -99,19 +99,20 @@ input_floor = normalized_rms(samples) + 10
 # Corresponds to sensitivity: lower means more pixels light up with lower sound
 # Adjust this as you see fit.
 input_ceiling = input_floor + (2**num_bits)/2.0
+input_ceiling = 5000
 import time
 peak = 0
 while True:
     time.sleep(1.0)
     mic.record(samples, len(samples))
     magnitude = normalized_rms(samples)
-    # You might want to print this to see the values.
-    #print((magnitude,))
-    print('Input Min Max = ',input_floor,input_ceiling)
+    # You might want to print this to see the values and plot
+    print((magnitude,))
+    #print('Input Min Max = ',input_floor,input_ceiling)
 
     # Compute scaled logarithmic reading in the range 0 to NUM_PIXELS
     constrained_value = constrain(magnitude, input_floor, input_ceiling)
-    print('Constrained_Value = ',constrained_value)
+    #print('Constrained_Value = ',constrained_value)
     c = log_scale(constrained_value,input_floor, input_ceiling, 0, NUM_PIXELS)
     #C is a number between 0 and NUM_PIXELS scaled by the min and max audio level
 
