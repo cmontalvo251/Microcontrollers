@@ -12,9 +12,10 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  volts[0] = analogRead(A0)*5./1023.; //load
+  volts[0] = 0;
+  //volts[0] = analogRead(A0)*5./1023.; //load
   volts[1] = analogRead(A1)*5./1023.; //battery
-  volts[2] = analogRead(A2)*5./1023.; //solar
+  volts[2] = 2*analogRead(A2)*5./1023.; //solar - multiply by 2 since you're using the voltage divider
   volts[3] = millis()/1000.0; //time
 
   if (false)  {
