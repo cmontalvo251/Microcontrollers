@@ -1,5 +1,5 @@
 // Test code for Adafruit GPS modules using MTK3329/MTK3339 driver
-//
+// /
 // This code shows how to listen to the GPS module in an interrupt
 // which allows the program to have more 'freedom' - just parse
 // when a new NMEA sentence is available! Then access data when
