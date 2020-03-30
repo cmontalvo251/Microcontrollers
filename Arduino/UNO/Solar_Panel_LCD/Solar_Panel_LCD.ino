@@ -10,8 +10,8 @@ void setup() {
 
 void loop() {
   //Read the solar panel voltage and the battery voltage
-  float solar_voltage = 2*analogRead(A2)*5/1023.; //multiply by 2 since I've intalled a voltage divider
-  float battery_voltage = analogRead(A1)*5/1023;
+  float solar_voltage = 2.0*analogRead(A2)*5.0/1023.0; //multiply by 2 since I've intalled a voltage divider
+  float battery_voltage = 1.0*analogRead(A1)*5.0/1023.0;
   // set the cursor to column 0, line 1
   // (note: line 1 is the second row, since counting begins with 0):
   int column = 0;
