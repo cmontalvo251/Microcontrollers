@@ -84,6 +84,10 @@ pixels.show()
 
 mic = audiobusio.PDMIn(board.MICROPHONE_CLOCK, board.MICROPHONE_DATA,sample_rate=16000, bit_depth=num_bits)
 
+##Aliasing happens at 2*times the frequency
+##3000*2 = 6000 Hz or more
+#Sampling at 16000 Hz
+
 # Record an initial sample to calibrate. Assume it's quiet when we start.
 samples = array.array('H', [0] * NUM_SAMPLES) #8 bit must be in ByteArray format or B, 16 bit must be in Hexadecimal, only 8 or 16 bit sampling is supported
 mic.record(samples, len(samples))
