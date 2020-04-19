@@ -34,7 +34,7 @@ palette[3] = WHITE
 tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
 
 # Create a Group
-group = displayio.Group(max_size=8)
+group = displayio.Group(max_size=15)
 
 # Add the TileGrid to the Group
 group.append(tile_grid)
@@ -68,7 +68,7 @@ for i in range(1,10,4):
     group.append(light_texts[-1])
 
 ###Make a grid now
-time_range_hrs = 12.0
+time_range_hrs = 8
 time_next = 0
 time_sleep = time_range_hrs*60*60/display.width
 time_range_text = label.Label(terminalio.FONT,text="R = " + str(time_range_hrs)+" h "+"S = "+str(int(time_sleep))+" s",color=WHITE)
@@ -77,17 +77,22 @@ time_range_text.y = int(0.1*display.height)
 group.append(time_range_text)
 print("Sleep Range = ",time_sleep)
 
+#Setup light and temperature
+i2c_bus = busio.I2C(board.SCL, board.SDA)
+adt = adafruit_adt7410.ADT7410(i2c_bus, address=0x48)
+adt.high_resolution = True
+adc = AnalogIn(board.LIGHT)
+
+##Current Temperature and light value
+current_vals = label.Label(terminalio.FONT,text="L: "+str(adc.value)+" T: "+str(adt.temperature),color=WHITE)
+current_vals.x = int(0.1*display.width)
+current_vals.y = int(0.2*display.height)
+group.append(current_vals)
 # Add the Group to the Display
 display.show(group)
 
 #Line Height
 line_height = 5
-
-#
-i2c_bus = busio.I2C(board.SCL, board.SDA)
-adt = adafruit_adt7410.ADT7410(i2c_bus, address=0x48)
-adt.high_resolution = True
-adc = AnalogIn(board.LIGHT)
 
 ctr = display.width-1
 yball = 0
@@ -106,6 +111,12 @@ while 1:
         ypixel_temp = display.height - ypixel_temp
         ypixel_light = display.height - ypixel_light
         print(temperature_farenheit,light,lightstep,tempstep,ypixel_temp,ypixel_light)
+        #Update the text
+        group.pop()
+        current_vals = label.Label(terminalio.FONT,text="L: "+str(light)+" T: "+str(int(temperature_farenheit)),color=WHITE)
+        current_vals.x = int(0.1*display.width)
+        current_vals.y = int(0.2*display.height)
+        group.append(current_vals)
         #Clear bitmap
         #Draw a pixel to indicate what column you are on
         bitmap[ctr,0] = 0
@@ -122,9 +133,11 @@ while 1:
                     bitmap[x,y] = 2
                 elif x == ctr and abs(y-ypixel_light) < line_height:
                     bitmap[x,y] = 1
-        bitmap[ctr,3] = 3
-        bitmap[ctr,4] = 3
-        bitmap[ctr,5] = 3
+                elif x == ctr:
+                    bitmap[x,y] = 0
+        bitmap[ctr,0] = 3
+        bitmap[ctr,1] = 3
+        bitmap[ctr,2] = 3
     ##Draw a ball dropping on the right side of the screen
     xball = int(0.9*display.width)
     bitmap[xball,yball] = 0
