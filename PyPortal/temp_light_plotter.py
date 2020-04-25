@@ -42,11 +42,16 @@ group.append(tile_grid)
 #Light step
 lightmax = 65536.
 lightstep = lightmax/display.height
-tempmax = 150.
-tempstep = (tempmax-0.)/display.height
+#Summer
+tempmax = 105.
+tempmin = 50.
+#Winter
+#tempmax = 75.
+#tempmin = 25.
+tempslope = display.height/(tempmin-tempmax)
 
-def createText(level,maxval,x,incolor):
-    val = int(level*maxval)
+def createText(level,maxval,minval,x,incolor):
+    val = int(level*(maxval-minval)+minval)
     textobj = label.Label(terminalio.FONT,text=str(val),color=incolor)
     textobj.x = int(x*display.width)
     textobj.y = int((1-level)*display.height)
@@ -57,18 +62,18 @@ tempx = 0.8
 temp_texts = []
 for i in range(1,10,4):
     print(i/10.)
-    temp_texts.append(createText(i/10.,tempmax,tempx,TEMPCOLOR))
+    temp_texts.append(createText(i/10.,tempmax,tempmin,tempx,TEMPCOLOR))
     group.append(temp_texts[-1])
 
 lightx = 0.7
 light_texts = []
 for i in range(1,10,4):
     print(i/10.)
-    light_texts.append(createText(i/10.,lightmax,lightx,LIGHTCOLOR))
+    light_texts.append(createText(i/10.,lightmax,0,lightx,LIGHTCOLOR))
     group.append(light_texts[-1])
 
 ###Make a grid now
-time_range_hrs = 8
+time_range_hrs = 8.0
 time_next = 0
 time_sleep = time_range_hrs*60*60/display.width
 time_range_text = label.Label(terminalio.FONT,text="R = " + str(time_range_hrs)+" h "+"S = "+str(int(time_sleep))+" s",color=WHITE)
@@ -105,12 +110,11 @@ while 1:
         light = adc.value
         temperature_celsius = adt.temperature
         temperature_farenheit = temperature_celsius*9.0/5.0 + 32.0 - (15.0) #Subsract bias (you need to wait for it to heat up tho)
-        ypixel_temp = int(temperature_farenheit/tempstep)
+        ypixel_temp = int((temperature_farenheit-tempmin)*tempslope+display.height)
         ypixel_light = int(light/lightstep)
         ##Flip the axes
-        ypixel_temp = display.height - ypixel_temp
         ypixel_light = display.height - ypixel_light
-        print(temperature_farenheit,light,lightstep,tempstep,ypixel_temp,ypixel_light)
+        print(temperature_farenheit,light,lightstep,tempslope,ypixel_temp,ypixel_light)
         #Update the text
         group.pop()
         current_vals = label.Label(terminalio.FONT,text="L: "+str(light)+" T: "+str(int(temperature_farenheit)),color=WHITE)
