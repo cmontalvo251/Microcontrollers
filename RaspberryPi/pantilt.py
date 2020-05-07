@@ -1,3 +1,7 @@
+###ORIGINALLY SUBMITTED BY MR. POPE IN SPRING OF 2020#####
+###I DO NOT CLAIM OWNERSHIP OF THIS SOFTWARE AND ALL RIGHTS ARE
+##RESERVED FOR MR. POPE SPG 2020#############3
+
 #importing required libraries
 import curses
 import os
