@@ -12,9 +12,10 @@ led.value = True
 
 while True:
     print('Button value is ',buttonA.value)
+    led.value = False
     if buttonA.value == True:
         print('Button Value is ',buttonA.value)
-        led.value = not led.value
+        led.value = True
         while buttonA.value == True:
             print('Waiting for you to let go....')
             # Wait for all buttons to be released.
