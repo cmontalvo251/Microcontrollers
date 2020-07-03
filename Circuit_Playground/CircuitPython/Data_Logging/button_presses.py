@@ -7,5 +7,5 @@ buttonA.direction = digitalio.Direction.INPUT
 buttonA.pull = digitalio.Pull.DOWN
 
 while True:
-    print(int(buttonA.value))
+    print(time.monotonic(),int(buttonA.value))
     time.sleep(0.1)
