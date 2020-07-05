@@ -5,5 +5,5 @@ import analogio
 analog = analogio.AnalogIn(board.A2)
 
 while True:
-    print((analog.value,))
+    print(time.monotonic(),analog.value)
     time.sleep(0.05)
