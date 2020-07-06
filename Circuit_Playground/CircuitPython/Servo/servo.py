@@ -12,13 +12,8 @@ def servo_duty_cycle(pulse_ms, frequency=50):
     return duty_cycle
 
 # Main loop will run forever moving between 1.0 and 2.0 mS long pulses:
-duty = 1.0
 while True:
-    duty = 0.8
-    print('Duty Cycle = ',duty)
-    servo.duty_cycle = servo_duty_cycle(duty)
-    time.sleep(1.0)
-    duty = 2.0
-    print('Duty Cycle = ',duty)
-    servo.duty_cycle = servo_duty_cycle(duty)
-    time.sleep(1.0)
+    for pulse_ms in [0.8,2.0]:
+        print('Milli Second Pulse = ',pulse_ms)
+        servo.duty_cycle = servo_duty_cycle(pulse_ms)
+        time.sleep(1.0)
