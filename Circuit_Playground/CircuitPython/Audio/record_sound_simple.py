@@ -40,10 +40,7 @@ def mean(values):
     return sum(values) / len(values)
 
 mic = audiobusio.PDMIn(board.MICROPHONE_CLOCK, board.MICROPHONE_DATA,sample_rate=16000, bit_depth=num_bits)
-# Record an initial sample to calibrate. Assume it's quiet when we start.
-samples = array.array('H', [0] * NUM_SAMPLES) #8 bit must be in ByteArray format or B, 16 bit must be in Hexadecimal, only 8 or 16 bit sampling is supported
-mic.record(samples, len(samples))
-input_floor = 50
+samples = array.array('H', [0] * NUM_SAMPLES)
 
 while True:
     time.sleep(0.01)
