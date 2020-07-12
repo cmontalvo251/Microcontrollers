@@ -73,10 +73,12 @@ while True:
     val = abs(x) + abs(y) + abs(z)
     delta = abs(9.81 - val)
     print((delta,))
-    if delta > 25.0:
+    if delta > 15.0:
         PLAY_SOUND(clash[ctr])
         ctr+=1
         if ctr > len(clash)-1:
             ctr = 0
+    elif delta > 10.0:
+        PLAY_SOUND('Hum4_audacity.wav')
 
     time.sleep(0.1)
