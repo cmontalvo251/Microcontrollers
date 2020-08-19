@@ -42,16 +42,17 @@ void user_input() {
     Serial.print("Number Received = ");
     int outnumber = int(input_string.toFloat());
     Serial.println(outnumber);
+  }
 }
 
 void loop() {
 
   //Check for a user input
-  user_input;
+  user_input();
 
   //If ok to send. send to child
   if (!oktosend) {
-    if (Serial1.available() {
+    if (Serial1.available()) {
       Serial.println("Child has responded");
       char input = Serial1.read();
       if (input == '\n') {
