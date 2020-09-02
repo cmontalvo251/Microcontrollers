@@ -1,5 +1,5 @@
 
-#define NUM_CHARS 6
+#define NUM_CHARS 4
 
 char input_chars[NUM_CHARS];
 boolean oktosend = true;
@@ -18,7 +18,6 @@ void clearDigits() {
   Serial.println("Digits Cleared");
 }
 
-//Serial.println("Before Print Chars");
 
 void printchars() {
   for (int id = 0; id < NUM_CHARS; id++) {
@@ -26,8 +25,6 @@ void printchars() {
   }
   Serial.println("Chars Printed");
 }
-
-//Serial.println("Before User Input");
 
 void user_input() {  
   if (Serial.available() > 0) {
@@ -37,7 +34,7 @@ void user_input() {
     Serial.println("Clearing Digits");
 
     int ctr = 0;
-    delay(1000);
+    delay(100);
     while (Serial.available()) {
       input_chars[ctr] = Serial.read();
       Serial.print(input_chars[ctr]);

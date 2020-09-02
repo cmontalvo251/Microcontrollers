@@ -1,18 +1,19 @@
 #define TX 18
 #define RX 19
 
-#define NUM_DIGITS 5
+#define NUM_DIGITS 3
 
-int led = 9;           // the PWM pin the LED is attached to
+#include <Servo.h>
+
+int servoPin = 7;          // the PWM pin the LED is attached to
 int place = pow(10,NUM_DIGITS-1);
-int brightness = 0;    // how bright the LED is
-int fadeAmount = 5;    // how many points to fade the LED by
+int angle = 0;
+
+Servo myservo;
 
 void setup() {
 
-  //Here we initialize the LED
-  pinMode(led, OUTPUT);
-  analogWrite(led,brightness);
+  myservo.attach(servoPin);
   
   Serial.begin(9600); //Talking to the computer
   Serial1.begin(115200); //receiving from another computer
@@ -23,10 +24,17 @@ void setup() {
 }
 
 void loop() {
+
+  //Debug
+  //angle+=20;
+  //if (angle>180){angle=0;}
+  //myservo.write(angle);
+  //delay(1000);
+
+  //while (false) {
   while (Serial1.available() > 0) {
     //Grab 1 digit at a time
     char input = Serial1.read();
-    
     Serial.print("Input = ");
     Serial.print(input);
     
@@ -36,13 +44,10 @@ void loop() {
       place = pow(10,NUM_DIGITS-1);
       
       //Clear LED
-      analogWrite(led,0);
+      myservo.write(angle);
       
-      //Turn on led with the brightness that was read
-      analogWrite(led,brightness);
-      
-      //Reset brightness
-      brightness = 0;
+      //Reset angle
+      angle = 0;
 
       Serial1.write('\n');
     } else {
@@ -53,10 +58,10 @@ void loop() {
       Serial.print(digit);
       Serial.print(" ");
       
-      brightness += digit*place;
+      angle += digit*place;
       
       Serial.print(" Number = ");
-      Serial.print(brightness);
+      Serial.print(angle);
       Serial.print(" ");
       Serial.print(" Place = ");
       Serial.print(place);
