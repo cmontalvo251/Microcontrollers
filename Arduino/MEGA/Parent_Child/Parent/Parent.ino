@@ -4,10 +4,34 @@
 char input_chars[NUM_CHARS];
 boolean oktosend = true;
 
+#define onlyTrigPin 9
+#define onlyEchoPin 8
+
+void SetupPin(int TrigPin,int EchoPin) {
+ pinMode(TrigPin,OUTPUT);
+ pinMode(EchoPin,INPUT); 
+}
+
+long Distance(int TrigPin,int EchoPin) {
+  long duration; 
+  digitalWrite(TrigPin,LOW);
+  delayMicroseconds(2); 
+  digitalWrite(TrigPin,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TrigPin,LOW);
+  duration = pulseIn(EchoPin,HIGH);
+  long cm = (duration/2.0)/29.1;  
+  if (cm > 180) {
+    cm = 180;
+  }
+  return cm;
+}  
+
 void setup() {
   Serial.begin(9600);
   Serial1.begin(115200); //sending to child
   clearDigits();
+  SetupPin(onlyTrigPin,onlyEchoPin);
   Serial.println("Setup complete");
 }
 
@@ -58,7 +82,9 @@ void user_input() {
 
 void loop() {
   //Check for a user input
-  user_input();
+  //user_input();
+  long cm = Distance(onlyTrigPin,onlyEchoPin);
+  Serial.println(cm);
   //Serial.println("User Input Working"); //User Input Working
   //If ok to send. send to child
   if (!oktosend) {
