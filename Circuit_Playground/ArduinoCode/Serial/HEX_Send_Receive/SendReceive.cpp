@@ -9,9 +9,11 @@
 #include "HardwareSerial.h"
 #include "Arduino.h"
 
-#include "I2Csensors.h"
-#include "ADCS_Algo.h"
-
+//This is needed to convert from floats to longs
+union inparser {
+  long inversion;
+  float floatversion;
+} ;
 
 // Declared these global so they can be "spied on" during debug
 #define MAXLINE	60
@@ -32,7 +34,7 @@ void DoHardwareInLoop(){
 		FirstLine[i++] = inchar;
 		//PRINTF("%c",inchar);
 	} while ((inchar != '\r') && (i<MAXLINE));
-  FirstLine[i] = '\0'; //Null terminate the character
+  FirstLine[i] = '\0'; //Null terminate the string
 
 	// Format from PC: (It's looking for a \r right?)
 	// X:nnnnnnnn \r 
