@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+ROOT=../source/
+
+rm ADCS_Algo.* DoHIL.* I2Csensors.*
+for VAR in ADCS_Algo.c ADCS_Algo.h I2Csensors.h
+do
+	ln -s ${ROOT}${VAR} ${VAR}
+done
+
+mv ADCS_Algo.c ADCS_Algo.cpp
+mv DoHIL.c DoHIL.cpp
