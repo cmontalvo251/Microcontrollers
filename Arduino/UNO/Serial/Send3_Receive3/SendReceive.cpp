@@ -42,7 +42,6 @@ void SendReceiveNumber(){
   //Echo back what you received (just for debugging)
   //Serial.print(FirstLine);
 
-
   /////////////////?FIRST NUMBER/////////////////////
   //Convert Hex Digits to an integer
 	inputvar.inversion = 0;
