@@ -5,7 +5,7 @@ import adafruit_irremote
 import neopixel
 
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=1.0)
-
+ON = 0
 # Create a 'pulseio' input, to listen to infrared signals on the IR receiver
 pulsein = pulseio.PulseIn(board.IR_RX, maxlen=120, idle_state=True)
 # Create a decoder that will take pulses and turn them into numbers
@@ -25,12 +25,18 @@ while True:
         print("Failed to decode: ", e.args)
         continue
 
-    print(pulses)
-    #print("Infrared code received: ", received_code)
+    #print(pulses)
+    print("Infrared code received: ", received_code)
+
     #if received_code[2] == 247:
     #    print("Channel Down")
-    #    pixels.fill((255,0,0))
+    if ON:
+        pixels.fill((0,0,0))
+        ON = 0
+    else:
+        ON = 1
+        pixels.fill((255,0,0))
     #elif received_code[2] == 183:
     #    print("Channel Up")
     #    pixels.fill((0,255,0))
-    #pixels.show()
+    pixels.show()
