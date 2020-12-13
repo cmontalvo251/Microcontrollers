@@ -19,5 +19,7 @@ lis3dh.range = adafruit_lis3dh.RANGE_8_G
 while True:
     x,y,z = lis3dh.acceleration
     xe,ye,ze = sensor_ext.acceleration
-    print((x,xe,y,ye,z,ze))
+    gx,gy,gz = sensor_ext.gyro
+    #print((x,xe,y,ye,z,ze))
+    print((gx,gy,gz))
     time.sleep(0.1)
