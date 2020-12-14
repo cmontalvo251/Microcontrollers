@@ -17,8 +17,8 @@ lis3dh = adafruit_lis3dh.LIS3DH_I2C(i2c, address=0x19, int1=_int1)
 lis3dh.range = adafruit_lis3dh.RANGE_8_G
 
 while True:
-    x,y,z = lis3dh.acceleration
-    xe,ye,ze = sensor_ext.acceleration
+    #x,y,z = lis3dh.acceleration
+    #xe,ye,ze = sensor_ext.acceleration
     gx,gy,gz = sensor_ext.gyro
     #print((x,xe,y,ye,z,ze))
     print((gx,gy,gz))
