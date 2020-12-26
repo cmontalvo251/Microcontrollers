@@ -113,16 +113,7 @@ def get_random_color():
 def update_text():
     global temp
 
-    #Get Temperature
-    print("Fetching json from", DATA_SOURCE)
-    response = requests.get(DATA_SOURCE)
-    print(response.json())
-    print(response.json()["main"]["temp"])
-    temp = round(response.json()["main"]["temp"])
-    print("Received Temperature = ",temp)
-
     ##Get internet time
-    magtag.network.get_local_time()
     now = time.localtime()  # Get the time values we need
 
     #Extract Relevant Information
@@ -169,16 +160,19 @@ magtag.set_background(0xFFFFFF)
 
 ##Create a Timer
 pixel_timer = 0.0
+network_timer = 0.0
 screen_timer = 0.0
 
 #Update settings
 update_pixels = 1.0
+update_network = 3600.0
 update_minutes = 1.0
 update_screen = update_minutes*60.0 ##minutes to seconds
 
 while True:
     #Get current time
     current_time = time.monotonic()
+    print("Current Time = ",current_time," Next screen update = ",screen_timer," Next network update = ",network_timer)
 
     ##Get current button presses
     for i, b in enumerate(magtag.peripherals.buttons):
@@ -190,7 +184,6 @@ while True:
 
     ##Check to see if it's time to update the Pixels
     if current_time - pixel_timer > update_pixels:
-        print("updating pixels")
         pixel_timer = current_time + update_pixels
         #on board pixels first
         for x in range(0,4):
@@ -200,6 +193,21 @@ while True:
         for x in range(0,NUM_PIXELS):
             light_strip[x] = get_random_color()
 
+    if current_time - network_timer > update_network or network_timer == 0:
+        #Get Temperature and time
+        try:
+            print("Updating Time")
+            magtag.network.get_local_time()
+            print("Fetching json from", DATA_SOURCE)
+            response = requests.get(DATA_SOURCE)
+            print(response.json())
+            print(response.json()["main"]["temp"])
+            temp = round(response.json()["main"]["temp"])
+            print("Received Temperature = ",temp)
+            network_timer = current_time + update_network
+        except RunTimeError:
+            print("Could not update values from internet")
+
     ##Now check to see if we should update the screen
     if current_time - screen_timer > update_screen or screen_timer == 0:
         print("updating screen")
@@ -207,4 +215,4 @@ while True:
         update_text()
 
     ##Slow things down for a moment
-    time.sleep(0.1)
+    time.sleep(0.5)
