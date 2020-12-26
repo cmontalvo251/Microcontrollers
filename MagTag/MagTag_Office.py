@@ -7,7 +7,6 @@ import ssl
 import wifi
 import socketpool
 import adafruit_requests
-#import audioio
 import board
 from adafruit_magtag.magtag import MagTag
 
@@ -124,13 +123,16 @@ def update_text():
     minutes = now[4]
 
     ##Determine if we are AM or PM
-    if hours > 12:
-        hours-=12
-        ampm = 'PM'
+    if hours == 12:
+        ampm = 'PM' #this is noon
     else:
-        ampm = 'AM'
-        if hours == 0: ##This is midnight
-            hours = 12
+        if hours > 12:
+            hours-=12
+            ampm = 'PM'
+        else:
+            ampm = 'AM'
+    if hours == 0: ##This is midnight
+        hours = 12
 
     ###Determine whether or not to blink the code
     colon = ":"
@@ -205,7 +207,7 @@ while True:
             temp = round(response.json()["main"]["temp"])
             print("Received Temperature = ",temp)
             network_timer = current_time + update_network
-        except RunTimeError:
+        except:
             print("Could not update values from internet")
 
     ##Now check to see if we should update the screen
