@@ -76,6 +76,7 @@ update_screen = update_minutes*60.0 ##minutes to seconds
 #print("Received Temperature = ",temp)
 
 def Network_Update(current_time,update_network,temp):
+    light_strip.fill(0xFFFF000)
     try:
         print("Updating Time")
         magtag.network.get_local_time()
@@ -199,7 +200,8 @@ while True:
                 #play_fun_song()
             if i == 1:
                 print("Button 1 Pressed")
-                light_strip.fill(0xFFF000)
+                light_strip.fill(0x00FF00)
+                time.sleep(2.0)
                 network_timer,temp = Network_Update(current_time,update_network,temp)
 
     ##Check to see if it's time to update the Pixels
