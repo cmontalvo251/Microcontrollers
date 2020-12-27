@@ -55,6 +55,17 @@ DATA_SOURCE = ("http://api.openweathermap.org/data/2.5/weather?q=" + LOCATION + 
 DATA_SOURCE += "&appid=" + secrets["openweather_token"]
 temp = 0.0
 
+##Create a Timer
+pixel_timer = 0.0
+network_timer = 0.0
+screen_timer = 0.0
+
+#Update settings
+update_pixels = 1.0
+update_network = 3600.0
+update_minutes = 1.0
+update_screen = update_minutes*60.0 ##minutes to seconds
+
 #Test Weather
 #print("Fetching json from", DATA_SOURCE)
 #response = requests.get(DATA_SOURCE)
@@ -64,19 +75,20 @@ temp = 0.0
 #temp = response.json()["main"]["temp"]
 #print("Received Temperature = ",temp)
 
-# main text, index 0
-magtag.add_text(
-    #text_font = "Arial-18.bdf",
-    text_font = terminalio.FONT,
-    text_position=(
-        magtag.graphics.display.width // 2,
-        10,
-    ),
-    text_scale = 4.0,
-    line_spacing=1,
-    text_anchor_point=(0.5, 0),
-)
-
+def Network_Update(current_time,update_network,temp):
+    try:
+        print("Updating Time")
+        magtag.network.get_local_time()
+        print("Fetching json from", DATA_SOURCE)
+        response = requests.get(DATA_SOURCE)
+        print(response.json())
+        print(response.json()["main"]["temp"])
+        temp = round(response.json()["main"]["temp"])
+        print("Received Temperature = ",temp)
+        network_timer = current_time + update_network
+    except:
+        print("Could not update values from internet")
+    return network_timer,temp
 
 def Get_Sound():
     print("Importing Sound")
@@ -160,16 +172,18 @@ def update_text():
 #Set background to white
 magtag.set_background(0xFFFFFF)
 
-##Create a Timer
-pixel_timer = 0.0
-network_timer = 0.0
-screen_timer = 0.0
-
-#Update settings
-update_pixels = 1.0
-update_network = 3600.0
-update_minutes = 1.0
-update_screen = update_minutes*60.0 ##minutes to seconds
+# main text, index 0
+magtag.add_text(
+    #text_font = "Arial-18.bdf",
+    text_font = terminalio.FONT,
+    text_position=(
+        magtag.graphics.display.width // 2,
+        10,
+    ),
+    text_scale = 4.0,
+    line_spacing=1,
+    text_anchor_point=(0.5, 0),
+)
 
 while True:
     #Get current time
@@ -183,6 +197,10 @@ while True:
                 print("Button 0 Pressed")
                 PLAY_DEMO_SONG()
                 #play_fun_song()
+            if i == 1:
+                print("Button 1 Pressed")
+                light_strip.fill(0xFFF000)
+                network_timer,temp = Network_Update(current_time,update_network,temp)
 
     ##Check to see if it's time to update the Pixels
     if current_time - pixel_timer > update_pixels:
@@ -197,18 +215,7 @@ while True:
 
     if current_time - network_timer > update_network or network_timer == 0:
         #Get Temperature and time
-        try:
-            print("Updating Time")
-            magtag.network.get_local_time()
-            print("Fetching json from", DATA_SOURCE)
-            response = requests.get(DATA_SOURCE)
-            print(response.json())
-            print(response.json()["main"]["temp"])
-            temp = round(response.json()["main"]["temp"])
-            print("Received Temperature = ",temp)
-            network_timer = current_time + update_network
-        except:
-            print("Could not update values from internet")
+        network_timer,temp = Network_Update(current_time,update_network,temp)
 
     ##Now check to see if we should update the screen
     if current_time - screen_timer > update_screen or screen_timer == 0:
