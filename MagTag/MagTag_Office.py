@@ -97,9 +97,9 @@ def PLAY_DEMO_SONG():
         magtag.peripherals.play_tone(notepair[0], notepair[1] * 0.2)
 
 def get_random_color():
-    r = random.randint(0,255)
-    g = random.randint(0,255)
-    b = random.randint(0,255)
+    r = random.randint(1,255)
+    g = random.randint(1,255)
+    b = random.randint(1,255)
     norm = (r*r + g*g + b*b)**(0.5)
     #print(r/norm,g/norm,b/norm,norm)
     brightness = 255
