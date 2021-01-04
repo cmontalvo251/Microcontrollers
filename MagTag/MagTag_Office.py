@@ -75,7 +75,7 @@ update_screen = update_minutes*60.0 ##minutes to seconds
 #temp = response.json()["main"]["temp"]
 #print("Received Temperature = ",temp)
 
-def Network_Update(current_time,update_network,temp):
+def Network_Update(current_time_in,update_network_in,temp_in):
     light_strip.fill(0xFFFF000)
     try:
         print("Updating Time")
@@ -84,12 +84,16 @@ def Network_Update(current_time,update_network,temp):
         response = requests.get(DATA_SOURCE)
         print(response.json())
         print(response.json()["main"]["temp"])
-        temp = round(response.json()["main"]["temp"])
+        temp_out = round(response.json()["main"]["temp"])
         print("Received Temperature = ",temp)
         network_timer = current_time + update_network
     except:
-        print("Could not update values from internet")
-    return network_timer,temp
+        print("Could not update values from internet.")
+        print("Using old value for temp")
+        temp_out = temp_in
+        print("Going to try again in 1 minute")
+        network_timer = current_time + 60.0
+    return network_timer,temp_out
 
 def Get_Sound():
     print("Importing Sound")
