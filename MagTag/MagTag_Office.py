@@ -113,6 +113,20 @@ def PLAY_DEMO_SONG():
     for notepair in song:
         magtag.peripherals.play_tone(notepair[0], notepair[1] * 0.2)
 
+def set_color(idx,color,who):
+    if LIGHTS == False:
+        light_strip.fill(0x000000)
+        magtag.peripherals.neopixels.fill(0x00000)
+        return
+    if idx == -1:
+        light_strip.fill(0x00FF00)
+    else:
+        if who == 0:
+            magtag.peripherals.neopixels[idx] = color
+        else:
+            light_strip[idx] = color
+
+
 def get_random_color():
     r = random.randint(1,255)
     g = random.randint(1,255)
@@ -190,6 +204,8 @@ magtag.add_text(
     text_anchor_point=(0.5, 0),
 )
 
+LIGHTS = True
+
 while True:
     #Get current time
     current_time = time.monotonic()
@@ -204,20 +220,25 @@ while True:
                 #play_fun_song()
             if i == 1:
                 print("Button 1 Pressed")
-                light_strip.fill(0x00FF00)
+                set_color(-1,0x00FF00,0)
                 time.sleep(2.0)
                 network_timer,temp = Network_Update(current_time,update_network,temp)
+            if i == 2:
+                print("Button 2 Pressed")
+                LIGHTS = not LIGHTS
+                print("LIGHTS = ",LIGHTS)
+                time.sleep(1.0)
 
     ##Check to see if it's time to update the Pixels
     if current_time - pixel_timer > update_pixels:
         pixel_timer = current_time + update_pixels
         #on board pixels first
         for x in range(0,4):
-            magtag.peripherals.neopixels[x] = get_random_color()
+            set_color(x,get_random_color(),0)
 
         #Then led strip
         for x in range(0,NUM_PIXELS):
-            light_strip[x] = get_random_color()
+            set_color(x,get_random_color(),1)
 
     if current_time - network_timer > update_network or network_timer == 0:
         #Get Temperature and time
