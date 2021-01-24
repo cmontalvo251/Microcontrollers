@@ -5,6 +5,7 @@ import board
 import displayio
 import terminalio
 import digitalio
+import sys
 from adafruit_display_text.label import Label
 from adafruit_bitmap_font import bitmap_font
 from adafruit_matrixportal.network import Network
@@ -58,7 +59,7 @@ font = terminalio.FONT
 clock_label = Label(font, max_glyphs=20)
 
 ##Network Update Function
-def Network_Update(current_time_in,temp_in):
+def Network_Update(current_time_in,temp_in,last_update_success_in):
     print('Trying to update clock and weather from Internet')
     try:
         print('Updating Time')
@@ -73,16 +74,19 @@ def Network_Update(current_time_in,temp_in):
         if temp_new > 0:
             temp_out = temp_new
             last_check = time.monotonic()
+            last_update_success_out = last_check
         else:
             temp_out = temp_in
             last_check = -RESETINTERVAL #To force an update
+            last_update_success_out = last_update_success_in
     except:
         print("Could not update values from internet.")
         print("Using old value for temp")
         temp_out = temp_in
-        print("Going to try again in 1 minute")
-        last_check = current_time_in + 60.0 - RESETINTERVAL
-    return last_check,temp_out
+        print("Going to try again at the next interval")
+        last_check = time.monotonic()
+        last_update_success_out = last_update_success_in
+    return last_check,temp_out,last_update_success_out
 
 def update_time(*,temp_in=0,hours=None, minutes=None, show_colon=False):
     now = time.localtime()  # Get the time values we need
@@ -160,6 +164,7 @@ RESETINTERVAL = 30.0*minutes2seconds #How often do you want the system to check 
 COLORTEXT = 1
 COLORBACKGROUND = 0
 last_check = -RESETINTERVAL
+last_update_success = 0.0
 
 while True:
     #################THIS IS WHERE WE CHECK FOR BUTTON PRESSES#############
@@ -189,11 +194,11 @@ while True:
     ########################NOTIFY USER OF PROGRESS########################
     current_time = time.monotonic()
     next_check = last_check+RESETINTERVAL
-    print("Current Time = ",current_time," Next network update = ",next_check)
+    print("Current Time = ",current_time," Next network update = ",next_check," Last Successful Update = ",last_update_success)
 
     ##########################CHECK FOR NETWORK UPDATE##########################
     if last_check is None or current_time > next_check:
-        last_check,temp = Network_Update(current_time,temp)
+        last_check,temp,last_update_success = Network_Update(current_time,temp,last_update_success)
 
     ###########################UPDATE CLOCK TEXT######################
     update_time(temp_in=temp)
