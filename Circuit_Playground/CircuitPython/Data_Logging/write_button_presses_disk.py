@@ -15,7 +15,7 @@ led.direction = digitalio.Direction.OUTPUT
 led.value = True
 
 if switch.value == False:
-    file = open('Test_Data.txt','w')
+    file = open('Method3.txt','w')
 else:
     print('Not opening file for writing')
 
