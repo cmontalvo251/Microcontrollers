@@ -7,15 +7,17 @@
 import time
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keycode import Keycode
+#https://learn.adafruit.com/circuitpython-essentials/circuitpython-hid-keyboard-and-mouse
+import usb_hid
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
 from adafruit_circuitplayground.express import cpx
 
-print(dir(cpx))
+#print(dir(cpx)) - Not supported in 6.1.0
 
 # Set the keyboard object!
 # Sleep for a bit to avoid a race condition on some systems
 time.sleep(1)
-kbd = Keyboard()
+kbd = Keyboard(usb_hid.devices)
 layout = KeyboardLayoutUS(kbd)  # US is only current option...
 
 print("Time\tLight\tTemperature\tX\tY\tZ")  # Print column headers

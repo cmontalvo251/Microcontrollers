@@ -5,6 +5,7 @@ import board
 import displayio
 import terminalio
 import digitalio
+import sys
 from adafruit_display_text.label import Label
 from adafruit_bitmap_font import bitmap_font
 from adafruit_matrixportal.network import Network
@@ -57,8 +58,37 @@ font = terminalio.FONT
 ##Create the Label
 clock_label = Label(font, max_glyphs=20)
 
-def update_time(*, hours=None, minutes=None, show_colon=False):
-    global temp
+##Network Update Function
+def Network_Update(current_time_in,temp_in,last_update_success_in):
+    print('Trying to update clock and weather from Internet')
+    try:
+        print('Updating Time')
+        update_time(show_colon=True)  # Make sure a colon is displayed while updating
+        print('Getting Time from Network')
+        network.get_local_time()  # Synchronize Board's clock to Internet
+        print('Getting Weather')
+        value = network.fetch_data(DATA_SOURCE, json_path=(DATA_LOCATION,))
+        temp_new = round(value['main']['temp'])
+        print(value)
+        print('Temperature = ',temp_new)
+        if temp_new > 0:
+            temp_out = temp_new
+            last_check = time.monotonic()
+            last_update_success_out = last_check
+        else:
+            temp_out = temp_in
+            last_check = -RESETINTERVAL #To force an update
+            last_update_success_out = last_update_success_in
+    except:
+        print("Could not update values from internet.")
+        print("Using old value for temp")
+        temp_out = temp_in
+        print("Going to try again at the next interval")
+        last_check = time.monotonic()
+        last_update_success_out = last_update_success_in
+    return last_check,temp_out,last_update_success_out
+
+def update_time(*,temp_in=0,hours=None, minutes=None, show_colon=False):
     now = time.localtime()  # Get the time values we need
 
     #Extract Relevant Information
@@ -101,13 +131,13 @@ def update_time(*, hours=None, minutes=None, show_colon=False):
         day_str='0'+day_str
 
     ###Print to home for debugging
-    print('{}{}{}{}{}{} {}/{}/{} {}F'.format(hours_str,colon,minutes_str,colon,seconds_str,ampm,month_str,day_str,year,temp))
+    print('{}{}{}{}{}{} {}/{}/{} {}F'.format(hours_str,colon,minutes_str,colon,seconds_str,ampm,month_str,day_str,year,temp_in))
 
     ###Now print to the RGB Matrix
     ##This prints the year
     #clock_label.text = "{}{}{}{}{}\n{}/{}/{}".format(hours_str,colon,minutes_str,colon,seconds_str,month_str,day_str,year)
     #This prints the temperature
-    clock_label.text = "{}{}{}{}{}\n{}/{} {}F".format(hours_str,colon,minutes_str,colon,seconds_str,month_str,day_str,temp)
+    clock_label.text = "{}{}{}{}{}\n{}/{} {}F".format(hours_str,colon,minutes_str,colon,seconds_str,month_str,day_str,temp_in)
 
     ###Get the bounding box
     bbx, bby, bbwidth, bbh = clock_label.bounding_box
@@ -122,18 +152,22 @@ UNITS = 'imperial'
 DATA_SOURCE = ("http://api.openweathermap.org/data/2.5/weather?q=" + LOCATION + "&units=" + UNITS)
 DATA_SOURCE += "&appid=" + secrets["openweather_token"]
 DATA_LOCATION = []
-temp = 0
+temp = 0.0
 
-last_check = None
 update_time(show_colon=True)  # Display whatever time is on the board
 group.append(clock_label)  # add the clock label to the group
 
 ##The tutorial says to use 1 hour or 60 minutes (3600 seconds) but I think every 10 minutes
 ##Is more appropriate
-RESETINTERVAL = 10*60 #How often do you want the system to check for the time on the internet?
+minutes2seconds = 60.0
+RESETINTERVAL = 30.0*minutes2seconds #How often do you want the system to check for the time on the internet?
 COLORTEXT = 1
 COLORBACKGROUND = 0
+last_check = -RESETINTERVAL
+last_update_success = 0.0
+
 while True:
+    #################THIS IS WHERE WE CHECK FOR BUTTON PRESSES#############
     if buttonUP.value == False:
         print('Button Up Pressed')
         COLORTEXT+=1
@@ -149,29 +183,25 @@ while True:
         #if COLORBACKGROUND > 5:
         #    COLORBACKGROUND = 0
         time.sleep(1)
+    #######################################################################
 
-    ###SET THE COLOR OF THE CLOCK
+    ######################SET THE COLOR OF THE CLOCK####################
     #print(COLORTEXT,COLORBACKGROUND)
     color[0] = backcolorwheel[COLORBACKGROUND]
     clock_label.color = colorwheel[COLORTEXT] ##These colors are set above
+    ########################################################################
 
-    #print('Last Check = ',last_check,'Time = ',time.monotonic())
-    if last_check is None or time.monotonic() > last_check + RESETINTERVAL:
-        print('Trying to update clock and weather from Internet')
-        try:
-            print('Updating Time')
-            update_time(show_colon=True)  # Make sure a colon is displayed while updating
-            print('Getting Time from Network')
-            network.get_local_time()  # Synchronize Board's clock to Internet
-            print('Getting Weather')
-            value = network.fetch_data(DATA_SOURCE, json_path=(DATA_LOCATION,))
-            temp = round(value['main']['temp'])
-            print(value)
-            print('Temperature = ',temp)
-            print('Resetting Last Check')
-            last_check = time.monotonic()
-        except RuntimeError as e:
-            print("Some error occured, retrying! -", e)
+    ########################NOTIFY USER OF PROGRESS########################
+    current_time = time.monotonic()
+    next_check = last_check+RESETINTERVAL
+    print("Current Time = ",current_time," Next network update = ",next_check," Last Successful Update = ",last_update_success)
 
-    update_time()
+    ##########################CHECK FOR NETWORK UPDATE##########################
+    if last_check is None or current_time > next_check:
+        last_check,temp,last_update_success = Network_Update(current_time,temp,last_update_success)
+
+    ###########################UPDATE CLOCK TEXT######################
+    update_time(temp_in=temp)
+
+    ######################SLEEP 1 SECOND##################################3
     time.sleep(1)
