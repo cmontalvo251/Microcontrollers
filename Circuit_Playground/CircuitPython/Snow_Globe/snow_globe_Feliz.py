@@ -63,17 +63,17 @@ def Circle_Lights(color):
     for idx in range(0,10):
         pixels[idx] = color
         pixels.show()
-        time.sleep(0.1);
+        time.sleep(0.05);
         pixels.fill((0,0,0))
 
 def End_Game():
     for idx in range(0,4):
         pixels.fill((255,255,255))
         pixels.show()
-        time.sleep(0.1)
+        time.sleep(0.05)
         pixels.fill((0,0,0))
         pixels.show()
-        time.sleep(0.1)
+        time.sleep(0.05)
 
 ##Right Button Press
 def change_brightness():
