@@ -5,6 +5,7 @@
 # Time values are seconds since board powered on (relative time)
 
 import time
+import usb_hid
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keycode import Keycode
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
@@ -15,7 +16,7 @@ print(dir(cpx))
 # Set the keyboard object!
 # Sleep for a bit to avoid a race condition on some systems
 time.sleep(1)
-kbd = Keyboard()
+kbd = Keyboard(usb_hid.devices)
 layout = KeyboardLayoutUS(kbd)  # US is only current option...
 
 print("Time\tLight\tTemperature\tX\tY\tZ")  # Print column headers
