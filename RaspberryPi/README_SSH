@@ -1,0 +1,43 @@
+10/23/20: Found out how to ssh without internet via ethernet cable.
+
+
+On RPi:
+Plug in ethernet cable and power on
+Login
+$sudo raspi-config
+5 interfacing options
+P2 SSH
+Enable
+Reboot
+$hostname
+This will show you what the hostname of the pi is. For the Navio2, the default is navio. You can also see this information by logging on to the RPi and looking at the bottom left.
+$hostname -I
+This will show you the IP address from the ethernet cable.
+
+
+On Laptop running linux:
+Plug in ethernet cable (Using ethernet to usb adapter)
+Go to settings
+Go to Network
+Click the settings under USB Ethernet
+Click the IPv4 tab
+Change the IPv4 Method to “Link-Local Only”
+Click “Apply” at top right
+Open Terminal
+$hostname
+$hostname -I
+You need to make sure an IP address is now appearing with the same first 6-digits as the RPi’s IP address.
+$ssh pi@navio.local
+Type “yes”
+Enter Password
+
+On laptop running Mac OS: 
+open "network preferences"
+select your Ethernet connection on the left hand side of the box
+Check that you have “Using DHCP” selected for “Configure IPv4” option
+check that “Location” at the top of the dialog box has “Automatic” selected for your network configuration
+run 'ssh pi@navio.local' 
+Type "yes" 
+enter password
+
+

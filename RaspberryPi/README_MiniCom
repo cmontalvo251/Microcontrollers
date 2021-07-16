@@ -1,0 +1,63 @@
+Your laptop should be running linux software.
+1. Open the Terminal
+2. Download Minicom - $sudo apt-get install minicom
+3. Run Minicom - $sudo minicom
+4. Next open the menu - Ctrl-A Z
+5. Open the serial port setup - O
+6. Press the A key
+7. Change the serial device to /dev/ttyUSB0
+8. Press the enter key to return to the previous menu
+9. Press the E key
+10. Change the baud rate to 57600 8N1
+11. Press the enter key to return to the previous menu
+12. Press the F key to change the hardware flow control from yes to no
+13. Save the changes as default
+At this point, the laptop should be ready to go.
+Plug in the 3DR radio to any USB port on the laptop.
+Next, move to the RPi.
+1. Power the RPi on if not already
+2. Log in
+3. Make sure all software and git repos are up-to-date
+   $sudo apt-get update
+   $sudo apt-get upgrade
+4. Change the default serial settings on the RPi software
+   $sudo raspi-config
+   Click on 4 Interfacing Options
+   Click on Serial
+   Choose Yes for both options that pop-up
+5. Leave the RPi software settings menu (This will result in a reboot in order to allow the software to update)
+6. Enter the boot directory - $cd /boot/
+7. Change the baud rate in the cmdline boot instructions (Be very careful! If you change anything else by accident, you will break the software and will need to reflash the SD card)
+   $sudo nano cmdline.txt
+   There will be a single line with a bunch of things of boot instructions
+   Find the following: console=serial0,115200
+   The 115200 is the baud rate that needs changed
+   Change the 115200 to 57600
+8. Save this file
+9. If you haven't already, plug in the 3DR radio to the UART port on the Navio2
+10. Reboot the RPi - $sudo reboot now
+At this point, the login shell should be visible from your laptop.
+If it is not, check the 6-pin wire connecting the UART port to the 3DR radio.
+If this is not working, see the following video for troubleshooting.
+https://www.youtube.com/watch?v=bDLn9DJR_sE&t=285s
+
+IF YOU WANT TO REVERSE THIS
+
+Maxwell Cobar: 09/02/20: Found a new way to setup telemetry without having to worry about the login shell!
+
+1.) $sudo raspi-config
+2.) Click on Interfacing options
+3.) Click on Serial
+4.) Click No on login shell
+5.) Click Yes on serial port hardware
+6.) Reboot
+7.) Login
+8.) $ls -l /dev (shift-PgUp to scroll up)
+9.) Make sure serial0 is set to ttyAMA0 there will be a symbolic link for serial0 -> ttyAMA0
+10.) $sudo nano /boot/cmdline.txt
+11.) Remove the following: console=serial0,115200
+12.) Run Telemetry.py (C.git/Test_Scripts/Telemetry_Maxwell/)
+13.) If serial0 is not set to ttyAMA0, then $sudo nano /boot/config.txt
+14.) Add this to the end of the file: dtoverlay=pi3-miniuart-bt
+15.) Then reboot
+16.) Start at step 7
