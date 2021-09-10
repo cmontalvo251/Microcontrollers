@@ -4,7 +4,6 @@ import digitalio
 from adafruit_circuitplayground.express import cpx
 import os
 
-
 if cpx.switch == False:
     file = open('Method3.txt','w')
 else:
