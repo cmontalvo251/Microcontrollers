@@ -19,8 +19,6 @@ buttonDOWN = digitalio.DigitalInOut(board.BUTTON_DOWN)
 buttonDOWN.direction = digitalio.Direction.INPUT
 buttonDOWN.pull = digitalio.Pull.UP
 
-BLINK = True
-
 # Get wifi details and more from a secrets.py file
 try:
     from secrets import secrets
@@ -58,37 +56,32 @@ font = terminalio.FONT
 ##Create the Label
 clock_label = Label(font, max_glyphs=20)
 
+#Create Timer
+network_timer = 0.0
+
+##Update Settings
+update_network = 3600.0
+
 ##Network Update Function
-def Network_Update(current_time_in,temp_in,last_update_success_in):
+def Network_Update(temp_in):
     print('Trying to update clock and weather from Internet')
     try:
         print('Updating Time')
-        update_time(show_colon=True)  # Make sure a colon is displayed while updating
-        print('Getting Time from Network')
         network.get_local_time()  # Synchronize Board's clock to Internet
-        print('Getting Weather')
+        print("Fetching Json from",DATA_SOURCE)
         value = network.fetch_data(DATA_SOURCE, json_path=(DATA_LOCATION,))
-        temp_new = round(value['main']['temp'])
-        print(value)
-        print('Temperature = ',temp_new)
-        if temp_new > 0:
-            temp_out = temp_new
-            last_check = time.monotonic()
-            last_update_success_out = last_check
-        else:
-            temp_out = temp_in
-            last_check = -RESETINTERVAL #To force an update
-            last_update_success_out = last_update_success_in
+        temp_out = round(value['main']['temp'])
+        print('Received Temperature = ',temp_out)
+        network_timer = current_time + update_network
     except:
         print("Could not update values from internet.")
         print("Using old value for temp")
         temp_out = temp_in
-        print("Going to try again at the next interval")
-        last_check = time.monotonic()
-        last_update_success_out = last_update_success_in
-    return last_check,temp_out,last_update_success_out
+        print("Going to try again in 1 minute")
+        network_timer = current_time + 60.0
+    return network_timer,temp_out
 
-def update_time(*,temp_in=0,hours=None, minutes=None, show_colon=False):
+def update_text(*,temp_in=0,hours=None, minutes=None, show_colon=False):
     now = time.localtime()  # Get the time values we need
 
     #Extract Relevant Information
@@ -107,12 +100,7 @@ def update_time(*,temp_in=0,hours=None, minutes=None, show_colon=False):
         ampm = 'AM'
         if hours == 0: ##This is midnight
             hours = 12
-
-    ###Determine whether or not to blink the code
-    if BLINK:
-        colon = ":" if show_colon or now[5] % 2 else " "
-    else:
-        colon = ":"
+    colon = ":"
 
     hours_str = str(hours)
     if len(hours_str) == 1:
@@ -154,17 +142,14 @@ DATA_SOURCE += "&appid=" + secrets["openweather_token"]
 DATA_LOCATION = []
 temp = 0.0
 
-update_time(show_colon=True)  # Display whatever time is on the board
+update_text(show_colon=True)  # Display whatever time is on the board
 group.append(clock_label)  # add the clock label to the group
 
 ##The tutorial says to use 1 hour or 60 minutes (3600 seconds) but I think every 10 minutes
 ##Is more appropriate
 minutes2seconds = 60.0
-RESETINTERVAL = 30.0*minutes2seconds #How often do you want the system to check for the time on the internet?
 COLORTEXT = 1
 COLORBACKGROUND = 0
-last_check = -RESETINTERVAL
-last_update_success = 0.0
 
 while True:
     #################THIS IS WHERE WE CHECK FOR BUTTON PRESSES#############
@@ -193,15 +178,14 @@ while True:
 
     ########################NOTIFY USER OF PROGRESS########################
     current_time = time.monotonic()
-    next_check = last_check+RESETINTERVAL
-    print("Current Time = ",current_time," Next network update = ",next_check," Last Successful Update = ",last_update_success)
+    print("Current Time = ",current_time," Next network update = ",network_timer)
 
     ##########################CHECK FOR NETWORK UPDATE##########################
-    if last_check is None or current_time > next_check:
-        last_check,temp,last_update_success = Network_Update(current_time,temp,last_update_success)
+    if current_time - network_timer > update_network or network_timer == 0:
+        network_timer,temp = Network_Update(temp)
 
     ###########################UPDATE CLOCK TEXT######################
-    update_time(temp_in=temp)
+    update_text(temp_in=temp)
 
-    ######################SLEEP 1 SECOND##################################3
-    time.sleep(1)
+    ######################SLEEP##################################3
+    time.sleep(0.1)
