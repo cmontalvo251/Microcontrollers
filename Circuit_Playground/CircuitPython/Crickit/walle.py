@@ -53,7 +53,7 @@ PLAY_SONG('wall-e16bit.wav')
 ##Initialize Counter
 ctr = 0
 ##Speed of motors
-speed = 0.5*0
+speed = 0.5
 while True:
     ##Read Accelerometer
     x,y,z = lis3dh.acceleration
