@@ -46,14 +46,18 @@ def PLAY_SONG(filename):
                 pass
     return
 
-#Say hello Wall-E
+#Say he llo Wall-E
+time.sleep(10)
 print('I am Walle')
-PLAY_SONG('wall-e16bit.wav')
+SONGS = 1
+if SONGS:
+    PLAY_SONG('wall-e16bit.wav')
 
 ##Initialize Counter
 ctr = 0
 ##Speed of motors
-speed = 0.5
+speed = -1.0
+time.sleep(2)
 while True:
     ##Read Accelerometer
     x,y,z = lis3dh.acceleration
@@ -66,10 +70,11 @@ while True:
     motor_2.throttle = speed
 
     ##Check for bonk
-    if norm > 2:
+    if norm > 4:
         motor_1.throttle = 0.0
         motor_2.throttle = 0.0
-        PLAY_SONG(squeals[ctr])
+        if SONGS:
+            PLAY_SONG(squeals[ctr])
         ctr+=1
         if ctr >= len(squeals):
             ctr = 0
@@ -77,9 +82,9 @@ while True:
         motor_1.throttle = -speed
         motor_2.throttle = -speed
         time.sleep(2)
-        ##Then rotate for 0.5 seconds
+        ##Then rotate for 1.0 seconds
         motor_1.throttle = speed
         motor_2.throttle = -speed
-        time.sleep(0.5)
+        time.sleep(1.0)
     ##Sleep
     time.sleep(0.1)
