@@ -36,8 +36,8 @@ for line in file:
             if len(row) == 5:
                 time_flag = np.double(time_flag)
                 if time_flag > 14355 and time_flag < 14382:
-                    print("New Packet Detected")
-                    print(packet)
+                    #print("New Packet Detected")
+                    #print(packet)
                     if len(packet) > 1:
                         t.append(np.double(packet[2].replace('\n','')))
                         x.append(np.double(packet[3].replace('\n','')))
@@ -60,10 +60,23 @@ y = np.array(y)
 z = np.array(z)
 T = np.array(T)
 
+###IMPORT THE ONBOARD DATA
+data = np.loadtxt('CPB_Datalog_w_BLE.txt')
+tCPB = data[:,0]
+xCPB = data[:,1]
+yCPB = data[:,2]
+zCPB = data[:,3]
+TCPB = data[:,4]
+
 plt.plot(t,x,'--')
+plt.plot(tCPB,xCPB)
 plt.plot(t,y,'--')
+plt.plot(tCPB,yCPB)
 plt.plot(t,z,'--')
+plt.plot(tCPB,zCPB)
 plt.figure()
 plt.plot(t,T,'--')
+plt.plot(tCPB,TCPB)
 plt.show()
     
+
