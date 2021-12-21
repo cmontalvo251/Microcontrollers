@@ -4,9 +4,6 @@ import matplotlib.pyplot as plt
 #Opening the File
 file = open('Timestamp_Mode_w_Datalog.txt')
 
-first_row = None
-second_row = None
-
 t = []
 x = []
 y = []
@@ -60,10 +57,17 @@ y = np.array(y)
 z = np.array(z)
 T = np.array(T)
 
-plt.plot(t,x,'--')
-plt.plot(t,y,'--')
-plt.plot(t,z,'--')
+plt.plot(t,x,label='X')
+plt.plot(t,y,label='Y')
+plt.plot(t,z,label='Z')
+plt.xlabel('Time (sec)')
+plt.ylabel('Acceleration (m/s^2)')
+plt.grid()
+plt.legend()
 plt.figure()
-plt.plot(t,T,'--')
+plt.plot(t,T)
+plt.xlabel('Time (sec)')
+plt.ylabel('Temperature (C)')
+plt.grid()
 plt.show()
     

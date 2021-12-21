@@ -54,10 +54,7 @@ while True:
         print((t,x,y,z,T))
 
         #And send them over uart (which is basically serial) but this is _server
-        #which means it's wireless
-        #uart_server.write('{},{}\n'.format(scale(l), t))
         uart_server.write('{},{},{}\n'.format(x,y,z))
-        #uart_server.write('{}\n'.format(theta))
 
         #Sleep for 5Hz
         time.sleep(0.2)# Write your code here :-)

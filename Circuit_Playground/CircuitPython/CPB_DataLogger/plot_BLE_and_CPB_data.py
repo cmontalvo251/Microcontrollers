@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 #Opening the File
 file = open('Timestamp_Mode_w_Datalog.txt')
 
-first_row = None
-second_row = None
-
+#Create Empty Arrays
 t = []
 x = []
 y = []
@@ -69,14 +67,14 @@ zCPB = data[:,3]
 TCPB = data[:,4]
 
 plt.plot(t,x,'--')
-plt.plot(tCPB,xCPB)
+#plt.plot(tCPB,xCPB)
 plt.plot(t,y,'--')
-plt.plot(tCPB,yCPB)
+#plt.plot(tCPB,yCPB)
 plt.plot(t,z,'--')
-plt.plot(tCPB,zCPB)
+#plt.plot(tCPB,zCPB)
 plt.figure()
 plt.plot(t,T,'--')
-plt.plot(tCPB,TCPB)
+#plt.plot(tCPB,TCPB)
 plt.show()
     
 
