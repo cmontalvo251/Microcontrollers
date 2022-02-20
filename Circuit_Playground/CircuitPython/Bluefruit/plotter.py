@@ -40,6 +40,7 @@ def scale(value):
 while True:
     # Advertise when not connected.
     print('Not connected')
+    print('Search for',ble.name)
     ble.start_advertising(advertisement)
     ##Keep looping until connection established
     while not ble.connected:
