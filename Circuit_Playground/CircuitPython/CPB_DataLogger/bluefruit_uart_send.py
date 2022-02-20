@@ -33,6 +33,7 @@ print('Accelerometer Setup')
 while True:
     # Advertise when not connected.
     print('Not connected')
+    print('Look for',ble.name)
     ble.start_advertising(advertisement)
     ##Keep looping until connection established
     while not ble.connected:
