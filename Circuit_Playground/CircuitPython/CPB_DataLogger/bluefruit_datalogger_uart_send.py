@@ -81,6 +81,7 @@ while True:
             ADVERTISING = True
         else:
             print('Advertising')
+            print('Look for ',ble.name)
     else:
         #Stop advertising once connected
         print('Connected')
