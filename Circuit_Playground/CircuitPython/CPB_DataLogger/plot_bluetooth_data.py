@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import time
 
 #Opening the File
-file = open('Timestamp_Mode_w_Datalog.txt')
+file = open('Phone_Bluetooth_Data.txt')
 
 t = []
 x = []

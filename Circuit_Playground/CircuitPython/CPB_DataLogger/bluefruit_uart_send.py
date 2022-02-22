@@ -59,4 +59,3 @@ while True:
 
         #Sleep for 5Hz
         time.sleep(0.2)# Write your code here :-)
-        time.sleep(0.2)# Write your code here :-)
