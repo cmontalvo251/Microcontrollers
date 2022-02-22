@@ -55,7 +55,8 @@ while True:
         print((t,x,y,z,T))
 
         #And send them over uart (which is basically serial) but this is _server
-        uart_server.write('{},{},{}\n'.format(x,y,z))
+        uart_server.write('{},{},{},{},{},{}\n'.format('A',t,x,y,z,T))
 
         #Sleep for 5Hz
+        time.sleep(0.2)# Write your code here :-)
         time.sleep(0.2)# Write your code here :-)
