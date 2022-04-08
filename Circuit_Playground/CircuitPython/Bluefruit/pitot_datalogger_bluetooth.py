@@ -71,8 +71,8 @@ def windspeed(V,V0):
 #Globals
 V0 = 0
 U0 = 0
-Uf = 0
-f = 0.9
+Ufraw = 0
+f = 0.7
 ADVERTISING = False
 
 #INFINITE WHILE LOOP
@@ -82,23 +82,25 @@ while True:
     t = time.monotonic()-startTime
 
     #Get Voltage
-    V = getVoltage(pin)
+    Vraw = getVoltage(pin)
 
     ##Compute Raw Windspeed
-    U = windspeed(V,V0)
-    ##Output
-    Uout = U-U0
+    Uraw = windspeed(Vraw,V0)
 
     #Filter Windspeed
-    Uf = (1-f)*Uout + f*Uf
+    Ufraw = (1-f)*Uraw + f*Ufraw
+
+    #Scale
+    Uf = Ufraw - U0
+    U = Uraw - U0
 
     ##Check for Button press to calibrate
     if button_a.value==True:
-        V0 = V
+        V0 = Vraw
         pixels.fill((255,0,0))
         time.sleep(2)
     if button_b.value == True:
-        U0 = Uf
+        U0 = Ufraw
         pixels.fill((0,255,0))
         time.sleep(2)
     pixels.fill((0,0,0))
@@ -118,7 +120,7 @@ while True:
         #Stop advertising once connected
         ble.stop_advertising()
         ADVERTISING = False
-        uart_server.write('{},{}\n'.format(Uout,Uf))
+        uart_server.write('{},{}\n'.format(U,Uf))
     #PRINT TO A FILE
     if FILEOPEN:
         output = str(t) + " " + str(Uout) + " " + str(Uf) + str('\n')
@@ -134,7 +136,7 @@ while True:
 
     ##PRINT TO STDOUT
     #print(V,V0,V-V0,Vcal,ctr,ctrU,U,U0,U-U0,Ucal,Uf)
-    print((Uout,Uf))
+    print((U,Uf))
 
     ##Wait 0.5 seconds for 2 hz data rate
     time.sleep(0.5)# Write your code here :-)
