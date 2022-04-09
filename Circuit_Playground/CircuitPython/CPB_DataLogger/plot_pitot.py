@@ -11,6 +11,10 @@ U = U[time > 50]
 Uf = Uf[time > 50]
 time = time[time > 50]
 
-plt.plot(time,U)
-plt.plot(time,Uf)
+plt.plot(time,U,label='Raw Signal')
+plt.plot(time,Uf,label='Filtered Signal')
+plt.xlabel('Time (sec)')
+plt.ylabel('Measured Windspeed (m/s)')
+plt.grid()
+plt.legend()
 plt.show()
