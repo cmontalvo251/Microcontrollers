@@ -123,7 +123,7 @@ while True:
         uart_server.write('{},{}\n'.format(U,Uf))
     #PRINT TO A FILE
     if FILEOPEN:
-        output = str(t) + " " + str(Uout) + " " + str(Uf) + str('\n')
+        output = str(t) + " " + str(U) + " " + str(Uf) + str('\n')
         file.write(output)
         file.flush()
         led.value = not led.value
