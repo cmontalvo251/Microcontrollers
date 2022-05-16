@@ -49,8 +49,10 @@ c = 0
 ###CHECK FOR OPENING FILE
 if switch.value == False:
     file = open('CPB_Datalog.txt','w')
+    FILEOPEN = True
 else:
     print('Not opening file for writing')
+    FILEOPEN = False
 
 ###BOOLEANS
 ADVERTISING = False
@@ -71,20 +73,17 @@ while True:
     T = thermistor.temperature
 
     ##PRINT TO STDOUT
-    print(t,x,y,z,T)
+    print((t,x,y,z,T))
 
     # Advertise when not connected.
     if not ble.connected:
-        print('Not connected')
         if ADVERTISING == False:
             ble.start_advertising(advertisement)
             ADVERTISING = True
         else:
-            print('Advertising')
-            print('Look for ',ble.name)
+            print('Advertising, Look for ',ble.name)
     else:
         #Stop advertising once connected
-        print('Connected')
         ble.stop_advertising()
         ADVERTISING = False
         uart_server.write('{},{},{},{},{}\n'.format(t,x,y,z,T))
@@ -100,6 +99,11 @@ while True:
         output = str(t) + " " + str(x) + " " + str(y) + " " + str(z) + " " + str(T) + str('\n')
         file.write(output)
         file.flush()
+    else:
+        if FILEOPEN == True:
+            print('FILE CLOSED!!!')
+            file.close()
+            FILEOPEN = False
 
     ##Wait 0.2 seconds for 5 hz data rate
     time.sleep(0.2)# Write your code here :-)
