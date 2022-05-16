@@ -3,7 +3,6 @@ void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);      // default NMEA GPS baud
 }
- 
      
 void loop() {
   if (Serial.available()) {
