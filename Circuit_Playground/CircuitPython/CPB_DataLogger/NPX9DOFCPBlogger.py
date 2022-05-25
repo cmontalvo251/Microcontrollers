@@ -122,7 +122,7 @@ while True:
         ##CPY DATA
         #output = str(t) + " " + str(x) + " " + str(y) + " " + str(z) + " " + str(T) + str('\n')
         ##EXTERNAL DATA + time\temp
-        output = str(t) + " " + str(gyro_x) + " " + str(gyro_y) + " " + str(gyro_z) + " " + str(mag_x) + " " + str(mag_y) + " " + str(mag_z) + " " + str(accel_x) + " " +str (accel_y) + " " +str(accel_z) + " " + str(T) + str('\n')
+        output = str(t) + " " + str(gyro_x) + " " + str(gyro_y) + " " + str(gyro_z) + " " + str(mag_x) + " " + str(mag_y) + " " + str(mag_z) + " " + str(accel_x) + " " +str (accel_y) + " " +str(accel_z) + " " + str(x) + " " + str(y) + " " + str(z) + " " + str(T) + str('\n')
         file.write(output)
         file.flush()
     else:
