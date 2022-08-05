@@ -99,7 +99,7 @@ while True:
         #Stop advertising once connected
         ble.stop_advertising()
         ADVERTISING = False
-        uart_server.write('{},{},{},{},{}\n'.format(t,x,y,z,T))
+        uart_server.write('{},{},{},{},{},{},{},{}\n'.format(t,x,y,z,p,rH,Te,T))
 
     ##CHECK AND SEE IF SWITCH IS THROWN
     if switch.value == False:
