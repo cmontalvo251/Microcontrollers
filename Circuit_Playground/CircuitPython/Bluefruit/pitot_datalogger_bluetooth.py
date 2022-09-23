@@ -3,14 +3,16 @@ import time
 import busio
 import board
 import digitalio
-import adafruit_lis3dh
-import adafruit_thermistor
 import analogio
 import math
 import neopixel
 from adafruit_ble import BLERadio
 from adafruit_ble.advertising.standard import ProvideServicesAdvertisement
 from adafruit_ble.services.nordic import UARTService
+
+led = digitalio.DigitalInOut(board.D13)
+led.direction = digitalio.Direction.OUTPUT
+led.value = True
 
 ####Setup blue tooth
 ble = BLERadio()
@@ -19,13 +21,28 @@ advertisement = ProvideServicesAdvertisement(uart_server)
 print('Bluetooth Setup')
 
 #Set up pixels
-pixel_brightness = 0.25
+pixel_brightness = 1.0
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=pixel_brightness)
 
 ##SETUP Button A
 button_a = digitalio.DigitalInOut(board.D4)
 button_a.direction = digitalio.Direction.INPUT
 button_a.pull = digitalio.Pull.DOWN
+
+##SETUP Button B
+button_b = digitalio.DigitalInOut(board.D5)
+button_b.direction = digitalio.Direction.INPUT
+button_b.pull = digitalio.Pull.DOWN
+
+switch = digitalio.DigitalInOut(board.D7)
+switch.direction = digitalio.Direction.INPUT
+switch.pull = digitalio.Pull.UP
+if switch.value == False:
+    file = open('CPB_Datalog.txt','w')
+    FILEOPEN = True
+else:
+    print('Not opening file for writing')
+    FILEOPEN = False
 
 ##SETUP ANALOGIO
 pin = analogio.AnalogIn(board.A4)
@@ -53,71 +70,73 @@ def windspeed(V,V0):
 
 #Globals
 V0 = 0
-Vcal = 0
-Ucal = 0
 U0 = 0
-ctr = 0
-N = 10
-ctrU = N
-Uf = 0
-f = 0.9
+Ufraw = 0
+f = 0.7
 ADVERTISING = False
 
 #INFINITE WHILE LOOP
+startTime = time.monotonic()
 while True:
-    #Get Voltage
-    V = getVoltage(pin)
+    #Get time
+    t = time.monotonic()-startTime
 
-    ##Compute Windspeed
-    U = windspeed(V,V0)
-    ##Output
-    Uout = U-U0
+    #Get Voltage
+    Vraw = getVoltage(pin)
+
+    ##Compute Raw Windspeed
+    Uraw = windspeed(Vraw,V0)
 
     #Filter Windspeed
-    Uf = (1-f)*Uout + f*Uf
+    Ufraw = (1-f)*Uraw + f*Ufraw
 
-    #Calibration
-    if ctr < N:
-        pixels.fill((255,0,0))
-        Vcal += V
-        ctr+=1
-        ctrU = -1
-    else:
-        V0 = Vcal/N
-    if ctrU < N:
-        if ctrU > -1:
-            pixels.fill((0,255,0))
-            Ucal += U
-        ctrU+=1
-    else:
-        U0 = Ucal/N
-    if ctrU == N and ctr == 10:
-        #Turn on all pixels off
-        pixels.fill((0,0,0))
+    #Scale
+    Uf = Ufraw - U0
+    U = Uraw - U0
 
     ##Check for Button press to calibrate
     if button_a.value==True:
-        ctr = 0
-        Vcal = 0
+        V0 = Vraw
+        pixels.fill((255,0,0))
+        time.sleep(2)
+    if button_b.value == True:
+        U0 = Ufraw
+        pixels.fill((0,255,0))
+        time.sleep(2)
+    pixels.fill((0,0,0))
 
     # Advertise when not connected.
     if not ble.connected:
-        print('Not connected')
         if ADVERTISING == False:
             ble.start_advertising(advertisement)
             ADVERTISING = True
+            timeStartA = time.monotonic()
+            val = True
         else:
-            print('Advertising')
+            print('Not connected: Advertising',ble.name,time.monotonic()-timeStartA)
+            val = not val
+            pixels.fill((int(val),int(val),int(val)))
     else:
         #Stop advertising once connected
-        print('Connected')
         ble.stop_advertising()
         ADVERTISING = False
-        uart_server.write('{},{}\n'.format(Uout,Uf))
+        uart_server.write('{},{}\n'.format(U,Uf))
+    #PRINT TO A FILE
+    if FILEOPEN:
+        output = str(t) + " " + str(U) + " " + str(Uf) + str('\n')
+        file.write(output)
+        file.flush()
+        led.value = not led.value
+    else:
+        led.value = True
+    if switch.value == True and FILEOPEN:
+        print('File closed')
+        file.close()
+        FILEOPEN = False
 
     ##PRINT TO STDOUT
     #print(V,V0,V-V0,Vcal,ctr,ctrU,U,U0,U-U0,Ucal,Uf)
-    print((Uout,Uf))
+    print((U,Uf))
 
-    ##Wait 0.2 seconds for 5 hz data rate
-    time.sleep(0.2)# Write your code here :-)
+    ##Wait 0.5 seconds for 2 hz data rate
+    time.sleep(0.5)# Write your code here :-)

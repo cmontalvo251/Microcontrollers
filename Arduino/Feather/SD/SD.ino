@@ -5,6 +5,7 @@
 #define cardSelect 4
 
 File logfile;
+char filename[15];
 
 // blink out an error code
 void error(uint8_t errno) {
@@ -38,7 +39,6 @@ void setup() {
     Serial.println("Card init. failed!");
     error(2);
   }
-  char filename[15];
   strcpy(filename, "ANALOG00.TXT");
   for (uint8_t i = 0; i < 100; i++) {
     filename[6] = '0' + i/10;
@@ -66,11 +66,11 @@ void setup() {
 
 uint8_t i=0;
 void loop() {
-  digitalWrite(8, HIGH);
+  digitalWrite(13, HIGH);
   logfile.print("A0 = "); logfile.println(analogRead(0));
-  Serial.print("A0 = "); Serial.println(analogRead(0));
-  digitalWrite(8, LOW);
+  Serial.print(filename);
+  Serial.print(" A0 = "); Serial.println(analogRead(0));
+  digitalWrite(13, LOW);
   logfile.flush();
   delay(100);
 }
-

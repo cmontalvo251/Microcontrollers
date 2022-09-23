@@ -4,6 +4,9 @@ import busio
 import board
 import digitalio
 import adafruit_lis3dh
+import adafruit_lis3mdl
+from adafruit_lsm6ds.lsm6ds33 import LSM6DS33
+from adafruit_ms8607 import MS8607
 import adafruit_thermistor
 import neopixel
 from adafruit_ble import BLERadio
@@ -35,6 +38,11 @@ i2c = busio.I2C(board.ACCELEROMETER_SCL, board.ACCELEROMETER_SDA)
 _int1 = digitalio.DigitalInOut(board.ACCELEROMETER_INTERRUPT)
 lis3dh = adafruit_lis3dh.LIS3DH_I2C(i2c, address=0x19, int1=_int1)
 lis3dh.range = adafruit_lis3dh.RANGE_8_G
+
+##And the external accel/gyro/mag
+##Finally PTH Sensor
+i2c = busio.I2C(board.SCL, board.SDA)
+pth = MS8607(i2c)
 
 ####Setup blue tooth
 ble = BLERadio()
@@ -69,11 +77,16 @@ while True:
     ##GET THE CURRENT ACCEL
     x,y,z = lis3dh.acceleration
 
+    #and PTH sensor
+    p = pth.pressure
+    Te = pth.temperature
+    rH = pth.relative_humidity
+
     #GET THE TEMPERATURE
     T = thermistor.temperature
 
     ##PRINT TO STDOUT
-    print((t,x,y,z,T))
+    print((t,x,y,z,p,rH,Te,T))
 
     # Advertise when not connected.
     if not ble.connected:
@@ -86,7 +99,7 @@ while True:
         #Stop advertising once connected
         ble.stop_advertising()
         ADVERTISING = False
-        uart_server.write('{},{},{},{},{}\n'.format(t,x,y,z,T))
+        uart_server.write('{},{},{},{},{},{},{},{}\n'.format(t,x,y,z,p,rH,Te,T))
 
     ##CHECK AND SEE IF SWITCH IS THROWN
     if switch.value == False:
@@ -96,7 +109,8 @@ while True:
         if c >= len(colors):
             c = 0
         #PRINT TO A FILE
-        output = str(t) + " " + str(x) + " " + str(y) + " " + str(z) + " " + str(T) + str('\n')
+        #print((t,x,y,z,p,rH,Te,T))
+        output = str(t) + " " + str(x) + " " + str(y) + " " + str(z) + " " + str(p) + " " + str(rH) + " " + str(Te) + " " + str(T) + str('\n')
         file.write(output)
         file.flush()
     else:

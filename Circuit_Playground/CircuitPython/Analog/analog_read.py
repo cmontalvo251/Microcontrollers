@@ -12,5 +12,5 @@ while True:
     time_elapsed = time.monotonic() - bootuptime
     #print("Analog Voltage: %f" % getVoltage(analogin))
     val = getVoltage(analogin)
-    print((time_elapses,))
+    print((val,))
     time.sleep(0.1)

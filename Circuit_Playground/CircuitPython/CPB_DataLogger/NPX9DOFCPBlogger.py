@@ -9,6 +9,15 @@ import neopixel
 from adafruit_ble import BLERadio
 from adafruit_ble.advertising.standard import ProvideServicesAdvertisement
 from adafruit_ble.services.nordic import UARTService
+import adafruit_fxos8700
+import adafruit_fxas21002c
+
+###SETUP GYROSCOPE
+i2c1 = board.I2C()
+gyroscope = adafruit_fxas21002c.FXAS21002C(i2c1)
+
+###SETUP EXTERNAL ACCELEROMETER/MAGNETOMETER (IMU)
+imu = adafruit_fxos8700.FXOS8700(i2c1)
 
 ###SETUP LED
 led = digitalio.DigitalInOut(board.D13)
@@ -69,11 +78,22 @@ while True:
     ##GET THE CURRENT ACCEL
     x,y,z = lis3dh.acceleration
 
+    ##GET CURRENT GYRO(ANGULAR VELO rad/s)
+    gyro_x, gyro_y, gyro_z = gyroscope.gyroscope
+
+    ##GET THE CURRENT EXTERNAL ACCEL
+    accel_x, accel_y, accel_z = imu.accelerometer
+
+    ##GET THE CURRENT MAGNETOMETER
+    mag_x, mag_y, mag_z = imu.magnetometer
+
     #GET THE TEMPERATURE
     T = thermistor.temperature
 
     ##PRINT TO STDOUT
-    print((t,x,y,z,T))
+    #print((t,x,y,z,T))
+    print('CPY: ', 'ACCEL: ',x,y,z,'\n','     TEMP:  ',T)
+    print('EXTERNAL: ','GYRO: ',gyro_x, gyro_y, gyro_z,'\n','          MAG:  ',mag_x, mag_y, mag_z,'\n','          ACCEL:', accel_x, accel_y, accel_z,'\n')
 
     # Advertise when not connected.
     if not ble.connected:
@@ -86,7 +106,10 @@ while True:
         #Stop advertising once connected
         ble.stop_advertising()
         ADVERTISING = False
-        uart_server.write('{},{},{},{},{}\n'.format(t,x,y,z,T))
+        ##CPY DATA
+        #uart_server.write('{},{},{},{},{}\n,'.format(t,x,y,z,T))
+        ##EXTERNAL DATA + time\temp
+        uart_server.write('{},{},{},{},{},{},{},{},{},{},{}\n,'.format(t, gyro_x, gyro_y, gyro_z,accel_x, accel_y, accel_z, mag_x, mag_y, mag_z,T))
 
     ##CHECK AND SEE IF SWITCH IS THROWN
     if switch.value == False:
@@ -96,7 +119,10 @@ while True:
         if c >= len(colors):
             c = 0
         #PRINT TO A FILE
-        output = str(t) + " " + str(x) + " " + str(y) + " " + str(z) + " " + str(T) + str('\n')
+        ##CPY DATA
+        #output = str(t) + " " + str(x) + " " + str(y) + " " + str(z) + " " + str(T) + str('\n')
+        ##EXTERNAL DATA + time\temp
+        output = str(t) + " " + str(gyro_x) + " " + str(gyro_y) + " " + str(gyro_z) + " " + str(mag_x) + " " + str(mag_y) + " " + str(mag_z) + " " + str(accel_x) + " " +str (accel_y) + " " +str(accel_z) + " " + str(x) + " " + str(y) + " " + str(z) + " " + str(T) + str('\n')
         file.write(output)
         file.flush()
     else:
