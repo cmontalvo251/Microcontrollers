@@ -60,4 +60,4 @@ while True:
         pixels.fill((0,0,0))
     pixels[CTR] = RED
     uart_server.write("{},{},{},{}\n".format(time.monotonic(),x,y,z))
-    time.sleep(0.1)
+    time.sleep(0.01)
