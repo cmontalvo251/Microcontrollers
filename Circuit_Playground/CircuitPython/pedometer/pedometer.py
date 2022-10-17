@@ -51,12 +51,12 @@ while True:
     print('CONNECTED!',time.monotonic())
     if bias > 0 and RESET == False:
         STEPS += 1
+        CTR+=1
         RESET = True
     if bias < 0 and RESET == True:
         RESET = False
-    CTR = STEPS
-    while CTR > 9:
-        CTR -= 10
+    if CTR > 9:
+        CTR = 0
         pixels.fill((0,0,0))
     pixels[CTR] = RED
     uart_server.write("{},{},{},{}\n".format(time.monotonic(),x,y,z))
