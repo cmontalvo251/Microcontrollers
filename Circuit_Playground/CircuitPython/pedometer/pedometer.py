@@ -3,6 +3,7 @@ import time
 import board
 import analogio
 import adafruit_thermistor
+import random
 
 ##Import Adafruit BLE
 from adafruit_ble import BLERadio
@@ -33,6 +34,9 @@ GREEN = (0,255,0)
 STEPS = 0
 CTR = 0
 RESET = False
+r = 0
+g = 0
+b = 0
 while True:
     #Get accelerometer data
     x,y,z = lis3dh.acceleration
@@ -52,12 +56,15 @@ while True:
     if bias > 0 and RESET == False:
         STEPS += 1
         CTR+=1
+        r = random.randint(0,255)
+        g = random.randint(0,255)
+        b = random.randint(0,255)
         RESET = True
     if bias < 0 and RESET == True:
         RESET = False
     if CTR > 9:
         CTR = 0
         pixels.fill((0,0,0))
-    pixels[CTR] = RED
+    pixels[CTR] = (r,g,b)
     uart_server.write("{},{},{},{}\n".format(time.monotonic(),x,y,z))
     time.sleep(0.01)
