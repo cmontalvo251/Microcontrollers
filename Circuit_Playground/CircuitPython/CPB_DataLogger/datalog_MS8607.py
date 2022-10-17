@@ -61,7 +61,7 @@ c = 0
 
 ###CHECK FOR OPENING FILE
 if switch.value == False:
-    file = open('CPB_Datalog.txt','w')
+    file = open('Launch_t_axyz_p_rH_Te_T.txt','w')
     FILEOPEN = True
 else:
     print('Not opening file for writing')
