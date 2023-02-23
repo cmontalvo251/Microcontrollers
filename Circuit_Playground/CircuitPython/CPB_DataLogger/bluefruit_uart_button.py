@@ -22,7 +22,7 @@ buttonA = digitalio.DigitalInOut(board.BUTTON_A)
 buttonA.direction = digitalio.Direction.INPUT
 buttonA.pull = digitalio.Pull.DOWN
 print('Button Setup')
-
+start_time = time.monotonic()
 while True:
     # Advertise when not connected.
     print('Not connected')
@@ -38,9 +38,9 @@ while True:
     ##Once connected
     while ble.connected:
         #Time =
-        t = time.monotonic()
+        t = time.monotonic()-start_time
         #Button press
-        b = buttonA.value
+        b = int(buttonA.value)
 
         #Print to STDOUT
         print((t,b))
