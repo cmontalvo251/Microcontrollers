@@ -220,6 +220,9 @@ unsigned int getRawChannelValue(enum recv_channel index)
 
 void receiver::setup_RX() {
   //Set up receiver.
+  #ifdef PRINTSERIAL
+  Serial.println("Initializing Receiver");
+  #endif
   receiverModule::init(); ////Namespaces work better in C (C++ use classes)
   delay(250); ////but head over to receiver.cpp to see the namespace functions
   receiverModule::resetLimitStats();
@@ -231,6 +234,9 @@ void receiver::setup_RX() {
   receiver_input_channel_pitch = 0;
   receiver_input_channel_gear0 = 0;
   receiver_input_channel_gear1 = 0;
+  #ifdef PRINTSERIAL
+  Serial.println("Receiver Initialized");
+  #endif
 }
 
 
@@ -312,7 +318,7 @@ int receiver::get_FASTPilot_mode() {
     return 5;
     //strcpy(mode_name,"WAY ");
   }
-  printf("Receiver error - Mode out of bounds \n");
+  printf("Checking mode function has received an out of bound arm switch \n");
   return -1;
 }
 

@@ -81,6 +81,12 @@
 //Rev 8.0 - Bare bones telemetry added to send pitch, roll yaw to ground station.
 //Rev 8.1 - Telemetry code altered to send altitude information instead.
 
+//Note from 2023
+//It's been a while since I've run this code and I'm setting it up on a new computer.
+//First issue is one of the Arduino Libraries was not found. All of these libraries are in Microcontrollers.git/Arduino/libraries
+//Second issue is Serial2 not being defined. You need to go to board manager and install the Due board for Arduino
+//The third issue is that if you use a Dx5 the code will freak out because it assume it's receiving a 6 channel transmitter so use a Dx6 or 7.
+
 #include "receiver.h"
 #include "userparams.h"
 #include "mathHelp.h"

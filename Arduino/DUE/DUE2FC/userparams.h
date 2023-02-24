@@ -31,7 +31,7 @@
 #define CONTROL_PERIOD 0.1 //Control is the same as receiver since control depends on receiver right now.
 #define COMMAND_PERIOD 0 //Send ESC signals asap
 #define FILEPRINT_PERIOD 0.5 //It's 2 times a second now to make sure the GPS works
-#define SERIALPRINT_PERIOD 5.0 //seconds -- For some reason the system wasn't working before. Better to just set the serial print to 1000 seconds and always have PRINTSERIAL set to true
+#define SERIALPRINT_PERIOD 0.2 //seconds -- For some reason the system wasn't working before. Better to just set the serial print to 1000 seconds and always have PRINTSERIAL set to true
 #define XBEE_PERIOD 0.5
 #define XBEE_VARS 2
 
