@@ -7,6 +7,10 @@
 File logfile;
 char filename[15];
 
+//To compile on the Feather you need to add this to the list of additional board URLS in preferences
+//Then you need to install the SAMD/AVR ADafruit boards.
+//https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
+
 // blink out an error code
 void error(uint8_t errno) {
   while(1) {
