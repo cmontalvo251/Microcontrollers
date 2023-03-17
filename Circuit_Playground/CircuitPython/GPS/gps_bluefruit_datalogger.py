@@ -58,10 +58,11 @@ else:
 ADVERTISING = False
 
 #INFINITE WHILE LOOP
-last_print = time.monotonic()
+last_print = 0.0
+start_time = time.monotonic()
 while True:
     ##GET CURRENT TIME
-    t = time.monotonic()
+    t = time.monotonic()-start_time
 
     ##GET THE CURRENT GPS
     gps.update()
