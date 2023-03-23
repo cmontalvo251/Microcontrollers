@@ -1,26 +1,51 @@
-#include <BME280_SIMPLE.h> //Uncommenting this leaves 461 bytes and code still works
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
 
-Adafruit_BME280 bme; //Uncommenting this leaves 421 bytes and code still works
+#define SEALEVELPRESSURE_HPA (1013.25)
 
+Adafruit_BME280 bme; // I2C
 
 void setup() {
+    Serial.begin(9600);
+    Serial.println(F("BME280 test"));
 
-  Serial.begin(115200);
-
-  bme.begin();
-
+    bool status;
+    
+    // default settings
+    status = bme.begin();
+    if (!status) {
+        Serial.println("Could not find a valid BME280 sensor, check wiring!");
+        while (1);
+    }
+    
+    Serial.println("-- Default Test --");
+    Serial.println();
 }
 
-void loop() {
 
-  //Pressure/Temp/Humidity
-  //float temp = bme.readTemperature();
-  //float pressure = bme.readPressure() / 100.0F;
-  //float humidity = bme.readHumidity();
-
-  Serial.print(bme.readTemperature()); Serial.print(" ");
-  Serial.print(bme.readPressure() / 100.0F); Serial.print(" ");
-  Serial.print(bme.readHumidity()); Serial.print(" ");
-  Serial.println();
+void loop() { 
+    printValues();
+    delay(1000);
 }
 
+
+void printValues() {
+    Serial.print("Temperature = ");
+    Serial.print(bme.readTemperature());
+    Serial.println(" *C");
+
+    Serial.print("Pressure = ");
+
+    Serial.print(bme.readPressure() / 100.0F);
+    Serial.println(" hPa");
+
+    Serial.print("Approx. Altitude = ");
+    Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
+    Serial.println(" m");
+
+    Serial.print("Humidity = ");
+    Serial.print(bme.readHumidity());
+    Serial.println(" %");
+
+    Serial.println();
+}
