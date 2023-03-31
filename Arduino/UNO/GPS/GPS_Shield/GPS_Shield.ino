@@ -184,23 +184,39 @@ void loop()                     // run over and over again
     // a tricky thing here is if we print the NMEA sentence, or data
     // we end up not listening and catching other sentences! 
     // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
-    //Serial.println(GPS.lastNMEA());   // this also sets the newNMEAreceived() flag to false
+    char *stringptr = GPS.lastNMEA();
   
-    if (!GPS.parse(GPS.lastNMEA()))   // this also sets the newNMEAreceived() flag to false
+    if (!GPS.parse(stringptr))  { // this also sets the newNMEAreceived() flag to false
       return;  // we can fail to parse a sentence in which case we should just wait for another
+    } else {
+      timer = millis(); // reset the timer
+      Serial.print(timer/1000.0);
+      logfile.print(timer/1000.0);
+      Serial.print(","); 
+      logfile.print(",");
+      Serial.print(GPS.latitudeDegrees, 8);
+      logfile.print(GPS.latitudeDegrees,8);
+      Serial.print(","); 
+      logfile.print(",");
+      Serial.print(GPS.longitudeDegrees, 8);
+      logfile.print(GPS.longitudeDegrees,8);
+      Serial.print(",");
+      logfile.print(",");  
+      Serial.print(GPS.altitude);
+      logfile.print(GPS.altitude);
+      Serial.print("\n");
+      logfile.print("\n");
+      logfile.flush();
+      //Serial.print("After Parsing = ");
+      //Serial.print(GPS.latitudeDegrees,8);
+    }
   }
 
   // if millis() or timer wraps around, we'll just reset it
   if (timer > millis())  timer = millis();
 
   //approximately every  0.1 seconds
-  if (millis() - timer > 100) { 
-    timer = millis(); // reset the timer
-    Serial.print(timer/1000.0);
-    logfile.print(timer/1000.0);
-    Serial.print(",");
-    logfile.print(",");
-    
+  //if (millis() - timer > 100) { 
     //Serial.print("\nTime: ");
     //Serial.print(GPS.hour, DEC); Serial.print(':');
     //Serial.print(GPS.minute, DEC); Serial.print(':');
@@ -218,22 +234,16 @@ void loop()                     // run over and over again
       //Serial.print(", "); 
       //Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
       //Serial.print("Location (in degrees, works with Google Maps): ");
-      Serial.print(GPS.latitudeDegrees, 8);
-      logfile.print(GPS.latitudeDegrees,8);
-      Serial.print(","); 
-      logfile.print(",");
-      Serial.print(GPS.longitudeDegrees, 8);
-      logfile.print(GPS.longitudeDegrees,8);
-      Serial.print(",");
-      logfile.print(",");
       
       //Serial.print("Speed (knots): "); Serial.println(GPS.speed);
       //Serial.print("Angle: "); Serial.println(GPS.angle);
       //Serial.print("Altitude: "); 
-      Serial.println(GPS.altitude);
-      logfile.println(GPS.altitude);
-      logfile.flush();
+      //Serial.println(GPS.altitude);
+      //logfile.println(GPS.altitude);
+      //Serial.println(GPS.lastNMEA());
+      //logfile.println(GPS.lastNMEA());
+      //logfile.flush();
       //Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
     //}
-  }
+  //}
 }

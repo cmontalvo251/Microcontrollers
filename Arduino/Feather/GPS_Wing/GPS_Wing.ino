@@ -74,9 +74,9 @@ void setup()
   Serial.print("GPS Class Initialized \n");
   
   // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
-  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+  //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   // uncomment this line to turn on only the "minimum recommended" data
-  //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
   // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
   // the parser doesn't care about other sentences at this time
 
@@ -187,10 +187,10 @@ void loop()                     // run over and over again
     // a tricky thing here is if we print the NMEA sentence, or data
     // we end up not listening and catching other sentences! 
     // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
-    //Serial.println(GPS.lastNMEA());   // this also sets the newNMEAreceived() flag to false
-  
-    if (!GPS.parse(GPS.lastNMEA()))   // this also sets the newNMEAreceived() flag to false
-      return;  // we can fail to parse a sentence in which case we should just wait for another
+    
+    GPS.parse(GPS.lastNMEA());
+
+    Serial.println(GPS.lastNMEA());   // this also sets the newNMEAreceived() flag to false
   }
 
   // if millis() or timer wraps around, we'll just reset it
@@ -221,12 +221,12 @@ void loop()                     // run over and over again
       //Serial.print(", "); 
       //Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
       //Serial.print("Location (in degrees, works with Google Maps): ");
-      Serial.print(GPS.latitudeDegrees, 8);
-      logfile.print(GPS.latitudeDegrees,8);
+      Serial.print(GPS.latitude, 8);
+      logfile.print(GPS.latitude,8);
       Serial.print(","); 
       logfile.print(",");
-      Serial.print(GPS.longitudeDegrees, 8);
-      logfile.print(GPS.longitudeDegrees,8);
+      Serial.print(GPS.longitude, 8);
+      logfile.print(GPS.longitude,8);
       Serial.print(",");
       logfile.print(",");
       
