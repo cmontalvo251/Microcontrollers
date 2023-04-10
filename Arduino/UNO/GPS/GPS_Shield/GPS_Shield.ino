@@ -185,6 +185,7 @@ void loop()                     // run over and over again
     // we end up not listening and catching other sentences! 
     // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
     char *stringptr = GPS.lastNMEA();
+    Serial.print(stringptr);
   
     if (!GPS.parse(stringptr))  { // this also sets the newNMEAreceived() flag to false
       return;  // we can fail to parse a sentence in which case we should just wait for another

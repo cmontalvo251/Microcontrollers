@@ -7,7 +7,7 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   
   // IMU //
   if(!bno.begin())
@@ -43,5 +43,7 @@ void loop() {
    Serial.print(lin_accel.z()); Serial.print(" ");
    Serial.print(temp); Serial.print(" "); 
    Serial.print("\n"); 
+
+   delay(100);
   
 }
