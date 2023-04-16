@@ -69,6 +69,10 @@ while True:
     latitude = gps.latitude
     longitude = gps.longitude
     altitude = gps.altitude_m
+    if latitude is None:
+        latitude = -99
+    if longitude is None:
+        longitude = -99
 
     ##PRINT TO STDOUT
     if t - last_print >= 0.1:
