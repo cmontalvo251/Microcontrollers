@@ -99,7 +99,7 @@ while True:
             if c >= len(colors):
                 c = 0
             #PRINT TO A FILE
-            output = str(t) + " " + str(latitude) + " " + str(longitude) + " " + str(altitude) + str('\n')
+            output = str(t) + "," + "{0:.6f},{1:.6f}".format(latitude,longitude) + "," + str(altitude) + str('\n')
             file.write(output)
             file.flush()
         else:
