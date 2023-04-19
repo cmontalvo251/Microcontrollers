@@ -1,5 +1,5 @@
-#include <Wire.h>
-#include "CommunicationUtils.h"
+//#include <Wire.h>
+//#include "CommunicationUtils.h"
 
 int numVars = 1; //Make sure this is the same as processing code
 float data[1]; //You must hardcode the number of variables.
@@ -16,8 +16,8 @@ float data[1]; //You must hardcode the number of variables.
 //10 - SD Card
 
 //Your options are 2,3 // 5,6 // 9,11
-#define frontTrigPin 8
-#define frontEchoPin 9
+#define frontTrigPin 11
+#define frontEchoPin 10
 
 //#define leftTrigPin 38
 //#define leftEchoPin 40

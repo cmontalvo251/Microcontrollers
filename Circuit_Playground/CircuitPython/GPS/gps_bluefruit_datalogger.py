@@ -69,6 +69,10 @@ while True:
     latitude = gps.latitude
     longitude = gps.longitude
     altitude = gps.altitude_m
+    if latitude is None:
+        latitude = -99
+    if longitude is None:
+        longitude = -99
 
     ##PRINT TO STDOUT
     if t - last_print >= 0.1:
@@ -99,7 +103,7 @@ while True:
             if c >= len(colors):
                 c = 0
             #PRINT TO A FILE
-            output = str(t) + " " + str(latitude) + " " + str(longitude) + " " + str(altitude) + str('\n')
+            output = str(t) + "," + "{0:.6f},{1:.6f}".format(latitude,longitude) + "," + str(altitude) + str('\n')
             file.write(output)
             file.flush()
         else:
