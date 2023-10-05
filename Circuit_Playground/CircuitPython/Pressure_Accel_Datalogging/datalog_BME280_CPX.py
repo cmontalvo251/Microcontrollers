@@ -7,9 +7,9 @@ import digitalio
 
 #For Sensors Used
 import adafruit_lis3dh #onboard accelerometer
-import adafruit_lps2x  #external pressure sensor
+from adafruit_bme280 import basic as adafruit_bme280  #external pressure sensor
 print('Wiring for Pressure sensor')
-print('LPS -> CPB')
+print('BME -> CPB')
 print('VIN -> 3.3V')
 print('GND -> GND')
 print('SDK -> SCL')
@@ -47,7 +47,8 @@ lis3dh.range = adafruit_lis3dh.RANGE_8_G
 
 ##And the external presure sensor
 i2c = busio.I2C(board.SCL, board.SDA)
-pressure_sensor = adafruit_lps2x.LPS22(i2c)
+print(dir(adafruit_bme280))
+pressure_sensor = adafruit_bme280.Adafruit_BME280_I2C(i2c)
 
 ##MAKE A COLOR WHEEL
 colors = [(255,0,0),(0,255,0),(0,0,255)]
@@ -76,8 +77,7 @@ while True:
     #and PTH sensor
     p = pressure_sensor.pressure
     Te = pressure_sensor.temperature
-    #LPS22 does not have a humidity sensor
-    rH = 0.0 #so we'll just set it to zero
+    rH = pressure_sensor.humidity
 
     #GET THE TEMPERATURE from the onboard sensor
     T = thermistor.temperature

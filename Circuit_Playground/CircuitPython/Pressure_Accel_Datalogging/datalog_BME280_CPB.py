@@ -7,9 +7,9 @@ import digitalio
 
 #For Sensors Used
 import adafruit_lis3dh #onboard accelerometer
-import adafruit_lps2x  #external pressure sensor
+from adafruit_bme280 import basic as adafruit_bme280  #external pressure sensor
 print('Wiring for Pressure sensor')
-print('LPS -> CPB')
+print('BME -> CPB')
 print('VIN -> 3.3V')
 print('GND -> GND')
 print('SDK -> SCL')
@@ -18,6 +18,11 @@ import adafruit_thermistor #on board temperature sensor
 
 #For an Indicator
 import neopixel
+
+#For Bluetooth
+from adafruit_ble import BLERadio
+from adafruit_ble.advertising.standard import ProvideServicesAdvertisement
+from adafruit_ble.services.nordic import UARTService
 
 ###SETUP LED
 led = digitalio.DigitalInOut(board.D13)
@@ -47,7 +52,14 @@ lis3dh.range = adafruit_lis3dh.RANGE_8_G
 
 ##And the external presure sensor
 i2c = busio.I2C(board.SCL, board.SDA)
-pressure_sensor = adafruit_lps2x.LPS22(i2c)
+print(dir(adafruit_bme280))
+pressure_sensor = adafruit_bme280.Adafruit_BME280_I2C(i2c)
+
+####Setup blue tooth
+ble = BLERadio()
+uart_server = UARTService()
+advertisement = ProvideServicesAdvertisement(uart_server)
+print('Bluetooth Setup')
 
 ##MAKE A COLOR WHEEL
 colors = [(255,0,0),(0,255,0),(0,0,255)]
@@ -60,6 +72,9 @@ if switch.value == False:
 else:
     print('Not opening file for writing')
     FILEOPEN = False
+
+###BOOLEANS
+ADVERTISING = False
 
 #INFINITE WHILE LOOP
 while True:
@@ -76,14 +91,26 @@ while True:
     #and PTH sensor
     p = pressure_sensor.pressure
     Te = pressure_sensor.temperature
-    #LPS22 does not have a humidity sensor
-    rH = 0.0 #so we'll just set it to zero
+    rH = pressure_sensor.humidity
 
     #GET THE TEMPERATURE from the onboard sensor
     T = thermistor.temperature
 
     ##PRINT TO STDOUT
     print((t,x,y,z,p,rH,Te,T))
+
+    # Advertise when not connected.
+    if not ble.connected:
+        if ADVERTISING == False:
+            ble.start_advertising(advertisement)
+            ADVERTISING = True
+        else:
+            print('Advertising, Look for ',ble.name)
+    else:
+        #Stop advertising once connected
+        ble.stop_advertising()
+        ADVERTISING = False
+        uart_server.write('{},{},{},{},{},{},{},{}\n'.format(t,x,y,z,p,rH,Te,T))
 
     ##CHECK AND SEE IF SWITCH IS THROWN
     if switch.value == False:
