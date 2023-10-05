@@ -1,3 +1,4 @@
 #Convert Pressure in Pascals to Altitude in Meters
+#note that pressure_pascals is the measurement from your pressure sensor in pascals
 pressure_sea_level = 0.0 #you must input the pressure at sea-level
-altitude = (1.0-((pascals/pressure_sea_level)**(1.0/5.25588)))/(2.2557*(10**-5.0))
+altitude = (1.0-((pressure_pascals/pressure_sea_level)**(1.0/5.25588)))/(2.2557*(10**-5.0))
