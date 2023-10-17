@@ -12,7 +12,7 @@ print('Wiring for Pressure sensor')
 print('LPS -> CPB')
 print('VIN -> 3.3V')
 print('GND -> GND')
-print('SDK -> SCL')
+print('SCK -> SCL')
 print('SDI -> SDA')
 import adafruit_thermistor #on board temperature sensor
 
