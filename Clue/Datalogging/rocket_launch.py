@@ -9,6 +9,20 @@ from adafruit_lsm6ds.lsm6ds33 import LSM6DS33 ###THIS IS AN ACCELEROMETER MODUEL
 import adafruit_bmp280 #pressure sensor
 import analogio
 
+#1.) Plug in Clue and watch ctouch count to 25 (don't hold down D0)
+#2.) Program will run in not logging mode but you will see data
+#3.) Unplug
+#4.) Plug in clue while holding D0 (you will see "D0 detected")
+#5.) Keep holding down D0 while code.py initializes (you will see "storage changed" "file open")
+#6.) Let go of D0
+#7.) Put into rocket
+#8.) Launch
+#9.) Retrieve
+#10.) Press B button (You will see "FILE CLOSED")
+#11.) Remove power
+#12.) Plug into computer (DO NOT TOUCH D0)
+#13.) Copy *.txt file
+
 ctouch = analogio.AnalogIn(board.D0)
 
 ###CREATE SOME SENSORS
@@ -20,11 +34,6 @@ sensor2 = adafruit_bmp280.Adafruit_BMP280_I2C(i2c)
 led = digitalio.DigitalInOut(board.D13)
 led.direction = digitalio.Direction.OUTPUT
 led.value = True
-
-##Button Presses
-buttonA = digitalio.DigitalInOut(board.BUTTON_A)
-buttonA.direction = digitalio.Direction.INPUT
-buttonA.pull = digitalio.Pull.UP
 
 ##Button Presses
 buttonB = digitalio.DigitalInOut(board.BUTTON_B)
