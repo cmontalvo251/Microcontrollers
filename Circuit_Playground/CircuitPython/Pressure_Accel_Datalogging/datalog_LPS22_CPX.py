@@ -43,7 +43,7 @@ thermistor = adafruit_thermistor.Thermistor(board.A9, 10000, 10000, 25, 3950)
 i2c = busio.I2C(board.ACCELEROMETER_SCL, board.ACCELEROMETER_SDA)
 _int1 = digitalio.DigitalInOut(board.ACCELEROMETER_INTERRUPT)
 lis3dh = adafruit_lis3dh.LIS3DH_I2C(i2c, address=0x19, int1=_int1)
-lis3dh.range = adafruit_lis3dh.RANGE_8_G
+lis3dh.range = adafruit_lis3dh.RANGE_16_G
 
 ##And the external presure sensor
 i2c = busio.I2C(board.SCL, board.SDA)
