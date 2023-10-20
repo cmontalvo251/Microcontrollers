@@ -14,7 +14,7 @@ while True:
     #print("Analog Voltage: %f" % getVoltage(analogin))
     val = getVoltage(analogin)
     print((val,))
-    if val < 0.5:
+    if val > 2.5:
         pixels.fill((255,0,0))
     else:
         pixels.fill((0,0,0))
