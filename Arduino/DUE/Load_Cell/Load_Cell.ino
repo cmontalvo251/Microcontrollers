@@ -28,30 +28,39 @@
 //HAVE NOT TESTED THIS ON A DUE YET.
 
 #include "HX711.h"
-#define DOUT  3
-#define CLK  2
-HX711 scale(DOUT, CLK);
+//DOUT - A1
+//CLK - A0
+HX711 scale(A1, A0);
 float zero_factor = 0;
-float calibration_factor = -28000; //-7050 worked for my 440lb max scale setup
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(38400);
   Serial.println("HX711 sketch");
   Serial.println("Remove all weight from scale");
-  scale.set_scale(calibration_factor);
+  scale.read();
+  scale.set_scale(2280.f);
   Serial.println("Calibration Factor Set");
   scale.tare(); //Reset the scale to 0
   Serial.println("Tare done");
-  for (int idx = 0;idx<100;idx++){
-    Serial.println(idx);
-    zero_factor += scale.get_units(); //Get a baseline reading  
+  delay(1000);
+  int count = 0;
+  for (int idx = 0;idx<=10;idx++){
+    Serial.print(idx);
+    Serial.print(" ");
+    Serial.println(zero_factor);
+    float val = scale.get_units(1);
+    if (abs(val) > 0 ) {
+      zero_factor += val;
+      count += 1;
+    }
+    delay(100);  
   }
-  zero_factor/=100.;
+  zero_factor/=count;
   Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
   Serial.println(zero_factor);
 }
 void loop() {
   Serial.print("Reading (lbf): ");
-  float weight_lbf = scale.get_units();
+  float weight_lbf = scale.get_units(1) - zero_factor;
   Serial.print(weight_lbf);
   Serial.print(" Time (sec): ");
   Serial.print(millis()/1000.0);
