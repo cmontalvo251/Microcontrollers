@@ -17,6 +17,8 @@
  This example code uses bogde's excellent library:  https://github.com/bogde/HX711
 
  bogde's library is released under a GNU GENERAL PUBLIC LICENSE
+
+ //Remember to plug these into DIGITAL pins!!!!
  Arduino pin 2 -> HX711 CLK
  3 -> DOUT
  5V -> VCC
