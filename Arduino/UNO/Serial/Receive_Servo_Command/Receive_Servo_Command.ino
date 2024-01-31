@@ -2,10 +2,9 @@
 Servo servo1;
 
 extern float ReceiveNumber(void);
-float df = 0;
 char val; //Data received from the serial port
 int ival; //data converted to int
-float degree; //Degree sent to servo
+float degree=0; //Degree sent to servo
 
 void setup() {
  Serial.begin(57600);  
@@ -18,11 +17,10 @@ void setup() {
 
 void loop() {  
   digitalWrite(LED_BUILTIN,HIGH);
-  df = ReceiveNumber();
+  degree = ReceiveNumber();
   //delay(10);
   digitalWrite(LED_BUILTIN,LOW);
   //delay(10);
   //df = 1;
-  degree = 0 + df*180.0;
   servo1.write(degree);
 } 
