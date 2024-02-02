@@ -11,6 +11,7 @@ led = digitalio.DigitalInOut(board.D13)
 led.direction = digitalio.Direction.OUTPUT
 
 while True:
+    time.sleep(0.1)
     print(time.monotonic(),buttonA.value)
     if buttonA.value:
         led.value = True
