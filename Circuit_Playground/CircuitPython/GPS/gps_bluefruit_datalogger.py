@@ -8,6 +8,9 @@ import digitalio
 #For Sensors Used
 import adafruit_gps
 
+#Import accelerometer
+import adafruit_lis3dh
+
 #For an Indicator
 import neopixel
 
@@ -29,6 +32,13 @@ switch.pull = digitalio.Pull.UP
 #SETUP PIXELS
 pixel_brightness = 0.25
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 1, brightness=pixel_brightness)
+
+##SETUP ACCELEROMETER
+i2c = busio.I2C(board.ACCELEROMETER_SCL, board.ACCELEROMETER_SDA)
+_int1 = digitalio.DigitalInOut(board.ACCELEROMETER_INTERRUPT)
+lis3dh = adafruit_lis3dh.LIS3DH_I2C(i2c, address=0x19, int1=_int1)
+lis3dh.range = adafruit_lis3dh.RANGE_8_G
+
 
 ####Setup blue tooth
 ble = BLERadio()
@@ -73,6 +83,11 @@ while True:
         latitude = -99
     if longitude is None:
         longitude = -99
+    if altitude is None:
+        altitude = -99
+
+    ##GET ACCELEROMTER
+    x,y,z = lis3dh.acceleration
 
     ##PRINT TO STDOUT
     if t - last_print >= 0.1:
@@ -80,7 +95,7 @@ while True:
         pixels[0] = (0,0,0)
         led.value = not led.value
         last_print = t
-        print((t,latitude,longitude,altitude))
+        print((t,latitude,longitude,altitude,x,y,z))
 
         # Advertise when not connected.
         if not ble.connected:
@@ -93,7 +108,7 @@ while True:
             #Stop advertising once connected
             ble.stop_advertising()
             ADVERTISING = False
-            uart_server.write('{},{},{},{}\n'.format(t,latitude,longitude,altitude))
+            uart_server.write('{},{},{},{},{},{},{}\n'.format(t,latitude,longitude,altitude,x,y,z))
 
         ##CHECK AND SEE IF SWITCH IS THROWN
         if switch.value == False:
@@ -103,7 +118,7 @@ while True:
             if c >= len(colors):
                 c = 0
             #PRINT TO A FILE
-            output = str(t) + "," + "{0:.6f},{1:.6f}".format(latitude,longitude) + "," + str(altitude) + str('\n')
+            output = str(t) + "," + "{0:.6f},{1:.6f}".format(latitude,longitude) + "," + str(altitude) + "," + str(x) + "," + str(y) + "," + str(z) + str('\n')
             file.write(output)
             file.flush()
         else:
