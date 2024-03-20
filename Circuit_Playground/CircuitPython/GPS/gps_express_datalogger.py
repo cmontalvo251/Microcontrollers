@@ -53,9 +53,6 @@ else:
     print('Not opening file for writing')
     FILEOPEN = False
 
-###BOOLEANS
-ADVERTISING = False
-
 #INFINITE WHILE LOOP
 last_print = time.monotonic()
 while True:
