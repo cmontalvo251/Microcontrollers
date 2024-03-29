@@ -79,12 +79,15 @@ while True:
     latitude = gps.latitude
     longitude = gps.longitude
     altitude = gps.altitude_m
+    speed = gps.speed_knots
     if latitude is None:
         latitude = -99
     if longitude is None:
         longitude = -99
     if altitude is None:
         altitude = -99
+    if speed is None:
+        speed = -99
 
     ##GET ACCELEROMTER
     x,y,z = lis3dh.acceleration
@@ -95,7 +98,7 @@ while True:
         pixels[0] = (0,0,0)
         led.value = not led.value
         last_print = t
-        print((t,latitude,longitude,altitude,x,y,z))
+        print((t,latitude,longitude,altitude,speed,x,y,z))
 
         # Advertise when not connected.
         if not ble.connected:
@@ -108,7 +111,7 @@ while True:
             #Stop advertising once connected
             ble.stop_advertising()
             ADVERTISING = False
-            uart_server.write('{},{},{},{},{},{},{}\n'.format(t,latitude,longitude,altitude,x,y,z))
+            uart_server.write('{},{},{},{},{},{},{},{}\n'.format(t,latitude,longitude,altitude,speed,x,y,z))
 
         ##CHECK AND SEE IF SWITCH IS THROWN
         if switch.value == False:
@@ -118,7 +121,7 @@ while True:
             if c >= len(colors):
                 c = 0
             #PRINT TO A FILE
-            output = str(t) + "," + "{0:.6f},{1:.6f}".format(latitude,longitude) + "," + str(altitude) + "," + str(x) + "," + str(y) + "," + str(z) + str('\n')
+            output = str(t) + "," + "{0:.6f},{1:.6f}".format(latitude,longitude) + "," + str(altitude) + "," + str(speed) + "," + str(x) + "," + str(y) + "," + str(z) + str('\n')
             file.write(output)
             file.flush()
         else:
