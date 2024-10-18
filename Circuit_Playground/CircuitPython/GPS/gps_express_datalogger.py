@@ -64,6 +64,7 @@ while True:
     latitude = gps.latitude
     longitude = gps.longitude
     altitude = gps.altitude_m
+    speed = gps.speed_knots
 
     #GET CURRENT ACCEL VALUES
     x,y,z = lis3dh.acceleration
@@ -74,7 +75,7 @@ while True:
         pixels[0] = (0,0,0)
         led.value = not led.value
         last_print = t
-        print((t,latitude,longitude,altitude,x,y,z))
+        print((t,latitude,longitude,altitude,speed,x,y,z))
 
         ##CHECK AND SEE IF SWITCH IS THROWN
         if switch.value == False:
@@ -84,7 +85,7 @@ while True:
             if c >= len(colors):
                 c = 0
             #PRINT TO A FILE
-            output = str(t) + " " + str(latitude) + " " + str(longitude) + " " + str(altitude) + " " + str(x) + " " + str(y) + " " + str(z) + str('\n')
+            output = str(t) + " " + str(latitude) + " " + str(longitude) + " " + str(altitude) + " " + str(speed) + " " + str(x) + " " + str(y) + " " + str(z) + str('\n')
             file.write(output)
             file.flush()
         else:
