@@ -174,7 +174,5 @@ while True:
             print('FILE CLOSED!!! Hit reset then copy data')
             file.close()
             FILEOPEN = False
-
-    ##Wait 0.1 seconds for 10 hz data rate
-    ##Wait 0.1 seconds for 10 hz data rate
-    time.sleep(0.1)
+        ##Wait 0.1 seconds for 10 hz data rate
+        time.sleep(0.1)
