@@ -15,6 +15,7 @@ from adafruit_magtag.magtag import MagTag
 #speaker_enable.direction = digitalio.Direction.OUTPUT
 #speaker_enable.value = True
 #a = audioio.AudioOut(board.A0)
+print('Startup....')
 
 ###External light strip
 NUM_PIXELS = 30
@@ -37,7 +38,22 @@ except ImportError:
 print("Time will be set for {}".format(secrets["timezone"]))
 
 #Connect to Wifi
-print("Connecting to Wifi")
+networks = []
+print('Scanning for networks....')
+i = 0
+for network in wifi.radio.start_scanning_networks():
+    print('Network found.....',i)
+    i+=1
+    networks.append(network)
+if i == 0:
+    print('No networks found')
+    while 1:
+        time.sleep(10)
+wifi.radio.stop_scanning_networks()
+networks = sorted(networks, key=lambda net: net.rssi, reverse=True)
+for network in networks:
+    print("ssid:",network.ssid, "rssi:",network.rssi)
+print("Connecting to Wifi: ",secrets["ssid"])
 wifi.radio.connect(secrets["ssid"], secrets["password"])
 
 ##Get Pool
@@ -240,12 +256,12 @@ while True:
         for x in range(0,NUM_PIXELS):
             set_color(x,get_random_color(),1)
 
-    if current_time - network_timer > update_network or network_timer == 0:
+    if current_time > network_timer or network_timer == 0:
         #Get Temperature and time
         network_timer,temp = Network_Update(current_time,update_network,temp)
 
     ##Now check to see if we should update the screen
-    if current_time - screen_timer > update_screen or screen_timer == 0:
+    if current_time > screen_timer or screen_timer == 0:
         print("updating screen")
         screen_timer = current_time + update_screen
         update_text()
