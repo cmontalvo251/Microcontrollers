@@ -8,7 +8,7 @@ import digitalio
 import sys
 from adafruit_display_text.label import Label
 from adafruit_bitmap_font import bitmap_font
-from adafruit_matrixportal.network import Network
+from adafruit_matrixportal.network import Network #If you want to fix the max atempts issues you're going to have to update this mpy
 from adafruit_matrixportal.matrix import Matrix
 
 ##Button Presses
@@ -64,21 +64,25 @@ update_network = 3600.0
 
 ##Network Update Function
 def Network_Update(temp_in):
+    global COLORTEXT
     print('Trying to update clock and weather from Internet')
+    network_timer = current_time + update_network
     try:
         print('Updating Time')
-        network.get_local_time()  # Synchronize Board's clock to Internet
+        network.get_local_time()  # this will hang if the wifi goes out because you can't change the max_atempts in this API
+        #so in order to get this to timeout and max out you'll need to update the UF2 and most likely the mpy for this call.
+        #definitely don't want to do that now but at least the directions are here in the event you want to mes with that.
         print("Fetching Json from",DATA_SOURCE)
         value = network.fetch_data(DATA_SOURCE, json_path=(DATA_LOCATION,))
         temp_out = round(value['main']['temp'])
         print('Received Temperature = ',temp_out)
-        network_timer = current_time + update_network
-    except:
+        COLORTEXT = 1
+    except Exception as e:
+        print(e)
+        COLORTEXT = 2
         print("Could not update values from internet.")
         print("Using old value for temp")
         temp_out = temp_in
-        print("Going to try again in 1 minute")
-        network_timer = current_time + 60.0
     return network_timer,temp_out
 
 def update_text(*,temp_in=0,hours=None, minutes=None, show_colon=False):
@@ -178,10 +182,10 @@ while True:
 
     ########################NOTIFY USER OF PROGRESS########################
     current_time = time.monotonic()
-    print("Current Time = ",current_time," Next network update = ",network_timer)
+    print("Current Time = ",current_time," Next network update = ",network_timer," COLORTEXT = ",COLORTEXT)
 
     ##########################CHECK FOR NETWORK UPDATE##########################
-    if current_time - network_timer > update_network or network_timer == 0:
+    if current_time > network_timer or network_timer == 0:
         network_timer,temp = Network_Update(temp)
 
     ###########################UPDATE CLOCK TEXT######################
