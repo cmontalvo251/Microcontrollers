@@ -10,6 +10,13 @@ import adafruit_lis3dh
 
 #For Sensors Used
 import adafruit_gps
+print('GPS wiring (CPX -> GPS)')
+print('A6/RX -> TX')
+print('A7/TX -> RX')
+print('GND -> GND')
+print('VOUT -> VIN')
+print('Sleeping 5 seconds...')
+time.sleep(5.0)
 
 #For an Indicator
 import neopixel
