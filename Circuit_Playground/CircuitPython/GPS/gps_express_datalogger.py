@@ -65,6 +65,14 @@ while True:
     longitude = gps.longitude
     altitude = gps.altitude_m
     speed = gps.speed_knots
+    if latitude is None:
+        latitude = -99
+    if longitude is None:
+        longitude = -99
+    if altitude is None:
+        altitude = -99
+    if speed is None:
+        speed = -99
 
     #GET CURRENT ACCEL VALUES
     x,y,z = lis3dh.acceleration
@@ -76,6 +84,7 @@ while True:
         led.value = not led.value
         last_print = t
         print((t,latitude,longitude,altitude,speed,x,y,z))
+        print(gps._raw_sentence)
 
         ##CHECK AND SEE IF SWITCH IS THROWN
         if switch.value == False:

@@ -67,6 +67,8 @@ else:
 ###BOOLEANS
 ADVERTISING = False
 
+print(dir(gps))
+
 #INFINITE WHILE LOOP
 last_print = 0.0
 start_time = time.monotonic()
@@ -93,12 +95,13 @@ while True:
     x,y,z = lis3dh.acceleration
 
     ##PRINT TO STDOUT
-    if t - last_print >= 0.1:
+    if t - last_print >= 1.0:
         ##RESET PIXELS
         pixels[0] = (0,0,0)
         led.value = not led.value
         last_print = t
         print((t,latitude,longitude,altitude,speed,x,y,z))
+        print(gps._raw_sentence)
 
         # Advertise when not connected.
         if not ble.connected:
