@@ -36,6 +36,7 @@ while True:
     ##Rate gyro
     gx,gy,gz = mpu.gyro
     thetadot = gz
+    rolldot = -gy
 
     ###SUMMING JUNCTION
     theta_ref = 0.0
@@ -45,13 +46,13 @@ while True:
     error = theta_ref - theta
     error_roll = roll_ref - roll
     errordot = thetadot_ref - thetadot
-    errordot_roll = rolldot_ref - 0.0
+    errordot_roll = rolldot_ref - rolldot
 
     ###CONTROLLER -
     kp = 0.01
-    kd = 0.0
+    kd = 0.002
     pulse_ms = kp*error + kd*errordot + 1.6
-    pulse_ms_roll = kp*error_roll + kd*errordot_roll + 1.6
+    pulse_ms_roll = -2*kp*error_roll - kd*errordot_roll + 1.6
     if pulse_ms > 2.1:
         pulse_ms = 2.1
     if pulse_ms < 0.992:
@@ -75,6 +76,6 @@ while True:
 
     #print((pulse_ms,pulse_msf,))
     #print((x,y,z))
-    print((theta,roll))
-    #print((gx,gy,gz))
+    #print((theta,roll))
+    print((gx,gy,gz))
     time.sleep(0.1)
