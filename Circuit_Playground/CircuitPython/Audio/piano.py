@@ -1,5 +1,5 @@
 # Example CircuitPython code for playing songs using cp.play_tone
-
+# This code was written almost entirely (>90%) by ChatGPT-4.1
 name = "Mary Had a Little Lamb"  # Change this to select the song
 
 import time
