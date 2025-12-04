@@ -22,3 +22,4 @@ libraries/*.zip
 *.zip
 Trellis/build*
 RaspberryPi/OS
+target/
