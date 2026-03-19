@@ -9,6 +9,7 @@ secrets_DO_NOT_PUSH.py
 *.jpg
 *.mpy
 *.ogg
+*-bundle-*
 Trellis/Python_Demo/README.txt
 Trellis/Python_Demo/lib
 *.uf2
