@@ -37,8 +37,8 @@ led = digitalio.DigitalInOut(board.D13)
 led.direction = digitalio.Direction.OUTPUT
 
 #FILE SETUP
-filename = "/sd/accel_log.csv"
-logfile = open(filename, "a")
+filename = "sd/accel_log.txt"
+logfile = open(filename, "w")
 FILEOPEN = True
 print("Press Button A to record.")
 
