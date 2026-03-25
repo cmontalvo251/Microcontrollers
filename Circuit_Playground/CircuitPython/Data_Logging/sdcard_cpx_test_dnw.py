@@ -1,5 +1,3 @@
-###CODE TESTED ON A CPX AND CPB - DOES NOT WORK DO NOT KNOW WHAT TO DO PLEASE HELP
-
 import time
 import board
 import busio
@@ -7,50 +5,74 @@ import storage
 import digitalio
 import adafruit_sdcard
 
+##This current code has been tested on a CircuitPlayground Bluefruit but should work no problema
+#on a circuit playground express.
+
+#This requires the use of a micro sd card breakout board from adafruit PID:254 - https://www.adafruit.com/product/254
+#and a SD card formatted to FAT and contains an sd/ folder.
+
 # -----------------------------
 # SD CARD SETUP
 # -----------------------------
-##board.SCK - A3  (CLK)
-##board.MOSI - A1 (DO)
-##board.MISO - A2 (DI)
+##board.SCK = A1 -> CLK
+##board.MOSI = A3 -> DI
+##board.MISO = A2 -> DO
+##board.AUDIO        -> CS
 ##VCC - VOUT
 ##GND - GND
 spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
-
-# Chip Select MUST be DigitalInOut
-##CS - A7
-print(dir(board))
-cs = digitalio.DigitalInOut(board.TX)
+cs = digitalio.DigitalInOut(board.AUDIO)
 cs.direction = digitalio.Direction.OUTPUT
-
-# Initialize SD card
 sd = adafruit_sdcard.SDCard(spi, cs)
 vfs = storage.VfsFat(sd)
 storage.mount(vfs, "/sd")
-
 print("SD card mounted!")
 
-# Create a new file
+#BUTTON & LED SETUP
+buttonA = digitalio.DigitalInOut(board.BUTTON_A)
+buttonA.direction = digitalio.Direction.INPUT
+buttonA.pull = digitalio.Pull.DOWN
+
+led = digitalio.DigitalInOut(board.D13)
+led.direction = digitalio.Direction.OUTPUT
+
+#FILE SETUP
 filename = "/sd/accel_log.csv"
-logfile = open(filename, "w")
-
-# Write CSV header
-logfile.write("time,ax,ay,az\n")
-logfile.flush()
-
-print("Logging to", filename)
+logfile = open(filename, "a")
+FILEOPEN = True
+print("Press Button A to record.")
 
 # -----------------------------
 # MAIN LOOP
 # -----------------------------
-x = 0
+counter = 0
+RECORD = False
+DATARECORDED = False
 while True:
-    x += 1
-    t = time.monotonic()
+    if buttonA.value == True:
+        RECORD = not RECORD
+        time.sleep(0.5)
+    if RECORD:
+        led.value = True
 
-    line = "{:.3f},{:.3f}\n".format(t,x)
-    logfile.write(line)
-    logfile.flush()
+        t = time.monotonic()
+        counter += 1
 
-    print(line, end="")
-    time.sleep(0.05)
+        line = "{:.3f},{}\n".format(t, counter)
+        logfile.write(line)
+        logfile.flush()
+
+        print("Recording:", line.strip())
+        
+        DATARECORDED = True
+    else:
+        led.value = False
+        if DATARECORDED == True and FILEOPEN == True:
+            logfile.close()
+            FILEOPEN = False
+            print('File closed')
+        if FILEOPEN:
+            print('Not recording. Press A to record')
+        else:
+            print('Press reset to log again')
+    time.sleep(0.1)
