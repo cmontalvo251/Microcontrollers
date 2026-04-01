@@ -12,10 +12,17 @@ z = data[:,3]
 
 ##Clip Data
 tclip = 0.0
-xc = x[t>tclip]
-yc = y[t>tclip]
-zc = z[t>tclip]
-tc = t[t>tclip]
+x2 = x[t>tclip]
+y2 = y[t>tclip]
+z2 = z[t>tclip]
+t2 = t[t>tclip]
+
+#if you want to clip data twice, change tclip to a number
+tclip2 = t2[-1]
+zc = z2[t2 < tclip2]
+xc = x2[t2 < tclip2]
+yc = y2[t2 < tclip2]
+tc = t2[t2 < tclip2]
 
 ##Shift Data
 tc-=tc[0]
