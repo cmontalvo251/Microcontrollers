@@ -12,6 +12,7 @@ while True:
     R = 10000
     Do = pin.value
     dR = R/(2**16/Do-1)
+    #dR = (2**16)/Do*(R) - R #<-It might be this. Double check your math
     B = 3950
     To = 25 + 273.1
     invT = (1/To) + math.log(dR/10000)/B
