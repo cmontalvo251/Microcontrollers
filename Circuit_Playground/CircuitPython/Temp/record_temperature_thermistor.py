@@ -11,11 +11,14 @@ pin = analogio.AnalogIn(board.A9) ##If you want analog
 while True:
     R = 10000
     Do = pin.value
-    dR = (2**16)/Do*(R) - R
+    dR = R/(2**16/Do-1)
     B = 3950
     To = 25 + 273.1
     invT = (1/To) + math.log(dR/10000)/B
     T = 1/invT - 273.1
     #temp = thermistor.value #if you want analog
-    print((Do,T))
+    print((Do,T)) #Remember this command prints Digital Output and Temperature
+    #but you probably want to uncomment the line below
+    #print((time.monotonic(),T))
+    
     time.sleep(0.5)
