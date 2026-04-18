@@ -33,10 +33,12 @@ while True:
     #Or this one if you're reading the raw analog signal
     Do = pin.value
     #From here you can easily convert the Digital output to voltage
-    Vth = 3.3*Do/2**16
+    Vm = 3.3*Do/2**16
+    #Of course Vth is easily obtained from Kirchoffs Voltage law
+    Vth = 3.3-Vm
     #You can then use the voltage divider rule to solve for the thermistor resistance
     #noting that this thermistor is connected to the 3.3V side again where the series resistor is 10000
-    Rth = 10000*(3.3/Vth-1)
+    Rth = 10000*(3.3/Vm-1)
     ##And finally you can compute the temperature in celsius
     B = 3950
     To = 25 + 273.1
