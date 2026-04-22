@@ -2,6 +2,19 @@ import time
 import board
 import digitalio
 
+#WIRING
+#Load Cell
+#E+ - Red
+#E- - Black
+#A- - White
+#A+ - Green
+
+##CPX
+#VCC - 3.3
+#GND - GND
+#DT - A1
+#SCK - A2
+
 # Pin Setup
 DT = digitalio.DigitalInOut(board.A1)
 SCK = digitalio.DigitalInOut(board.A2)
@@ -23,7 +36,7 @@ def read_hx711():
         SCK.value = False
         if DT.value:
             count += 1
-    
+   
     # The 25th pulse sets the gain for the next reading (Channel A, Gain 128)
     SCK.value = True
     SCK.value = False
@@ -31,7 +44,7 @@ def read_hx711():
     # HX711 outputs 24-bit 2's complement
     if count & 0x800000:
         count -= 0x1000000
-        
+       
     return count
 
 def read_average(samples=10):
@@ -57,11 +70,11 @@ print("Offset:", offset)
 
 # 2. Calibration factor
 # You will need to adjust this scale value using a known weight
-scale = 12000 
+scale = 12000
 
 while True:
     reading = read_average(10)
     weight = (reading - offset) / scale
-    
     print("Weight:", weight, "kg")
+    #print(read_hx711())
     time.sleep(0.3)
