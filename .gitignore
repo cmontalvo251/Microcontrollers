@@ -1,5 +1,6 @@
 *.mkv
 *.svg
+*.txt
 lib
 nes
 *.pdf

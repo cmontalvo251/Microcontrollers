@@ -13,15 +13,11 @@ class CPX:
         self.index = index
         self.filename = 'CPX'+str(index)+'.txt'
         self.file = open(self.filename,'w')
-        try:
-            self.serialPort = serial.Serial(portname,115200)
-            print('if no errors port opened')
-            print('portname: ',portname)
-        except IOError:
-            print('Error opening serial port')
-            #print('portname: ',portname)
-            sys.exit()
-        self.norm = 0
+        self.serialPort = serial.Serial(portname,115200)
+        self.t = -99
+        self.button = -99
+        print('if no errors port opened')
+        print('portname: ',portname)
     ##############################################################################
     def convert(self,input):
         input = input.strip('b')
@@ -34,15 +30,18 @@ class CPX:
         inBuffer = self.serialPort.readline()
         instr = str(inBuffer)
         buffer_list = instr.split(' ')
-        #print(self.index,":",buffer_list)
-        self.t = self.convert(buffer_list[0])
-        self.button = self.convert(buffer_list[1])
-
-        #print('CPX = ',self.index,":",self.x, self.y, self.z, self.ax, self.ay, self.az,self.gx,self.gy,self.gz,'advrage = ',self.norm)
-
-        outstring = str(self.t) + " " + str(self.button) + "\n"
-        self.file.write(outstring)
-        self.file.flush()
+        #print("buffer:",buffer_list)
+        try:
+            self.t = self.convert(buffer_list[0])
+            self.button = self.convert(buffer_list[1])
+            outstring = str(self.t) + " " + str(self.button) + "\n"
+            self.file.write(outstring)
+            self.file.flush()
+        except:
+            pass
+        
+    def printdata(self,time):
+        print(time,self.t,self.button)
 
     def extractdata(self):
         ###EDIT THIS TO EXTRACT ALL DATA STREAMS #### DONE
@@ -67,18 +66,14 @@ class CPX:
 ##############################################################################
 
 ##Try and open the CPX
-try:
-    addr = "/dev/ttyACM0"
-    cpx = CPX(addr,0)
-except:
-    print('Error opening addr')
-    sys.exit()
+addr = "/dev/ttyACM0"
+cpx = CPX(addr,0)
 
 ###Read data
 startTime = time.time()
 while time.time() - startTime  < 10: #Take data for 10 seconds
-    print(time.time() - startTime)
     cpx.read()
+    cpx.printdata(time.time()-startTime)
 
 ##Close the file and extra data
 cpx.close()
