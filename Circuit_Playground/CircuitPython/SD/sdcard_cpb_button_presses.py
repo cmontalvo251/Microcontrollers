@@ -10,7 +10,8 @@ import adafruit_sdcard
 #on a circuit playground express.
 
 #This requires the use of a micro sd card breakout board from adafruit PID:254 - https://www.adafruit.com/product/254
-#and a SD card formatted to FAT and contains an sd/ folder.
+#and a SD card formatted to FAT32
+# The CPX/CPB must have an an sd/ folder.
 
 # -----------------------------
 # SD CARD SETUP
