@@ -18,8 +18,8 @@ uart = UARTService()
 advertisement = ProvideServicesAdvertisement(uart)
 print('Created BLE Service')
 
-# Analog Input Setup (Nail 2 on Pad A1)
-moisture_pin = analogio.AnalogIn(board.A1)
+# Analog Input Setup (Nail 2 on Pad A2)
+moisture_pin = analogio.AnalogIn(board.A2)
 
 DRY_VALUE = 200
 WET_VALUE = 50000
