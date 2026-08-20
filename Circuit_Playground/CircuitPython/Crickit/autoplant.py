@@ -3,6 +3,8 @@ import board
 import analogio
 import digitalio
 from adafruit_circuitplayground import cp
+#from adafruit_crickit import crickit  # Imports Crickit hardware support
+print('Imported Modules')
 
 # BLE Imports
 from adafruit_ble import BLERadio
@@ -14,19 +16,15 @@ ble = BLERadio()
 ble.name = "CPB Water Sensor"
 uart = UARTService()
 advertisement = ProvideServicesAdvertisement(uart)
+print('Created BLE Service')
 
 # Analog Input Setup (Nail 2 on Pad A1)
 moisture_pin = analogio.AnalogIn(board.A1)
 
-# Pump Control Pin Setup (Pad A2)
-pump = digitalio.DigitalInOut(board.A2)
-pump.direction = digitalio.Direction.OUTPUT
-pump.value = False  # Keep pump off initially
+DRY_VALUE = 200
+WET_VALUE = 50000
 
-DRY_VALUE = 2000
-WET_VALUE = 45000
-
-target_level = 10
+target_level = 0
 last_ble_send = 0
 
 def map_range(value, in_min, in_max, out_min, out_max):
@@ -52,25 +50,30 @@ while True:
 
     # Determine LED active color based on switch
     switch_state = cp.switch
-    active_color = (255, 0, 0) if switch_state else (0, 0, 255)
+    active_color = (75, 0, 0) if switch_state else (0, 0, 75)
 
     # --- Read Moisture Sensor ---
     raw_value = moisture_pin.value
     current_water_level = map_range(raw_value, DRY_VALUE, WET_VALUE, 0, 10)
 
-    # --- Pump Logic ---
-    # Turn pump ON if current level is below desired level.
-    # Turn pump OFF once current level is equal to or greater than desired level.
+    # --- Pump Logic via Crickit Drive 1 (or Motor 1) ---
+    # If using Drive 1 port on Crickit:
     if current_water_level < target_level:
-        pump.value = True
+    #    crickit.drive_1.fraction = 1.0  # Turn Pump ON (Full speed)
+        pump_status = "ON"
     else:
-        pump.value = False
+    #    crickit.drive_1.fraction = 0.0  # Turn Pump OFF
+        pump_status = "OFF"
 
     # --- Update NeoPixel Display ---
-    num_leds = min(current_water_level, target_level)
+    if switch_state:
+        num_leds = target_level
+    else:
+        num_leds = current_water_level
     for i in range(10):
         if i < num_leds:
             cp.pixels[i] = active_color
+            cp.pixels.show()
         else:
             cp.pixels[i] = (0, 0, 0)
 
@@ -81,10 +84,17 @@ while True:
             msg = (
                 f"Desired Level: {target_level}/10 | "
                 f"Current Level: {current_water_level}/10 | "
-                f"Pump: {'ON' if pump.value else 'OFF'} | "
                 f"Switch: {'Red' if switch_state else 'Blue'}\n"
             )
             uart.write(msg.encode("utf-8"))
             last_ble_send = current_time
+
+    msg = (
+                f"Desired Level: {target_level}/10 | "
+                f"Current Level: {current_water_level}/10 | "
+                f"Raw Level: {raw_value} | "
+                f"Switch: {'Red' if switch_state else 'Blue'}\n"
+            )
+    print(msg)
 
     time.sleep(0.05)
