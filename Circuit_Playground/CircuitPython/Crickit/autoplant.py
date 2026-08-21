@@ -3,7 +3,7 @@ import board
 import analogio
 import digitalio
 from adafruit_circuitplayground import cp
-#from adafruit_crickit import crickit  # Imports Crickit hardware support
+from adafruit_crickit import crickit  # Imports Crickit hardware support
 print('Imported Modules')
 
 # BLE Imports
@@ -18,11 +18,11 @@ uart = UARTService()
 advertisement = ProvideServicesAdvertisement(uart)
 print('Created BLE Service')
 
-# Analog Input Setup (Nail 2 on Pad A1)
-moisture_pin = analogio.AnalogIn(board.A1)
+# Analog Input Setup (Nail 2 on Pad A2)
+moisture_pin = analogio.AnalogIn(board.A2)
 
 DRY_VALUE = 200
-WET_VALUE = 50000
+WET_VALUE = 65535
 
 target_level = 0
 last_ble_send = 0
@@ -59,10 +59,10 @@ while True:
     # --- Pump Logic via Crickit Drive 1 (or Motor 1) ---
     # If using Drive 1 port on Crickit:
     if current_water_level < target_level:
-    #    crickit.drive_1.fraction = 1.0  # Turn Pump ON (Full speed)
+        crickit.dc_motor_1.throttle = 1.0  # Turn Pump ON (Full speed)
         pump_status = "ON"
     else:
-    #    crickit.drive_1.fraction = 0.0  # Turn Pump OFF
+        crickit.dc_motor_1.throttle = 0.0  # Turn Pump OFF
         pump_status = "OFF"
 
     # --- Update NeoPixel Display ---
@@ -84,6 +84,8 @@ while True:
             msg = (
                 f"Desired Level: {target_level}/10 | "
                 f"Current Level: {current_water_level}/10 | "
+                f"Raw Level: {raw_value} | "
+                f"Pump Status: {pump_status} | "
                 f"Switch: {'Red' if switch_state else 'Blue'}\n"
             )
             uart.write(msg.encode("utf-8"))
@@ -93,6 +95,7 @@ while True:
                 f"Desired Level: {target_level}/10 | "
                 f"Current Level: {current_water_level}/10 | "
                 f"Raw Level: {raw_value} | "
+                f"Pump Status: {pump_status} | "
                 f"Switch: {'Red' if switch_state else 'Blue'}\n"
             )
     print(msg)
