@@ -59,10 +59,17 @@ while True:
     # --- Pump Logic via Crickit Drive 1 (or Motor 1) ---
     # If using Drive 1 port on Crickit:
     if current_water_level < target_level:
+<<<<<<< HEAD
         crickit.dc_motor_1.throttle = 1.0  # Turn Pump ON (Full speed)
         pump_status = "ON"
     else:
         crickit.dc_motor_1.throttle = 0.0  # Turn Pump OFF
+=======
+        crickit.drive_1.fraction = 1.0  # Turn Pump ON (Full speed)
+        pump_status = "ON"
+    else:
+        crickit.drive_1.fraction = 0.0  # Turn Pump OFF
+>>>>>>> e4d4f51712df17bdb8e58d1af36ae938368cc3d1
         pump_status = "OFF"
 
     # --- Update NeoPixel Display ---
