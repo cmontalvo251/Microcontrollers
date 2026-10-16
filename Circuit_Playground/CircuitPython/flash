@@ -1,4 +1,0 @@
-#!/bin/bash
-
-cp -f $1 /media/carlos/CIRCUITPY/main.py
-
