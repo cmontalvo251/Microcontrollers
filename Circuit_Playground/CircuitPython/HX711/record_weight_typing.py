@@ -15,6 +15,10 @@ buttonA = digitalio.DigitalInOut(board.BUTTON_A)
 buttonA.direction = digitalio.Direction.INPUT
 buttonA.pull = digitalio.Pull.DOWN
 
+switch = digitalio.DigitalInOut(board.D7)  # For Circuit Playground Express
+switch.direction = digitalio.Direction.INPUT
+switch.pull = digitalio.Pull.UP
+
 # --- SETUP PINS & INDICATORS ---
 DT = digitalio.DigitalInOut(board.A4)
 SCK = digitalio.DigitalInOut(board.A5)
@@ -70,7 +74,7 @@ layout = KeyboardLayoutUS(kbd)  # US is only current option...
 def slow_write(string):   # Typing should not be too fast for
     for c in string:      # the computer to be able to accept
         layout.write(c)
-        time.sleep(0.02)   # use 1/5 second pause between characters
+        time.sleep(0.01)  
 TOGGLE = False
 
 scale = 213/80000.
@@ -85,9 +89,10 @@ while True:
     # Flash board LED to show activity
     led.value = not led.value
 
-    if buttonA.value == True:
-        TOGGLE = not TOGGLE
-        time.sleep(1.0)
+    if switch.value == False:
+        TOGGLE = True
+    else:
+        TOGGLE = False
 
     # Check toggle state and log data
     if TOGGLE:
@@ -101,5 +106,5 @@ while True:
     else:
         print("Not logging Data:",t,weight)
         pixels[0] = (0, 0, 0)
-  
-    time.sleep(0.1)
+
+    time.sleep(0.01)
