@@ -1,9 +1,7 @@
 import time
-
 import board
-import pulseio
+import pwmio
 from analogio import AnalogOut
-from adafruit_circuitplayground.express import cpx
 
 # set up time signature
 whole_note = 1.5  # adjust this to change tempo of everything
@@ -33,48 +31,25 @@ B4 = 494
 jingle_bells_song = [[E4, quarter_note], [E4, quarter_note],
 [E4, half_note], [E4, quarter_note], [E4, quarter_note],
 [E4, half_note], [E4, quarter_note], [G4, quarter_note],
-[C4, dotted_quarter_note], [D4, eighth_note], [E4, whole_note]]
-
-# Define a list of tones/music notes to play.
-TONE_FREQ = [ 262,  # C4
-              294,  # D4
-              330,  # E4
-              0,
-              349,  # F4
-              392,  # G4
-              440,  # A4
-              494 ] # B4
-
-length = [0.5,
-        1.0,
-        1.5,
-        1.0,
-        0.4,
-        2.3,
-        0.8,
-        3]
+[C4, dotted_quarter_note], [D4, eighth_note], [E4, whole_note],[0,whole_note]]
 
 # Create piezo buzzer PWM output.
-buzzer = pulseio.PWMOut(board.A1, variable_frequency=True)
+buzzer = pwmio.PWMOut(board.A1, variable_frequency=True)
 
 # Start at the first note and start making sound.
-buzzer.frequency = TONE_FREQ[0]
+buzzer.frequency = A3
 buzzer.duty_cycle = 2**15  # 32768 value is 50% duty cycle, a square wave.
 
 # Main loop will go through each tone in order up and down.
 while True:
+    print(time.monotonic())
     # Play tones going from start to end of list.
-    n = 0
     for i in range(len(jingle_bells_song)):
-        #cpx.start_tone(jingle_bells_song[i][0])
-        n+=1
-        if n >= len(TONE_FREQ):
-            n = 0
-        if TONE_FREQ[n] == 0:
+        note,note_length = jingle_bells_song[i]
+        print(note,note_length)
+        if note == 0:
             buzzer.duty_cycle = 0
         else:
             buzzer.duty_cycle = 2**15
-            buzzer.frequency = TONE_FREQ[n]
-
-        time.sleep(jingle_bells_song[i][1])
-        #cpx.stop_tone()
+            buzzer.frequency = note
+        time.sleep(note_length)
